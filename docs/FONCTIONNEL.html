@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Fonctionnelle - App Stock Mobile</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 20px; text-align: center; }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        header p { font-size: 1.1em; opacity: 0.9; }
+        .content { padding: 40px; }
+        h2 { color: #667eea; margin-top: 40px; margin-bottom: 20px; font-size: 1.8em; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+        h3 { color: #764ba2; margin-top: 25px; margin-bottom: 15px; font-size: 1.3em; }
+        .intro-box { background: #f0f4ff; border-left: 5px solid #667eea; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+        .intro-box p { font-size: 1.1em; line-height: 1.9; }
+        .flow-step { background: #f9f9f9; border: 2px solid #667eea; padding: 20px; margin: 15px 0; border-radius: 8px; }
+        .flow-step .step-number { display: inline-block; background: #667eea; color: white; width: 40px; height: 40px; border-radius: 50%; text-align: center; line-height: 40px; font-weight: bold; margin-right: 15px; }
+        .flow-step h4 { color: #667eea; margin-bottom: 10px; }
+        .feature-card { background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border: 2px solid #667eea; padding: 20px; margin: 15px 0; border-radius: 8px; }
+        .feature-card h4 { color: #667eea; margin-bottom: 10px; font-size: 1.1em; }
+        .feature-card ul { margin-left: 20px; }
+        .feature-card li { margin: 8px 0; }
+        .mockup { background: #f5f5f5; border: 2px solid #ddd; padding: 20px; margin: 20px 0; border-radius: 8px; font-family: monospace; }
+        .screen { background: white; border: 3px solid #333; width: 250px; height: 450px; margin: 20px auto; border-radius: 15px; padding: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); overflow: hidden; font-size: 12px; }
+        .screen-header { background: #667eea; color: white; padding: 10px; border-radius: 10px 10px 0 0; text-align: center; font-weight: bold; }
+        .screen-body { padding: 15px; height: 410px; overflow-y: auto; }
+        .btn { background: #667eea; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; margin: 5px; font-size: 12px; }
+        .btn:hover { background: #764ba2; }
+        .input-field { background: #f0f0f0; border: 1px solid #ccc; padding: 8px; margin: 8px 0; border-radius: 4px; width: 100%; font-size: 12px; }
+        .icon { font-size: 1.5em; }
+        .timeline { position: relative; padding: 20px 0; }
+        .timeline-item { margin-left: 40px; margin-bottom: 30px; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: -30px; top: 5px; width: 20px; height: 20px; background: #667eea; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px #667eea; }
+        .emoji { font-size: 1.5em; margin-right: 10px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        table th { background: #667eea; color: white; padding: 12px; text-align: left; }
+        table td { padding: 12px; border-bottom: 1px solid #ddd; }
+        table tr:hover { background: #f5f5f5; }
+        .warning { background: #fff3cd; border: 2px solid #ffc107; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .success { background: #d4edda; border: 2px solid #28a745; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        footer { background: #f9f9f9; padding: 20px; text-align: center; color: #666; border-top: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📱 Application Stock Mobile</h1>
+            <p>Documentation Fonctionnelle (Très Simple)</p>
+        </header>
+
+        <div class="content">
+            <!-- Section 1: Qu'est-ce que c'est? -->
+            <div class="intro-box">
+                <h3>🎯 C'est quoi cette app?</h3>
+                <p>
+                    Imagine que tu travailles dans un grand magasin (entrepôt). Tu dois trouver un produit rapidement.
+                    <br><br>
+                    <strong>Avant :</strong> Tu cherches dans un gros catalogue papier 📖 (lent!)
+                    <br>
+                    <strong>Après :</strong> Tu sors ton téléphone, tu tapes le code du produit, et BOOM! L'app te dit
+                    exactement où trouver le produit et combien il y en a. ⚡
+                    <br><br>
+                    <strong>C'est juste ça : Un téléphone qui te parle directement à la base de données du magasin!</strong>
+                </p>
+            </div>
+
+            <!-- Section 2: Ce qu'on peut faire -->
+            <h2><span class="emoji">✨</span>Ce que l'app peut faire</h2>
+
+            <div class="feature-card">
+                <h4>1️⃣ Se connecter (Login)</h4>
+                <p>Tu entres ton identifiant (login) et ton mot de passe. L'app vérifie que tu es un vrai employé et te laisse entrer.</p>
+                <p><strong>Exemple :</strong> Tu tapes "jean.dupont" et "password123" → L'app dit "Bienvenue Jean!" ✅</p>
+            </div>
+
+            <div class="feature-card">
+                <h4>2️⃣ Rechercher un produit</h4>
+                <p>Tu cherches un produit de <strong>deux manières</strong> :</p>
+                <ul>
+                    <li><strong>A) Taper le code SKU :</strong> Tu tapes "SKU12345" dans la barre de recherche</li>
+                    <li><strong>B) Scanner le code-barres :</strong> Tu pointes la caméra du téléphone sur le code-barres du produit → L'app le lit automatiquement! 📸</li>
+                </ul>
+                <p><strong>Exemple :</strong> Tu scannes un produit → L'app dit "C'est une Chaise Bleue (SKU12345)" ✅</p>
+            </div>
+
+            <div class="feature-card">
+                <h4>3️⃣ Voir les détails du stock</h4>
+                <p>Une fois que tu as trouvé un produit, l'app te montre :</p>
+                <ul>
+                    <li>💰 <strong>Combien il y a</strong> (Quantité disponible)</li>
+                    <li>📍 <strong>Où le trouver</strong> (Zone A, Rack 5, Position 3)</li>
+                    <li>📦 <strong>Infos supplémentaires</strong> (Lot, Date d'expiration, État du produit)</li>
+                </ul>
+                <p><strong>Exemple :</strong> "Il y a 45 Chaises Bleues. Elles sont en Zone A, Rack 5. Lot: 2024-001, Expire en 2025" ✅</p>
+            </div>
+
+            <!-- Section 3: Les écrans -->
+            <h2><span class="emoji">📱</span>Comment ça ressemble? (Les écrans)</h2>
+
+            <h3>Écran 1: Connexion</h3>
+            <div style="display: flex; justify-content: center;">
+                <div class="screen">
+                    <div class="screen-header">Connexion</div>
+                    <div class="screen-body">
+                        <p style="text-align: center; margin: 20px 0; font-size: 24px;">🔐</p>
+                        <p style="font-weight: bold; margin: 10px 0;">Identifiant :</p>
+                        <input class="input-field" placeholder="jean.dupont" value="">
+                        <p style="font-weight: bold; margin: 10px 0;">Mot de passe :</p>
+                        <input class="input-field" type="password" placeholder="••••••••" value="">
+                        <button class="btn" style="width: 100%; margin-top: 20px;">Se connecter</button>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Écran 2: Accueil (après connexion)</h3>
+            <div style="display: flex; justify-content: center;">
+                <div class="screen">
+                    <div class="screen-header">Accueil</div>
+                    <div class="screen-body">
+                        <p style="text-align: center; margin: 10px 0;">👋 Bienvenue Jean!</p>
+                        <button class="btn" style="width: 100%; margin: 15px 0;"><span class="emoji">🔍</span> Rechercher un produit</button>
+                        <button class="btn" style="width: 100%; margin: 15px 0;"><span class="emoji">📷</span> Scanner un code-barres</button>
+                        <button class="btn" style="width: 100%; margin: 15px 0;"><span class="emoji">⚙️</span> Paramètres</button>
+                        <button class="btn" style="width: 100%; margin: 15px 0; background: #999;">🚪 Se déconnecter</button>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Écran 3: Recherche</h3>
+            <div style="display: flex; justify-content: center;">
+                <div class="screen">
+                    <div class="screen-header">Rechercher</div>
+                    <div class="screen-body">
+                        <p style="font-weight: bold;">Code SKU :</p>
+                        <input class="input-field" placeholder="Taper ou scanner..." value="">
+                        <button class="btn" style="width: 100%; margin: 10px 0;"><span class="emoji">🔍</span> Chercher</button>
+                        <hr style="margin: 15px 0;">
+                        <p style="font-size: 11px; color: #666;">Résultats :</p>
+                        <div style="background: #f0f0f0; padding: 10px; border-radius: 4px; margin: 10px 0; cursor: pointer;">
+                            <p><strong>Chaise Bleue</strong></p>
+                            <p style="font-size: 11px; color: #666;">SKU12345 - 45 unités</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Écran 4: Détails du produit</h3>
+            <div style="display: flex; justify-content: center;">
+                <div class="screen">
+                    <div class="screen-header">Détails</div>
+                    <div class="screen-body">
+                        <p style="font-weight: bold; font-size: 14px;">Chaise Bleue</p>
+                        <p style="font-size: 11px; color: #666;">SKU: 12345</p>
+                        <hr style="margin: 10px 0;">
+                        <p style="font-size: 11px;"><strong>Quantité :</strong> 45 unités</p>
+                        <p style="font-size: 11px;"><strong>Zone :</strong> A</p>
+                        <p style="font-size: 11px;"><strong>Rack :</strong> 5</p>
+                        <p style="font-size: 11px;"><strong>Position :</strong> 3</p>
+                        <hr style="margin: 10px 0;">
+                        <p style="font-size: 11px;"><strong>Lot :</strong> 2024-001</p>
+                        <p style="font-size: 11px;"><strong>Expire :</strong> 2025-12-31</p>
+                        <p style="font-size: 11px;"><strong>État :</strong> ✅ Bon</p>
+                        <button class="btn" style="width: 100%; margin-top: 15px; background: #28a745;">↩️ Retour</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Le flux complet -->
+            <h2><span class="emoji">⏱️</span>Le flux complet (étape par étape)</h2>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Étape 1: Tu ouvres l'app</h4>
+                    <p>L'app te montre l'écran de connexion. Tu dois te connecter avec tes identifiants.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Étape 2: Tu cherches un produit</h4>
+                    <p>Tu tapes le code SKU OU tu scannes le code-barres du produit.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Étape 3: L'app cherche dans la base de données</h4>
+                    <p>L'app envoie ta requête au serveur. Le serveur cherche dans le WMS SPEED et te répond en quelques secondes.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Étape 4: Tu reçois les résultats</h4>
+                    <p>L'app te montre la liste des produits trouvés. Tu cliques sur celui que tu veux.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Étape 5: Tu vois les détails</h4>
+                    <p>L'app t'affiche la quantité, la localisation exacte, et les infos supplémentaires (lot, date expiration, etc.).</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Étape 6: Tu vas chercher le produit!</h4>
+                    <p>Grâce à l'info, tu vais directement à la bonne Zone, bon Rack, bonne Position. Pas de perte de temps! ⏱️💨</p>
+                </div>
+            </div>
+
+            <!-- Section 5: Cas d'usage réels -->
+            <h2><span class="emoji">🎬</span>Exemples réels</h2>
+
+            <h3>Cas 1: Recherche par SKU</h3>
+            <div class="flow-step">
+                <p><strong>Situation :</strong> Tu dois chercher le produit "CHAISE-BLEUE" pour une commande client.</p>
+                <p><strong>Avant l'app :</strong> Tu prends le catalogue papier, tu cherches "CHAISE-BLEUE"... 5 minutes plus tard, tu vois qu'il y en a 45. Mais où? Tu dois demander au responsable du stock. 😞</p>
+                <p><strong>Avec l'app :</strong> Tu ouvres l'app, tu tapes "SKU12345" (ou "CHAISE-BLEUE"), et en 2 secondes tu vois: "Zone A, Rack 5, Position 3, il y a 45 unités". Tu y vas directement! ⚡</p>
+            </div>
+
+            <h3>Cas 2: Scan de code-barres</h3>
+            <div class="flow-step">
+                <p><strong>Situation :</strong> Tu as un produit en main et tu ne connais pas son code.</p>
+                <p><strong>Avant l'app :</strong> Tu cherches le code-barres sur le produit, tu vas le chercher dans le catalogue papier... 10 minutes!</p>
+                <p><strong>Avec l'app :</strong> Tu points la caméra de ton téléphone sur le code-barres → L'app le scanne → Tu as les infos instantanément! 📸✨</p>
+            </div>
+
+            <!-- Section 6: Sécurité -->
+            <h2><span class="emoji">🔒</span>Sécurité</h2>
+
+            <div class="warning">
+                <h4>Mot de passe</h4>
+                <p>Tu dois avoir un mot de passe pour te connecter. Cela garantit que seuls les vrais employés accèdent aux infos du stock. Pas d'accès anonyme!</p>
+            </div>
+
+            <div class="success">
+                <h4>Les données restent confidentielles</h4>
+                <p>Seuls TOI et le serveur connaissez tes identifiants. L'app ne les envoie que si c'est vraiment nécessaire.</p>
+            </div>
+
+            <!-- Section 7: Résumé -->
+            <h2><span class="emoji">📝</span>Résumé en 3 points</h2>
+
+            <table>
+                <tr>
+                    <th>Point</th>
+                    <th>Explication</th>
+                </tr>
+                <tr>
+                    <td><strong>1. C'est quoi?</strong></td>
+                    <td>Une app mobile qui te dit exactement où trouver un produit dans l'entrepôt + sa quantité + ses infos</td>
+                </tr>
+                <tr>
+                    <td><strong>2. Comment l'utiliser?</strong></td>
+                    <td>Tu te connectes → Tu cherches un produit (par SKU ou scan) → Tu vois les détails et la localisation</td>
+                </tr>
+                <tr>
+                    <td><strong>3. Pourquoi c'est utile?</strong></td>
+                    <td>Ça fait gagner du temps (pas de catalogue papier) et c'est précis (pas d'erreur)</td>
+                </tr>
+            </table>
+
+            <div class="success" style="text-align: center; margin-top: 40px;">
+                <h3>🎉 Et voilà! Tu as compris le concept!</h3>
+                <p>Ce qu'on développe: Un app sur téléphone qui parle à la base de données du WMS SPEED.</p>
+                <p>C'est simple, utile, et ça va faire gagner du temps à tout le monde! ⚡</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Documentation Fonctionnelle - POC Stock Mobile | Rédigée pour être comprise par tout le monde</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python main.py)",
+      "Bash(kill %1)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "PowerShell($env:SQL_SERVER_PASSWORD=\"test_pass\"; cd D:\\\\Projects\\\\POC_SPEED_RF_INFO_STOCK\\\\backend; python -c \"from config import Settings; s = Settings\\(\\); print\\('sql_server_host:', s.sql_server_host\\); print\\('sql_server_port:', s.sql_server_port\\); print\\('api_host:', s.api_host\\); print\\('api_port:', s.api_port\\); print\\('password set:', bool\\(s.sql_server_password\\)\\)\")",
+      "PowerShell(Get-ChildItem -Path \"D:\\\\Projects\\\\POC_SPEED_RF_INFO_STOCK\" | ForEach-Object { $_.FullName })",
+      "PowerShell(Get-ChildItem -Path \"D:\\\\Projects\\\\POC_SPEED_RF_INFO_STOCK\\\\backend\" -Recurse | ForEach-Object { $_.FullName })",
+      "Bash(python -m py_compile backend/repositories/base_repository.py)",
+      "Bash(python -m py_compile backend/repositories/health_repository.py)",
+      "Bash(git -C \"D:\\\\Projects\\\\POC_SPEED_RF_INFO_STOCK\" add backend/repositories/base_repository.py backend/repositories/health_repository.py)",
+      "Bash(git -C \"D:\\\\Projects\\\\POC_SPEED_RF_INFO_STOCK\" commit -m \"fix: add typed exceptions, close cursors, remove __del__\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('services/health_service.py'\\).read\\(\\)\\); print\\('Syntax OK'\\)\")",
+      "Bash(git commit *)",
+      "Bash(git *)",
+      "Bash(pip install *)",
+      "Bash(New-Item *)",
+      "PowerShell(New-Item *)",
+      "Bash(python *)",
+      "PowerShell(java *)",
+      "PowerShell(curl *)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(Test-Path *)",
+      "PowerShell(netstat *)",
+      "PowerShell(Stop-Process *)",
+      "Bash(curl -s http://192.168.1.20:8000/)",
+      "Bash(curl -v http://192.168.1.20:8000/)",
+      "Bash(bash -c \"./build-with-java21.ps1 installDebug 2>&1\")",
+      "Bash(curl -s http://192.168.1.20:8000/api/health/database)",
+      "Bash(python3 -m json.tool)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://192.168.1.20:8000/api/health/database\" -UseBasicParsing | ConvertFrom-Json | ConvertTo-Json -Depth 10)",
+      "Bash(./gradlew clean *)",
+      "Bash(dir *)"
+    ]
+  }
+}

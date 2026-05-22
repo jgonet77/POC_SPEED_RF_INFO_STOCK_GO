@@ -2,7 +2,9 @@ package com.example.stockapp.logging
 
 import android.content.Context
 import android.util.Log
+import java.io.BufferedReader
 import java.io.File
+import java.io.FileReader
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -64,6 +66,17 @@ class AppLogger(context: Context) {
             val ctx = appContext ?: return
             AppLogger(ctx).logApiError(endpoint, error)
         }
+
+        /**
+         * Static clearLogs helper to delete the log file.
+         */
+        fun clearLogs() {
+            try {
+                getLogFile().delete()
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to clear logs: ${e.message}")
+            }
+        }
     }
 
     private val logFile: File
@@ -103,24 +116,83 @@ class AppLogger(context: Context) {
     }
 
     fun logApiResponse(endpoint: String, statusCode: Int, responseBody: String) {
-        info("API RESPONSE: $endpoint - Status: $statusCode\nBody: $responseBody")
+        val truncatedBody = if (responseBody.length > 200) {
+            responseBody.take(200) + "..."
+        } else {
+            responseBody
+        }
+        info("API RESPONSE: $endpoint - Status: $statusCode\nBody: $truncatedBody")
     }
 
     fun logApiError(endpoint: String, error: String) {
         this.error("API ERROR: $endpoint\n$error")
     }
 
-    fun getLogs(): String {
-        return if (logFile.exists()) {
-            logFile.readText()
-        } else {
-            "No logs yet"
+    /**
+     * Reads the last N lines from the log file in memory-efficient manner.
+     * Avoids loading entire file which could cause OOM on large logs.
+     * @param maxLines Maximum number of lines to return (default: 500)
+     * @return The last N lines as a single string
+     */
+    fun getLogs(maxLines: Int = 500): String {
+        if (!logFile.exists()) return "No logs yet"
+
+        val lines = mutableListOf<String>()
+        return try {
+            BufferedReader(FileReader(logFile)).use { reader ->
+                var line: String?
+                while (reader.readLine().also { line = it } != null) {
+                    lines.add(line!!)
+                    // Keep only last maxLines by removing the oldest
+                    if (lines.size > maxLines) {
+                        lines.removeAt(0)
+                    }
+                }
+            }
+            if (lines.isEmpty()) "No logs yet" else lines.joinToString("\n")
+        } catch (e: Exception) {
+            "Error reading logs: ${e.message}"
         }
     }
 
-    fun clearLogs() {
+    /**
+     * Instance method to clear logs. Use AppLogger.clearLogs() for static access.
+     */
+    fun clearLogsInstance() {
         if (logFile.exists()) {
             logFile.delete()
+        }
+    }
+
+    /**
+     * Count lines in the log file without loading entire content into memory.
+     */
+    private fun countLogLines(): Int {
+        if (!logFile.exists()) return 0
+        return try {
+            BufferedReader(FileReader(logFile)).use { reader ->
+                var count = 0
+                while (reader.readLine() != null) {
+                    count++
+                }
+                count
+            }
+        } catch (e: Exception) {
+            0
+        }
+    }
+
+    /**
+     * Rotate log file if it exceeds the maximum line threshold.
+     * When file has more than 2000 lines, it is deleted to restart fresh.
+     */
+    private fun rotateLogIfNeeded() {
+        try {
+            if (countLogLines() > 2000) {
+                logFile.delete()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to rotate log: ${e.message}")
         }
     }
 
@@ -140,9 +212,10 @@ class AppLogger(context: Context) {
             message
         )
 
-        // Append to file
+        // Append to file and check for rotation
         try {
             logFile.appendText(logLine)
+            rotateLogIfNeeded()
         } catch (e: Exception) {
             Log.e(TAG, "Failed to write log: ${e.message}")
         }

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 2 : API & Network Security - POC Stock App</title>
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box;}
+        body {font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;}
+        .container {max-width:1000px;margin:0 auto;background:white;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;}
+        header {background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:40px 20px;text-align:center;}
+        header h1 {font-size:2.5em;margin-bottom:10px;}
+        .content {padding:40px;}
+        .section {margin-bottom:40px;}
+        .section h2 {color:#667eea;border-bottom:3px solid #667eea;padding-bottom:10px;margin-bottom:20px;font-size:1.8em;}
+        .section h3 {color:#667eea;margin-top:20px;margin-bottom:10px;font-size:1.3em;}
+        .card {background:#f8f9fa;border-left:5px solid #667eea;padding:20px;margin-bottom:15px;border-radius:5px;}
+        .error-box {background:#ffebee;border-left:5px solid #f44336;padding:20px;margin-bottom:15px;border-radius:5px;}
+        .code-block {background:#2d2d2d;color:#f8f8f2;padding:15px;border-radius:5px;overflow-x:auto;margin:15px 0;font-family:'Courier New',monospace;font-size:0.9em;}
+        .back-link {display:inline-block;margin-top:20px;padding:10px 20px;background:#667eea;color:white;text-decoration:none;border-radius:5px;transition:all 0.3s;}
+        .back-link:hover {background:#764ba2;}
+        footer {background:#f8f9fa;padding:20px;text-align:center;border-top:2px solid #ddd;color:#666;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔒 Étape 2 : Intégration API & Network Security</h1>
+            <p>Configuration HTTP et création du client Retrofit (~1.5 heures)</p>
+        </header>
+
+        <div class="content">
+            <div class="section">
+                <h2>Problème Identifié</h2>
+                <div class="error-box">
+                    <strong>Erreur :</strong> CLEARTEXT communication to 192.168.1.20 not permitted by network security policy<br><br>
+                    <strong>Cause :</strong> Android 9+ bloque le trafic HTTP non chiffré par défaut pour des raisons de sécurité.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Solution : Network Security Config</h2>
+                <h3>Créer network_security_config.xml</h3>
+                <div class="card">
+                    Fichier : <code>res/xml/network_security_config.xml</code>
+                </div>
+
+                <div class="code-block">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;network-security-config&gt;
+    &lt;domain-config cleartextTrafficPermitted="true"&gt;
+        &lt;domain includeSubdomains="true"&gt;192.168.1.20&lt;/domain&gt;
+        &lt;domain includeSubdomains="true"&gt;localhost&lt;/domain&gt;
+        &lt;domain includeSubdomains="true"&gt;127.0.0.1&lt;/domain&gt;
+    &lt;/domain-config&gt;
+    &lt;default-config cleartextTrafficPermitted="false" /&gt;
+&lt;/network-security-config&gt;</div>
+
+                <h3>Référencer dans AndroidManifest.xml</h3>
+                <div class="code-block">&lt;application
+    ...
+    android:networkSecurityConfig="@xml/network_security_config"&gt;
+&lt;/application&gt;</div>
+            </div>
+
+            <div class="section">
+                <h2>Intégration Retrofit (HTTP Client)</h2>
+
+                <h3>1. Créer l'interface API</h3>
+                <div class="card">
+                    Fichier : <code>api/StockApiService.kt</code>
+                </div>
+
+                <div class="code-block">interface StockApiService {
+    @GET("api/health/database")
+    fun checkDatabaseHealth(): Call&lt;HealthCheckResponse&gt;
+
+    @GET("api/health/api")
+    fun checkApiHealth(): Call&lt;ApiHealthResponse&gt;
+}</div>
+
+                <h3>2. Initialiser le client Retrofit</h3>
+                <div class="card">
+                    Fichier : <code>api/ApiClient.kt</code><br><br>
+                    Singleton pattern pour éviter les instances multiples
+                </div>
+
+                <div class="code-block">object ApiClient {
+    lateinit var apiService: StockApiService
+
+    fun init(context: Context) {
+        val baseUrl = ConfigManager(context)
+            .getApiHost()
+        val port = ConfigManager(context)
+            .getApiPort()
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://$baseUrl:$port/")
+            .addConverterFactory(
+                GsonConverterFactory.create()
+            )
+            .build()
+
+        apiService = retrofit.create(
+            StockApiService::class.java
+        )
+    }
+}</div>
+
+                <h3>3. Créer les Data Classes</h3>
+                <div class="code-block">data class HealthCheckResponse(
+    val service: String,
+    val database_status: String,
+    val details: Map&lt;String, Any&gt;
+)
+
+data class ApiHealthResponse(
+    val status: String,
+    val message: String
+)</div>
+            </div>
+
+            <div class="section">
+                <h2>Gestion des Callbacks Asynchrones</h2>
+                <div class="code-block">class HealthRepository {
+    fun checkDatabaseHealth(
+        onSuccess: (HealthCheckResponse) -&gt; Unit,
+        onError: (String) -&gt; Unit
+    ) {
+        ApiClient.apiService
+            .checkDatabaseHealth()
+            .enqueue(object : Callback&lt;HealthCheckResponse&gt; {
+                override fun onResponse(
+                    call: Call&lt;HealthCheckResponse&gt;,
+                    response: Response&lt;HealthCheckResponse&gt;
+                ) {
+                    if (response.isSuccessful) {
+                        onSuccess(response.body()!!)
+                    } else {
+                        onError("API Error: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(
+                    call: Call&lt;HealthCheckResponse&gt;,
+                    t: Throwable
+                ) {
+                    onError("Connection Error: ${t.message}")
+                }
+            })
+    }
+}</div>
+            </div>
+
+            <div class="section">
+                <h2>Points Clés</h2>
+                <div class="card">
+                    <strong>✅ Cleartext Permission :</strong> Strictement limité à 192.168.1.20 en local<br><br>
+                    <strong>⚠️ Sécurité Production :</strong> Utiliser HTTPS avec certificats valides<br><br>
+                    <strong>📦 Retrofit :</strong> Gère automatiquement threading, sérialisation JSON, retry logic<br><br>
+                    <strong>🔄 Callbacks :</strong> Exécutés sur background thread, nécessite postValue() pour LiveData
+                </div>
+            </div>
+
+            <a href="index.html" class="back-link">← Retour à l'index</a>
+        </div>
+
+        <footer>
+            <p>POC Stock App - Étape 2 | Généré automatiquement</p>
+        </footer>
+    </div>
+</body>
+</html>

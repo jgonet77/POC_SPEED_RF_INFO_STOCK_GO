@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 7 : Timing & Logs - POC Stock App</title>
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box;}
+        body {font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;}
+        .container {max-width:1000px;margin:0 auto;background:white;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;}
+        header {background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:40px 20px;text-align:center;}
+        header h1 {font-size:2.5em;margin-bottom:10px;}
+        .content {padding:40px;}
+        .section {margin-bottom:40px;}
+        .section h2 {color:#667eea;border-bottom:3px solid #667eea;padding-bottom:10px;margin-bottom:20px;font-size:1.8em;}
+        .section h3 {color:#667eea;margin-top:20px;margin-bottom:10px;font-size:1.3em;}
+        .card {background:#f8f9fa;border-left:5px solid #667eea;padding:20px;margin-bottom:15px;border-radius:5px;}
+        .code-block {background:#2d2d2d;color:#f8f8f2;padding:15px;border-radius:5px;overflow-x:auto;margin:15px 0;font-family:'Courier New',monospace;font-size:0.9em;}
+        .back-link {display:inline-block;margin-top:20px;padding:10px 20px;background:#667eea;color:white;text-decoration:none;border-radius:5px;transition:all 0.3s;}
+        .back-link:hover {background:#764ba2;}
+        footer {background:#f8f9fa;padding:20px;text-align:center;border-top:2px solid #ddd;color:#666;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⏱️ Étape 7 : Chronomètres & Logging</h1>
+            <p>Mesure des performances et journalisation (~2 heures)</p>
+        </header>
+
+        <div class="content">
+            <div class="section">
+                <h2>Objectif</h2>
+                <div class="card">
+                    Afficher le temps écoulé pour chaque test<br><br>
+                    Journaliser les événements API dans des logs<br><br>
+                    Permettre la consultation des logs via l'app<br><br>
+                    Identifier les goulots d'étranglement
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>1. Mesurer le Temps Écoulé</h2>
+
+                <div class="code-block">fun checkApiHealth() {
+    _apiHealthStatus.value = "Testing..."
+    _apiTestTime.value = "Testing..."
+
+    // Démarrer le chrono
+    val startTime = System.currentTimeMillis()
+
+    repository.checkApiHealth(
+        onSuccess = { response ->
+            // Calculer le temps écoulé
+            val elapsed = System.currentTimeMillis() -
+                startTime
+
+            _apiHealthStatus.value =
+                "✅ ${response.status}"
+            _apiTestTime.value =
+                "Completed in ${elapsed}ms"
+            _errorMessage.value = ""
+        },
+        onError = { error ->
+            val elapsed = System.currentTimeMillis() -
+                startTime
+
+            _apiHealthStatus.value = "❌ Failed"
+            _apiTestTime.value =
+                "Failed after ${elapsed}ms"
+            _errorMessage.value = error
+        }
+    )
+}</div>
+
+                <h3>Temps Typiques Observés</h3>
+                <div class="card">
+                    <strong>Latence réseau:</strong> 50-500ms<br>
+                    <strong>Parsing JSON:</strong> <1ms<br>
+                    <strong>Requête SQL:</strong> 1-10ms<br>
+                    <strong>Total:</strong> 50-510ms (surtout network)
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>2. AppLogger : Journalisation Centralisée</h2>
+
+                <div class="code-block">object AppLogger {
+    private val logs = mutableListOf&lt;String&gt;()
+
+    fun log(message: String) {
+        val timestamp = SimpleDateFormat(
+            "HH:mm:ss.SSS",
+            Locale.getDefault()
+        ).format(Date())
+
+        val logEntry =
+            "[$timestamp] $message"
+
+        logs.add(logEntry)
+        Log.d("AppLogger", logEntry)
+    }
+
+    fun logApiCall(endpoint: String, method: String) {
+        log("API CALL: $method $endpoint")
+    }
+
+    fun logApiResponse(
+        endpoint: String,
+        code: Int,
+        body: String
+    ) {
+        log("API RESPONSE: $endpoint [$code] " +
+            "$body")
+    }
+
+    fun logApiError(endpoint: String, error: String) {
+        log("API ERROR: $endpoint - $error")
+    }
+
+    fun getLogs(): List&lt;String&gt; = logs.toList()
+
+    fun clearLogs() {
+        logs.clear()
+    }
+}

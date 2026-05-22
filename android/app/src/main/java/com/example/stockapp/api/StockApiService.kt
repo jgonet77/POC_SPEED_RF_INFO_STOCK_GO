@@ -1,5 +1,7 @@
 package com.example.stockapp.api
 
+import com.example.stockapp.models.HealthCheckResponse
+import com.example.stockapp.models.ApiHealthResponse
 import retrofit2.Call
 import retrofit2.http.GET
 
@@ -11,14 +13,3 @@ interface StockApiService {
     @GET("api/health/api")
     fun checkApiHealth(): Call<ApiHealthResponse>
 }
-
-data class HealthCheckResponse(
-    val service: String,
-    val database_status: String,
-    val details: Map<String, Any>
-)
-
-data class ApiHealthResponse(
-    val status: String,
-    val message: String
-)

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Technique - App Stock Mobile</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1100px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        header { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 40px 20px; text-align: center; }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        header p { font-size: 1.1em; opacity: 0.9; }
+        .content { padding: 40px; }
+        h2 { color: #11998e; margin-top: 40px; margin-bottom: 20px; font-size: 1.8em; border-bottom: 3px solid #11998e; padding-bottom: 10px; }
+        h3 { color: #38ef7d; margin-top: 25px; margin-bottom: 15px; font-size: 1.3em; }
+        .tech-box { background: #f0fffe; border-left: 5px solid #11998e; padding: 20px; border-radius: 8px; margin: 15px 0; }
+        .tech-box p { margin: 10px 0; }
+        .code-block { background: #1e1e1e; color: #d4d4d4; padding: 15px; margin: 15px 0; border-radius: 8px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 13px; }
+        .code-comment { color: #6a9955; }
+        .code-keyword { color: #569cd6; }
+        .code-string { color: #ce9178; }
+        .layer-card { background: linear-gradient(135deg, #11998e15 0%, #38ef7d15 100%); border: 2px solid #11998e; padding: 20px; margin: 15px 0; border-radius: 8px; }
+        .layer-card h4 { color: #11998e; margin-bottom: 10px; font-size: 1.15em; }
+        .flow-diagram { background: #f5f5f5; border: 2px dashed #11998e; padding: 20px; margin: 20px 0; border-radius: 8px; font-family: monospace; line-height: 1.8; }
+        .emoji { font-size: 1.5em; margin-right: 10px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        table th { background: #11998e; color: white; padding: 12px; text-align: left; }
+        table td { padding: 12px; border-bottom: 1px solid #ddd; }
+        table tr:hover { background: #f5f5f5; }
+        .warning { background: #fff3cd; border: 2px solid #ffc107; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .info { background: #d1ecf1; border: 2px solid #17a2b8; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .success { background: #d4edda; border: 2px solid #28a745; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        footer { background: #f9f9f9; padding: 20px; text-align: center; color: #666; border-top: 1px solid #ddd; }
+        .endpoint { background: #f9f9f9; border-left: 4px solid #11998e; padding: 15px; margin: 15px 0; border-radius: 4px; }
+        .endpoint .method { color: #11998e; font-weight: bold; }
+        .endpoint .path { font-family: monospace; color: #333; }
+        .request { background: #f0f0f0; padding: 10px; border-radius: 4px; margin: 8px 0; font-family: monospace; font-size: 12px; }
+        .response { background: #e8f5e9; padding: 10px; border-radius: 4px; margin: 8px 0; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ Documentation Technique</h1>
+            <p>Architecture et Implémentation - Expliquée simplement</p>
+        </header>
+
+        <div class="content">
+            <!-- Intro -->
+            <div class="info">
+                <h3><span class="emoji">🎯</span>Avant de lire ce document</h3>
+                <p>
+                    Cette doc explique comment fonctionne l'app <strong>techniquement</strong> (en détail).
+                    Les principes sont expliqués avec des analogies simples, comme si tu enseignais ça à un copain de classe!
+                </p>
+            </div>
+
+            <!-- Section 1: Architecture générale -->
+            <h2><span class="emoji">🏗️</span>1. Architecture générale (Le plan du bâtiment)</h2>
+
+            <p>
+                Imagine une maison avec <strong>3 étages</strong> :
+            </p>
+
+            <div class="grid-2">
+                <div class="layer-card">
+                    <h4>Étage 1: Le Salon (FRONTEND)</h4>
+                    <p>C'est l'app Android sur ton téléphone. C'est ce que tu VOIS et ce que tu TOUCHES.</p>
+                    <p><strong>Techniquement :</strong> Kotlin (langage de programmation Android)</p>
+                    <p><strong>Analogie :</strong> C'est la façade d'un restaurant (ce que les clients voient)</p>
+                </div>
+
+                <div class="layer-card">
+                    <h4>Étage 2: La Cuisine (BACKEND)</h4>
+                    <p>C'est le serveur Python qui fait le travail. Tu ne le vois pas, mais c'est LUI qui travaille.</p>
+                    <p><strong>Techniquement :</strong> Python (FastAPI) - API REST</p>
+                    <p><strong>Analogie :</strong> C'est la cuisine d'un restaurant (où on prépare à manger)</p>
+                </div>
+            </div>
+
+            <div class="layer-card" style="grid-column: 1 / -1;">
+                <h4>Étage 3 (Sous-sol): L'Entrepôt (DATABASE)</h4>
+                <p>C'est la base de données SQL Server du WMS SPEED. C'est où on stocke TOUTES les infos (stock, utilisateurs, emplacements, etc.)</p>
+                <p><strong>Techniquement :</strong> Microsoft SQL Server</p>
+                <p><strong>Analogie :</strong> C'est le vrai entrepôt (où on stocke les vrais produits)</p>
+            </div>
+
+            <div class="flow-diagram">
+TU (sur ton téléphone Android)
+         ↓ (Tu cliques sur "Chercher")
+    [FRONTEND - App Kotlin]
+         ↓ (Envoie une requête HTTP)
+   [BACKEND - Serveur Python]
+         ↓ (Fait une requête SQL)
+    [DATABASE - SQL Server]
+         ↓ (Retourne les données)
+   [BACKEND - Serveur Python]
+         ↓ (Formate les données)
+    [FRONTEND - App Kotlin]
+         ↓ (Affiche les résultats)
+TU VOIS LES RÉSULTATS! 🎉
+            </div>
+
+            <!-- Section 2: Les 3 couches du Backend -->
+            <h2><span class="emoji">🔧</span>2. Les 3 couches du serveur (Architecture en couches)</h2>
+
+            <p>
+                Le serveur Python (backend) est divisé en <strong>3 étages</strong>. Chaque étage a un travail spécifique:
+            </p>
+
+            <div class="layer-card">
+                <h4>Couche 1: API LAYER (Réceptionniste 📞)</h4>
+                <p>
+                    <strong>Rôle :</strong> Recevoir les requêtes du téléphone et envoyer les réponses.
+                </p>
+                <p><strong>Analogie :</strong> Un réceptionniste d'hôtel qui reçoit tes appels téléphoniques.</p>
+                <div class="code-block">
+<span class="code-keyword">@app.post</span>(<span class="code-string">"/api/auth/login"</span>)
+<span class="code-keyword">def</span> login(credentials: LoginRequest):
+    <span class="code-comment"># Reçoit login/password du téléphone</span>
+    <span class="code-keyword">return</span> {"status": "success", "token": "xyz123"}
+                </div>
+                <p><strong>Questions qu'elle se pose :</strong> "D'où vient cette requête? Comment la traiter?"</p>
+            </div>
+
+            <div class="layer-card">
+                <h4>Couche 2: SERVICE LAYER (Le Chef 👨‍🍳)</h4>
+                <p>
+                    <strong>Rôle :</strong> Faire la logique métier (les règles du jeu). "Ce qu'on DOIT faire" pour un client.
+                </p>
+                <p><strong>Analogie :</strong> Un chef qui décide COMMENT préparer un plat.</p>
+                <div class="code-block">
+<span class="code-keyword">class</span> AuthService:
+    <span class="code-keyword">def</span> authenticate_user(login: str, password: str):
+        <span class="code-comment"># Vérifier le mot de passe</span>
+        <span class="code-comment"># Récupérer les activités de l'utilisateur</span>
+        <span class="code-keyword">return</span> user_data
+                </div>
+                <p><strong>Questions qu'il se pose :</strong> "Est-ce que ce login/password est correct? Qui est cet utilisateur?"</p>
+            </div>
+
+            <div class="layer-card">
+                <h4>Couche 3: REPOSITORY LAYER (L'Entrepôt 📦)</h4>
+                <p>
+                    <strong>Rôle :</strong> Communiquer UNIQUEMENT avec la base de données. "Aller chercher ou sauver des données"
+                </p>
+                <p><strong>Analogie :</strong> L'entrepôtier qui va chercher les ingrédients dans l'entrepôt.</p>
+                <div class="code-block">
+<span class="code-keyword">class</span> UserRepository:
+    <span class="code-keyword">def</span> find_by_login(login: str):
+        <span class="code-comment"># SELECT * FROM Utilisateurs WHERE login = ?</span>
+        <span class="code-keyword">return</span> database_result
+                </div>
+                <p><strong>Questions qu'il se pose :</strong> "Comment accéder à la base de données? Quels sont les bonnes requêtes SQL?"</p>
+            </div>
+
+            <div class="success">
+                <h3>Pourquoi 3 couches et pas 1 seule?</h3>
+                <p>
+                    <strong>Avantage 1:</strong> Si la base de données change, on n'a qu'à changer la Repository, pas tout le reste!<br>
+                    <strong>Avantage 2:</strong> On peut tester chaque couche indépendamment (tests unitaires).<br>
+                    <strong>Avantage 3:</strong> C'est plus facile à comprendre et à maintenir.
+                </p>
+            </div>
+
+            <!-- Section 3: Les endpoints API -->
+            <h2><span class="emoji">🛣️</span>3. Les endpoints API (Les "chemins" de communication)</h2>
+
+            <p>Un endpoint API, c'est comme une <strong>route postale</strong>. Tu envoies un "colis" (requête HTTP) à une adresse (endpoint), et le serveur te répond.</p>
+
+            <h3>Endpoint 1: Se connecter (Login)</h3>
+            <div class="endpoint">
+                <p><span class="method">POST</span> <span class="path">/api/auth/login</span></p>
+                <p><strong>Qui demande :</strong> L'app Android</p>
+                <p><strong>Qu'on envoie (REQUEST) :</strong></p>
+                <div class="request">
+{
+  "login": "jean.dupont",
+  "password": "secret123"
+}
+                </div>
+                <p><strong>Qu'on reçoit (RESPONSE) :</strong></p>
+                <div class="response">
+{
+  "status": "success",
+  "user_id": 42,
+  "activities": [
+    {"id": 1, "name": "Préparation Commande"},
+    {"id": 2, "name": "Inventaire"}
+  ]
+}
+                </div>
+            </div>
+
+            <h3>Endpoint 2: Chercher un SKU</h3>
+            <div class="endpoint">
+                <p><span class="method">GET</span> <span class="path">/api/stock/search?sku=CHAISE-BLEUE</span></p>
+                <p><strong>Qui demande :</strong> L'app Android</p>
+                <p><strong>Paramètres :</strong> Le SKU du produit qu'on cherche</p>
+                <p><strong>Qu'on reçoit (RESPONSE) :</strong></p>
+                <div class="response">
+{
+  "results": [
+    {
+      "sku": "CHAISE-BLEUE",
+      "name": "Chaise Bleue Premium",
+      "quantity": 45
+    }
+  ]
+}
+                </div>
+            </div>
+
+            <h3>Endpoint 3: Voir les détails d'un produit</h3>
+            <div class="endpoint">
+                <p><span class="method">GET</span> <span class="path">/api/stock/CHAISE-BLEUE/details</span></p>
+                <p><strong>Qui demande :</strong> L'app Android</p>
+                <p><strong>Qu'on reçoit (RESPONSE) :</strong></p>
+                <div class="response">
+{
+  "sku": "CHAISE-BLEUE",
+  "name": "Chaise Bleue Premium",
+  "quantity": 45,
+  "location": {
+    "zone": "A",
+    "rack": 5,
+    "position": 3
+  },
+  "additional_info": {
+    "lot": "2024-001",
+    "expiration_date": "2025-12-31",
+    "status": "BON"
+  }
+}
+                </div>
+            </div>
+
+            <!-- Section 4: Frontend (Android) -->
+            <h2><span class="emoji">📱</span>4. Le Frontend (App Android Kotlin)</h2>
+
+            <p>L'app Android est ce que tu VOIS. Elle a plusieurs parties:</p>
+
+            <div class="grid-2">
+                <div class="layer-card">
+                    <h4>Activities (Les écrans)</h4>
+                    <p>Chaque écran est une "Activity"</p>
+                    <p><strong>Exemples :</strong></p>
+                    <ul>
+                        <li>LoginActivity</li>
+                        <li>HomeActivity</li>
+                        <li>SearchActivity</li>
+                        <li>DetailActivity</li>
+                    </ul>
+                </div>
+
+                <div class="layer-card">
+                    <h4>ViewModels (Le cerveau)</h4>
+                    <p>C'est qui gère la logique de chaque écran</p>
+                    <p><strong>Exemples :</strong></p>
+                    <ul>
+                        <li>LoginViewModel</li>
+                        <li>SearchViewModel</li>
+                        <li>DetailViewModel</li>
+                    </ul>
+                </div>
+
+                <div class="layer-card">
+                    <h4>API Client (Retrofit)</h4>
+                    <p>C'est qui communique avec le serveur Python</p>
+                    <p><strong>Le langage :</strong> HTTP REST (comme un SMS entre ton téléphone et le serveur)</p>
+                </div>
+
+                <div class="layer-card">
+                    <h4>Repository (Cache local)</h4>
+                    <p>Stockage local sur le téléphone (SharedPreferences)</p>
+                    <p><strong>Utile pour :</strong> Sauver le token de connexion</p>
+                </div>
+            </div>
+
+            <div class="flow-diagram" style="margin-top: 20px;">
+Utilisateur clique sur "Chercher"
+         ↓
+[Activity] demande au [ViewModel]
+         ↓
+[ViewModel] appelle le [API Client (Retrofit)]
+         ↓
+[API Client] envoie une requête HTTP au serveur Python
+         ↓
+[Serveur Python] traite et répond avec les données
+         ↓
+[ViewModel] reçoit les données et les envoie à [Activity]
+         ↓
+[Activity] affiche les résultats à l'écran
+         ↓
+L'utilisateur VOIT les résultats! 🎉
+            </div>
+
+            <!-- Section 5: La Base de Données -->
+            <h2><span class="emoji">💾</span>5. La Base de Données (SQL Server)</h2>
+
+            <p>C'est là qu'on stocke TOUTES les infos du WMS SPEED. Les tables principales sont :</p>
+
+            <table>
+                <tr>
+                    <th>Table</th>
+                    <th>Contient</th>
+                    <th>Exemple</th>
+                </tr>
+                <tr>
+                    <td><strong>Utilisateurs</strong></td>
+                    <td>Login, password, infos employé</td>
+                    <td>jean.dupont, password123</td>
+                </tr>
+                <tr>
+                    <td><strong>Articles/SKU</strong></td>
+                    <td>Codes produits, noms, descriptions</td>
+                    <td>CHAISE-BLEUE, Chaise Bleue Premium</td>
+                </tr>
+                <tr>
+                    <td><strong>Stock</strong></td>
+                    <td>Quantités par SKU</td>
+                    <td>45 Chaises Bleues disponibles</td>
+                </tr>
+                <tr>
+                    <td><strong>Emplacements</strong></td>
+                    <td>Où les produits sont rangés (Zone, Rack, Position)</td>
+                    <td>Zone A, Rack 5, Position 3</td>
+                </tr>
+                <tr>
+                    <td><strong>Lots</strong></td>
+                    <td>Numéro de lot, date d'expiration</td>
+                    <td>Lot 2024-001, Expire 2025-12-31</td>
+                </tr>
+                <tr>
+                    <td><strong>Activités</strong></td>
+                    <td>Préparation, Inventaire, etc.</td>
+                    <td>Préparation Commande</td>
+                </tr>
+            </table>
+
+            <div class="info">
+                <h4>📋 Note:</h4>
+                <p>La documentation complète des tables SQL Server sera fournie à l'étape d'analyse technique. Pour le POC, on crée une structure de test simplifiée.</p>
+            </div>
+
+            <!-- Section 6: Flux de sécurité -->
+            <h2><span class="emoji">🔐</span>6. Comment la sécurité fonctionne</h2>
+
+            <div class="flow-diagram">
+Utilisateur se connecte
+         ↓
+[App Android] envoie login + password au serveur (HTTPS - connexion sécurisée)
+         ↓
+[Serveur Python] vérifie les identifiants dans la BD
+         ↓
+SI correct → Serveur crée un TOKEN (clé unique)
+SI incorrect → Serveur dit "Erreur 401: Non autorisé"
+         ↓
+[App Android] reçoit le TOKEN et le sauvegarde
+         ↓
+Pour les futures requêtes, [App Android] envoie le TOKEN dans chaque demande
+         ↓
+[Serveur Python] vérifie le TOKEN avant de répondre
+         ↓
+Si TOKEN valide → Traiter la requête
+Si TOKEN invalide → Dire "Erreur 401: Non autorisé"
+            </div>
+
+            <div class="warning">
+                <h4>⚠️ Important:</h4>
+                <p>
+                    On JAMAIS envoyer le mot de passe pour chaque requête. On utilise un TOKEN (jeton) une seule fois.<br>
+                    C'est comme montrer une carte d'identité une fois à la banque, au lieu de dire ton mot de passe à chaque retrait!
+                </p>
+            </div>
+
+            <!-- Section 7: Outils et technologies -->
+            <h2><span class="emoji">🛠️</span>7. Les outils et technologies</h2>
+
+            <div class="grid-2">
+                <div class="tech-box">
+                    <h4>Backend</h4>
+                    <ul>
+                        <li><strong>Python 3.10+</strong> - Langage</li>
+                        <li><strong>FastAPI</strong> - Framework pour l'API</li>
+                        <li><strong>pyodbc</strong> - Connexion à SQL Server</li>
+                        <li><strong>Pydantic</strong> - Validation des données</li>
+                        <li><strong>pytest</strong> - Tests unitaires</li>
+                    </ul>
+                </div>
+
+                <div class="tech-box">
+                    <h4>Frontend</h4>
+                    <ul>
+                        <li><strong>Kotlin</strong> - Langage Android</li>
+                        <li><strong>Android Studio</strong> - IDE (éditeur de code)</li>
+                        <li><strong>Retrofit</strong> - HTTP Client</li>
+                        <li><strong>ViewModel & LiveData</strong> - Gestion de l'état UI</li>
+                        <li><strong>Espresso</strong> - Tests d'interface</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 8: Résumé -->
+            <h2><span class="emoji">📝</span>8. Résumé en images</h2>
+
+            <div class="tech-box">
+                <h4>L'architecture en 1 phrase</h4>
+                <p style="font-size: 1.1em; font-weight: bold; color: #11998e;">
+                    "L'app Android sur ton téléphone parle à un serveur Python via HTTP. Le serveur parle à la base de données SQL Server pour récupérer les infos du stock. Puis il envoie les résultats à l'app, qui les affiche à l'écran."
+                </p>
+            </div>
+
+            <table style="margin-top: 30px;">
+                <tr>
+                    <th>Composant</th>
+                    <th>Rôle</th>
+                    <th>Technologie</th>
+                </tr>
+                <tr>
+                    <td><strong>Frontend</strong></td>
+                    <td>Ce que tu VOIS et TOUCHES</td>
+                    <td>Kotlin (Android natif)</td>
+                </tr>
+                <tr>
+                    <td><strong>Backend (Couche API)</strong></td>
+                    <td>Reçoit les requêtes du téléphone</td>
+                    <td>Python FastAPI</td>
+                </tr>
+                <tr>
+                    <td><strong>Backend (Couche Service)</strong></td>
+                    <td>Fait la logique métier</td>
+                    <td>Python (ServiceClasses)</td>
+                </tr>
+                <tr>
+                    <td><strong>Backend (Couche Repository)</strong></td>
+                    <td>Parle à la base de données</td>
+                    <td>Python (pyodbc)</td>
+                </tr>
+                <tr>
+                    <td><strong>Database</strong></td>
+                    <td>Stocke toutes les infos</td>
+                    <td>Microsoft SQL Server</td>
+                </tr>
+            </table>
+
+            <div class="success" style="text-align: center; margin-top: 40px;">
+                <h3>🎓 Tu as compris l'architecture!</h3>
+                <p>Maintenant tu peux expliquer à tes copains comment fonctionne l'app! 🚀</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Documentation Technique - POC Stock Mobile | Expliquée simplement avec des analogies</p>
+        </footer>
+    </div>
+</body>
+</html>

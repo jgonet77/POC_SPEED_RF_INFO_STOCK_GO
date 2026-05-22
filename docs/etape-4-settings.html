@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 4 : Settings & Configuration - POC Stock App</title>
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box;}
+        body {font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;}
+        .container {max-width:1000px;margin:0 auto;background:white;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;}
+        header {background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:40px 20px;text-align:center;}
+        header h1 {font-size:2.5em;margin-bottom:10px;}
+        .content {padding:40px;}
+        .section {margin-bottom:40px;}
+        .section h2 {color:#667eea;border-bottom:3px solid #667eea;padding-bottom:10px;margin-bottom:20px;font-size:1.8em;}
+        .section h3 {color:#667eea;margin-top:20px;margin-bottom:10px;font-size:1.3em;}
+        .card {background:#f8f9fa;border-left:5px solid #667eea;padding:20px;margin-bottom:15px;border-radius:5px;}
+        .code-block {background:#2d2d2d;color:#f8f8f2;padding:15px;border-radius:5px;overflow-x:auto;margin:15px 0;font-family:'Courier New',monospace;font-size:0.9em;}
+        .back-link {display:inline-block;margin-top:20px;padding:10px 20px;background:#667eea;color:white;text-decoration:none;border-radius:5px;transition:all 0.3s;}
+        .back-link:hover {background:#764ba2;}
+        footer {background:#f8f9fa;padding:20px;text-align:center;border-top:2px solid #ddd;color:#666;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ Étape 4 : Settings & Configuration Dynamique</h1>
+            <p>Gestion des paramètres API et création SettingsActivity (~2 heures)</p>
+        </header>
+
+        <div class="content">
+            <div class="section">
+                <h2>Objectif</h2>
+                <div class="card">
+                    Permettre à l'utilisateur de modifier :<br><br>
+                    • IP du serveur API (défaut: 192.168.1.20)<br>
+                    • Port du serveur API (défaut: 8000)<br>
+                    • Persister les paramètres en SharedPreferences<br>
+                    • Relancer le test de connexion avec les nouveaux paramètres
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>1. ConfigManager : Gestion des Préférences</h2>
+
+                <div class="code-block">class ConfigManager(context: Context) {
+    private val sharedPrefs = context
+        .getSharedPreferences("api_config", Context.MODE_PRIVATE)
+
+    fun getApiHost(): String = sharedPrefs
+        .getString("api_host", "192.168.1.20") ?: "192.168.1.20"
+
+    fun getApiPort(): String = sharedPrefs
+        .getString("api_port", "8000") ?: "8000"
+
+    fun setApiHost(host: String) {
+        sharedPrefs.edit()
+            .putString("api_host", host)
+            .apply()
+    }
+
+    fun setApiPort(port: String) {
+        sharedPrefs.edit()
+            .putString("api_port", port)
+            .apply()
+    }
+}</div>
+
+                <h3>Avantages</h3>
+                <div class="card">
+                    <strong>SharedPreferences :</strong> Stockage persistant simple<br><br>
+                    <strong>Singleton Pattern :</strong> Une seule instance par app<br><br>
+                    <strong>Default Values :</strong> Fallback si clé manquante<br><br>
+                    <strong>apply() :</strong> Asynchrone, non-bloquant
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>2. SettingsActivity</h2>
+
+                <div class="code-block">class SettingsActivity : AppCompatActivity() {
+    private lateinit var configManager: ConfigManager
+    private lateinit var hostInput: EditText
+    private lateinit var portInput: EditText
+    private lateinit var retryButton: Button
+
+    override fun onCreate(
+        savedInstanceState: Bundle?
+    ) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_settings)
+
+        configManager = ConfigManager(this)
+        hostInput = findViewById(R.id.hostInput)
+        portInput = findViewById(R.id.portInput)
+        retryButton = findViewById(R.id.retryButton)
+
+        // Charger les valeurs actuelles
+        hostInput.setText(
+            configManager.getApiHost()
+        )
+        portInput.setText(
+            configManager.getApiPort()
+        )
+
+        retryButton.setOnClickListener {
+            val newHost = hostInput.text.toString()
+            val newPort = portInput.text.toString()
+
+            configManager.setApiHost(newHost)
+            configManager.setApiPort(newPort)
+
+            AppLogger.log(
+                "Settings: Changed API to " +
+                "$newHost:$newPort"
+            )
+
+            Toast.makeText(
+                this,
+                "Configuration mise à jour",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            finish()
+        }
+    }
+}</div>
+
+                <h3>Layout activity_settings.xml</h3>
+                <div class="code-block">&lt;LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"&gt;
+
+    &lt;TextView
+        android:text="Paramètres API"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp" /&gt;
+
+    &lt;TextView
+        android:text="Serveur API"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp" /&gt;
+
+    &lt;EditText
+        android:id="@+id/hostInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ex: 192.168.1.20"
+        android:layout_marginBottom="16dp" /&gt;
+
+    &lt;TextView
+        android:text="Port API"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp" /&gt;
+
+    &lt;EditText
+        android:id="@+id/portInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ex: 8000"
+        android:inputType="number"
+        android:layout_marginBottom="20dp" /&gt;
+
+    &lt;Button
+        android:id="@+id/retryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enregistrer" /&gt;
+
+&lt;/LinearLayout&gt;</div>
+            </div>
+
+            <div class="section">
+                <h2>3. Navigation vers SettingsActivity</h2>
+
+                <div class="code-block">settingsButton.setOnClickListener {
+    val intent = Intent(this, SettingsActivity::class.java)
+    startActivity(intent)
+}</div>
+            </div>
+
+            <div class="section">
+                <h2>4. Intégration dans ApiClient</h2>
+
+                <div class="code-block">fun init(context: Context) {
+    val config = ConfigManager(context)
+    val host = config.getApiHost()
+    val port = config.getApiPort()
+
+    val retrofit = Retrofit.Builder()
+        .baseUrl("http://$host:$port/")
+        .addConverterFactory(
+            GsonConverterFactory.create()
+        )
+        .build()
+
+    apiService = retrofit
+        .create(StockApiService::class.java)
+}</div>
+
+                <h3>Remarques</h3>
+                <div class="card">
+                    ⚠️ Après changement des paramètres, ApiClient doit être réinitialisé<br><br>
+                    ⚠️ Ou bien il faut redémarrer l'app<br><br>
+                    ✓ Dans ce POC, nous acceptons cette limitation
+                </div>
+            </div>
+
+            <a href="index.html" class="back-link">← Retour à l'index</a>
+        </div>
+
+        <footer>
+            <p>POC Stock App - Étape 4 | Généré automatiquement</p>
+        </footer>
+    </div>
+</body>
+</html>

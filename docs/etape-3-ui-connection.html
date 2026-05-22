@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 3 : UI & Connection Status - POC Stock App</title>
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box;}
+        body {font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;}
+        .container {max-width:1000px;margin:0 auto;background:white;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;}
+        header {background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:40px 20px;text-align:center;}
+        header h1 {font-size:2.5em;margin-bottom:10px;}
+        .content {padding:40px;}
+        .section {margin-bottom:40px;}
+        .section h2 {color:#667eea;border-bottom:3px solid #667eea;padding-bottom:10px;margin-bottom:20px;font-size:1.8em;}
+        .section h3 {color:#667eea;margin-top:20px;margin-bottom:10px;font-size:1.3em;}
+        .card {background:#f8f9fa;border-left:5px solid #667eea;padding:20px;margin-bottom:15px;border-radius:5px;}
+        .code-block {background:#2d2d2d;color:#f8f8f2;padding:15px;border-radius:5px;overflow-x:auto;margin:15px 0;font-family:'Courier New',monospace;font-size:0.9em;}
+        .back-link {display:inline-block;margin-top:20px;padding:10px 20px;background:#667eea;color:white;text-decoration:none;border-radius:5px;transition:all 0.3s;}
+        .back-link:hover {background:#764ba2;}
+        footer {background:#f8f9fa;padding:20px;text-align:center;border-top:2px solid #ddd;color:#666;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Étape 3 : Interface Utilisateur & Connection Status</h1>
+            <p>Création du layout et du ViewModel MVVM (~3 heures)</p>
+        </header>
+
+        <div class="content">
+            <div class="section">
+                <h2>Objectif</h2>
+                <div class="card">
+                    Créer une interface affichant :<br><br>
+                    ✓ État de connexion (Disconnected / Connecting / Connected / Error)<br>
+                    ✓ Icône et spinneur animé<br>
+                    ✓ IP et Port du serveur<br>
+                    ✓ Temps de réponse<br>
+                    ✓ Boutons de test API et Database<br>
+                    ✓ Gestion d'état complète
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>1. Créer l'Enum ConnectionStatus</h2>
+                <div class="code-block">enum class ConnectionStatus {
+    DISCONNECTED,  // État initial
+    CONNECTING,    // Test en cours
+    CONNECTED,     // Test réussi
+    ERROR          // Échec
+}</div>
+            </div>
+
+            <div class="section">
+                <h2>2. Créer le ViewModel MVVM</h2>
+
+                <h3>HealthViewModel.kt</h3>
+                <div class="code-block">class HealthViewModel(
+    val context: Context?
+) : ViewModel() {
+
+    private val _connectionStatus =
+        MutableLiveData&lt;ConnectionStatus&gt;(
+            ConnectionStatus.DISCONNECTED
+        )
+    val connectionStatus: LiveData&lt;ConnectionStatus&gt; =
+        _connectionStatus
+
+    private val _waitTime =
+        MutableLiveData&lt;String&gt;("")
+    val waitTime: LiveData&lt;String&gt; = _waitTime
+
+    fun testConnection(apiHost: String = "",
+                      apiPort: Int = 0) {
+        _connectionStatus.postValue(
+            ConnectionStatus.CONNECTING
+        )
+        _waitTime.postValue("Testing...")
+
+        thread(isDaemon = true) {
+            val startTime = System.currentTimeMillis()
+            repository.checkApiHealth(
+                onSuccess = { response ->
+                    val elapsed =
+                        System.currentTimeMillis() - startTime
+                    _connectionStatus.postValue(
+                        ConnectionStatus.CONNECTED
+                    )
+                    _waitTime.postValue(
+                        "Connected in ${elapsed}ms"
+                    )
+                },
+                onError = { error ->
+                    _connectionStatus.postValue(
+                        ConnectionStatus.ERROR
+                    )
+                    _waitTime.postValue("")
+                }
+            )
+        }
+    }
+}</div>
+
+                <h3>Points Importants</h3>
+                <div class="card">
+                    <strong>postValue()</strong> au lieu de <code>setValue()</code> car l'appel vient d'un thread daemon<br><br>
+                    <strong>MutableLiveData</strong> pour modifications internes<br><br>
+                    <strong>LiveData</strong> exposé pour lecture en public (immutable pattern)
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>3. Créer le Layout XML</h2>
+
+                <div class="code-block">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"&gt;
+
+    &lt;LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"&gt;
+
+        &lt;ProgressBar
+            android:id="@+id/connectionSpinner"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:visibility="gone" /&gt;
+
+        &lt;ImageView
+            android:id="@+id/connectionStatusIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:visibility="gone" /&gt;
+
+        &lt;TextView
+            android:id="@+id/connectionStatusText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Disconnected"
+            android:textSize="16sp" /&gt;
+
+        &lt;Button
+            android:id="@+id/cancelConnectionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:visibility="gone" /&gt;
+    &lt;/LinearLayout&gt;
+
+    &lt;TextView
+        android:id="@+id/waitTimeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="13sp" /&gt;
+
+&lt;/LinearLayout&gt;</div>
+            </div>
+
+            <div class="section">
+                <h2>4. Connecter les Observers dans MainActivity</h2>
+
+                <div class="code-block">viewModel.connectionStatus.observe(this) { status ->
+    when (status) {
+        ConnectionStatus.DISCONNECTED -> {
+            connectionStatusText.text = "Disconnected"
+            connectionSpinner.visibility = View.GONE
+            cancelConnectionButton.visibility = View.GONE
+            testApiButton.isEnabled = false
+        }
+        ConnectionStatus.CONNECTING -> {
+            connectionStatusText.text = "Connecting..."
+            connectionSpinner.visibility = View.VISIBLE
+            cancelConnectionButton.visibility = View.VISIBLE
+            testApiButton.isEnabled = false
+        }
+        ConnectionStatus.CONNECTED -> {
+            connectionStatusText.text = "Connected ✅"
+            connectionSpinner.visibility = View.GONE
+            cancelConnectionButton.visibility = View.GONE
+            testApiButton.isEnabled = true
+        }
+        ConnectionStatus.ERROR -> {
+            connectionStatusText.text = "Connection Failed ❌"
+            connectionSpinner.visibility = View.GONE
+            cancelConnectionButton.visibility = View.VISIBLE
+            testApiButton.isEnabled = false
+        }
+    }
+}
+
+viewModel.waitTime.observe(this) { time ->
+    waitTimeText.text = time
+}</div>
+            </div>
+
+            <div class="section">
+                <h2>Architecture MVVM</h2>
+                <div class="card">
+                    <strong>Model :</strong> HealthCheckResponse (data class)<br><br>
+                    <strong>View :</strong> MainActivity + activity_main.xml<br><br>
+                    <strong>ViewModel :</strong> HealthViewModel (gère état + logique)<br><br>
+                    <strong>Repository :</strong> HealthRepository (accès données)<br><br>
+                    <strong>LiveData :</strong> Observables réactifs avec lifecycle-aware
+                </div>
+            </div>
+
+            <a href="index.html" class="back-link">← Retour à l'index</a>
+        </div>
+
+        <footer>
+            <p>POC Stock App - Étape 3 | Généré automatiquement</p>
+        </footer>
+    </div>
+</body>
+</html>

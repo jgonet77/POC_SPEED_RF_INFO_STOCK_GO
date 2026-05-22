@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparaison Détaillée: Android vs Web</title>
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box;}
+        body {font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;}
+        .container {max-width:1200px;margin:0 auto;background:white;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;}
+        header {background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:40px 20px;text-align:center;}
+        header h1 {font-size:2.5em;margin-bottom:10px;}
+        .content {padding:40px;}
+        .section {margin-bottom:40px;}
+        .section h2 {color:#667eea;border-bottom:3px solid #667eea;padding-bottom:10px;margin-bottom:20px;font-size:1.8em;}
+        table {width:100%;border-collapse:collapse;margin:20px 0;}
+        th, td {padding:15px;text-align:left;border:1px solid #ddd;}
+        th {background:#667eea;color:white;}
+        tr:nth-child(even) {background:#f9f9f9;}
+        .android-cell {background:#fff3e0;}
+        .web-cell {background:#e3f2fd;}
+        .comparison-grid {display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0;}
+        .android-box {background:#fff3e0;border:2px solid #ff9800;padding:20px;border-radius:5px;}
+        .web-box {background:#e3f2fd;border:2px solid #2196f3;padding:20px;border-radius:5px;}
+        .android-box h3 {color:#ff9800;}
+        .web-box h3 {color:#2196f3;}
+        .back-link {display:inline-block;margin-top:20px;padding:10px 20px;background:#667eea;color:white;text-decoration:none;border-radius:5px;transition:all 0.3s;}
+        .back-link:hover {background:#764ba2;}
+        footer {background:#f8f9fa;padding:20px;text-align:center;border-top:2px solid #ddd;color:#666;}
+        ul {list-style:none;padding-left:20px;}
+        li::before {content:'▸ ';color:#667eea;font-weight:bold;margin-right:8px;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ Comparaison Détaillée: Android vs Web</h1>
+            <p>Analyse approfondie par critères techniques et commerciaux</p>
+        </header>
+
+        <div class="content">
+            <div class="section">
+                <h2>Tableau Comparatif par Domaine</h2>
+
+                <h3>1. Temps de Développement</h3>
+                <table>
+                    <tr>
+                        <th>Critère</th>
+                        <th class="android-cell">Android Natif</th>
+                        <th class="web-cell">Web (HTML/CSS/JS)</th>
+                    </tr>
+                    <tr>
+                        <td><strong>POC Simple (Test API)</strong></td>
+                        <td class="android-cell">15 heures</td>
+                        <td class="web-cell">2-3 heures</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Setup Initial</strong></td>
+                        <td class="android-cell">2-3 heures (Android Studio, SDK, config)</td>
+                        <td class="web-cell">15 minutes (VS Code, npm)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Apprentissage Courbe</strong></td>
+                        <td class="android-cell">Steep (Kotlin, Android SDK, lifecycle)</td>
+                        <td class="web-cell">Graduelle (HTML→CSS→JS)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Itération Cycle</strong></td>
+                        <td class="android-cell">5-10 min (compile + deploy)</td>
+                        <td class="web-cell"><1 sec (hot reload)</td>
+                    </tr>
+                </table>
+
+                <h3>2. Déploiement & Distribution</h3>
+                <table>
+                    <tr>
+                        <th>Critère</th>
+                        <th class="android-cell">Android Natif</th>
+                        <th class="web-cell">Web</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Installation Utilisateur</strong></td>
+                        <td class="android-cell">Google Play Store (~24h à 1 semaine review)</td>
+                        <td class="web-cell">Accès URL immédiat</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mises à Jour</strong></td>
+                        <td class="android-cell">Utilisateur doit télécharger version (souvent oublié)</td>
+                        <td class="web-cell">Serveur central, 100% des utilisateurs toujours à jour</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Taille App</strong></td>
+                        <td class="android-cell">10-100 MB (coûts données mobile)</td>
+                        <td class="web-cell">0 MB initial (contenu chargé on-demand)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Compatibilité</strong></td>
+                        <td class="android-cell">Android 8+ uniquement</td>
+                        <td class="web-cell">Tous OS + tous navigateurs</td>
+                    </tr>
+                </table>
+
+                <h3>3. Performance & Expérience Utilisateur</h3>
+                <table>
+                    <tr>
+                        <th>Critère</th>
+                        <th class="android-cell">Android Natif</th>
+                        <th class="web-cell">Web</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Vitesse d'Exécution</strong></td>
+                        <td class="android-cell">Très rapide (code compilé JIT/AOT)</td>
+                        <td class="web-cell">Rapide si bien optimisé (JS JIT moderne)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Latence Réseau</strong></td>
+                        <td class="android-cell">Même latence que Web</td>
+                        <td class="web-cell">Même latence que Android</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Animations Fluides</strong></td>
+                        <td class="android-cell">60-120 FPS native</td>
+                        <td class="web-cell">60 FPS avec CSS/requestAnimationFrame</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Consommation Batterie</strong></td>
+                        <td class="android-cell">Bonne avec lifecycle aware components</td>
+                        <td class="web-cell">Browser manage (peut être lourd)</td>
+                    </tr>
+                </table>
+
+                <h3>4. Accès Fonctionnalités Système</h3>
+                <table>
+                    <tr>
+                        <th>Fonctionnalité</th>
+                        <th class="android-cell">Android</th>
+                        <th class="web-cell">Web</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Caméra</strong></td>
+                        <td class="android-cell">✅ Accès direct + API avancées</td>
+                        <td class="web-cell">✅ WebRTC (limité)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>GPS/Location</strong></td>
+                        <td class="android-cell">✅ Très précis + background</td>
+                        <td class="web-cell">✅ Geolocation API (approximatif)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NFC/Bluetooth</strong></td>
+                        <td class="android-cell">✅ Accès complet</td>
+                        <td class="web-cell">❌ Web Bluetooth limité, NFC non supporté</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Notifications Push</strong></td>
+                        <td class="android-cell">✅ Firebase Cloud Messaging natif</td>
+                        <td class="web-cell">✅ Push API (via service worker)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Offline First</strong></td>
+                        <td class="android-cell">✅ Cache local + SQLite natif</td>
+                        <td class="web-cell">✅ Service Worker + IndexedDB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Contacts/Calendrier</strong></td>
+                        <td class="android-cell">✅ Accès system (nécessite permissions)</td>
+                        <td class="web-cell">❌ Non accessible</td>
+                    </tr>
+                </table>
+
+                <h3>5. Maintenance & Support Technique</h3>
+                <table>
+                    <tr>
+                        <th>Critère</th>
+                        <th class="android-cell">Android Natif</th>
+                        <th class="web-cell">Web</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Mises à Jour OS</strong></td>
+                        <td class="android-cell">Peut casser app (Android 8→9→10→11...)</td>
+                        <td class="web-cell">Transparent (navigateur auto-update)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Debugging</strong></td>
+                        <td class="android-cell">Android Studio + logcat (complexe)</td>
+                        <td class="web-cell">DevTools navigateur (très simple)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bug Fixes</strong></td>
+                        <td class="android-cell">Rollout ~1 semaine (Play Store review)</td>
+                        <td class="web-cell">Immédiat (push serveur)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Version Management</strong></td>
+                        <td class="android-cell">Coexistence versions multiples (v1.0, v1.1 installed)</td>
+                        <td class="web-cell">Une seule version côté serveur</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Équipe Skills</strong></td>
+                        <td class="android-cell">Kotlin + Android SDK (niche)</td>
+                        <td class="web-cell">HTML/CSS/JS (très courant)</td>
+                    </tr>
+                </table>
+
+                <h3>6. Coûts d'Infrastructure</h3>
+                <table>
+                    <tr>
+                        <th>Élément</th>
+                        <th class="android-cell">Android</th>
+                        <th class="web-cell">Web</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Dev Initial</strong></td>
+                        <td class="android-cell">15+ heures (ce POC)</td>
+                        <td class="web-cell">2-3 heures</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hosting App</strong></td>
+                        <td class="android-cell">Google Play Console (free) + serveur API</td>
+                        <td class="web-cell">Serveur web seul (plus économique)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CDN</strong></td>
+                        <td class="android-cell">Non nécessaire</td>
+                        <td class="web-cell">Recommandé pour bonne perf</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Support Utilisateur</strong></td>
+                        <td class="android-cell">Varié (800 devices), plus complexe</td>
+                        <td class="web-cell">Unifié (navigateur)</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2>Quand Choisir Android ?</h2>
+                <div class="android-box">
+                    <h3>✅ Android Natif Est le Meilleur Choix Si:</h3>
+                    <ul>
+                        <li>Vous avez besoin d'accès caméra/NFC/Bluetooth avancé</li>
+                        <li>L'app doit marcher 100% offline</li>
+                        <li>Performance très critique (jeux 3D, audio pro)</li>
+                        <li>Vous ciblez UNIQUEMENT Android (pas iOS/web)</li>
+                        <li>Équipe expérimentée Android existe</li>
+                        <li>Budget temps de dev = pas une contrainte</li>
+                        <li>Équipe ready pour maintenance long-terme</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Quand Choisir Web ?</h2>
+                <div class="web-box">
+                    <h3>✅ Web Est le Meilleur Choix Si:</h3>
+                    <ul>
+                        <li>Time-to-market est critique</li>
+                        <li>Budget de dev limité</li>
+                        <li>Vous avez besoin de cross-platform (Android + iOS + Desktop)</li>
+                        <li>Mises à jour fréquentes prévues</li>
+                        <li>Équipe web/frontend existe</li>
+                        <li>Peu d'accès hardware requis</li>
+                        <li>MVP validation métier = priorité</li>
+                        <li>Coûts maintenance doivent être bas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Alternatives Hybrides</h2>
+                <div class="comparison-grid">
+                    <div class="android-box">
+                        <h3>React Native / Expo</h3>
+                        <strong>Temps:</strong> 4-6 heures (ce POC)<br><br>
+                        <strong>Pros:</strong> Code partagé Android+iOS, perf bonne<br><br>
+                        <strong>Cons:</strong> Moins mature, moins flexible que natif<br><br>
+                        <strong>Verdict:</strong> ⭐⭐⭐⭐ Pour MVP cross-platform
+                    </div>
+
+                    <div class="web-box">
+                        <h3>Flutter / Dart</h3>
+                        <strong>Temps:</strong> 3-5 heures (ce POC)<br><br>
+                        <strong>Pros:</strong> Perf excellente, UI Material native<br><br>
+                        <strong>Cons:</strong> Langage nouveau (Dart)<br><br>
+                        <strong>Verdict:</strong> ⭐⭐⭐⭐⭐ Meilleur compromis
+                    </div>
+                </div>
+            </div>
+
+            <a href="index.html" class="back-link">← Retour à l'index</a>
+        </div>
+
+        <footer>
+            <p>POC Stock App - Comparaison Détaillée | Généré automatiquement</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 5 : State Management - POC Stock App</title>
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box;}
+        body {font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;}
+        .container {max-width:1000px;margin:0 auto;background:white;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;}
+        header {background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:40px 20px;text-align:center;}
+        header h1 {font-size:2.5em;margin-bottom:10px;}
+        .content {padding:40px;}
+        .section {margin-bottom:40px;}
+        .section h2 {color:#667eea;border-bottom:3px solid #667eea;padding-bottom:10px;margin-bottom:20px;font-size:1.8em;}
+        .section h3 {color:#667eea;margin-top:20px;margin-bottom:10px;font-size:1.3em;}
+        .card {background:#f8f9fa;border-left:5px solid #667eea;padding:20px;margin-bottom:15px;border-radius:5px;}
+        .error-box {background:#ffebee;border-left:5px solid #f44336;padding:20px;margin-bottom:15px;border-radius:5px;}
+        .code-block {background:#2d2d2d;color:#f8f8f2;padding:15px;border-radius:5px;overflow-x:auto;margin:15px 0;font-family:'Courier New',monospace;font-size:0.9em;}
+        .back-link {display:inline-block;margin-top:20px;padding:10px 20px;background:#667eea;color:white;text-decoration:none;border-radius:5px;transition:all 0.3s;}
+        .back-link:hover {background:#764ba2;}
+        footer {background:#f8f9fa;padding:20px;text-align:center;border-top:2px solid #ddd;color:#666;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔄 Étape 5 : State Management & Observers</h1>
+            <p>Gestion complète de l'état avec LiveData et Observer Pattern (~Intégré)</p>
+        </header>
+
+        <div class="content">
+            <div class="section">
+                <h2>Problème Rencontré</h2>
+                <div class="error-box">
+                    <strong>Erreur :</strong> IllegalStateException: Cannot invoke setValue on a background thread<br><br>
+                    <strong>Cause :</strong> testConnection() exécuté sur daemon thread, tentant de modifier LiveData synchronement
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>LiveData vs setValue() vs postValue()</h2>
+
+                <div class="card">
+                    <strong>setValue()</strong><br>
+                    • Synchrone, thread-safe via Looper<br>
+                    • DOIT être appelé du thread principal<br>
+                    • Mise à jour immédiate<br><br>
+                    <strong>postValue()</strong><br>
+                    • Asynchrone, peut être appelé de n'importe quel thread<br>
+                    • Envoie un message Looper au thread principal<br>
+                    • Mise à jour garantie mais avec délai minimal
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Implémentation Correcte</h2>
+
+                <div class="code-block">fun testConnection(apiHost: String = "",
+                      apiPort: Int = 0) {
+    if (_connectionStatus.value ==
+        ConnectionStatus.CONNECTING) return
+
+    val host = if (apiHost.isEmpty())
+        configManager?.getApiHost() ?: "192.168.1.20"
+        else apiHost
+
+    // IMPORTANT: postValue pour thread-safety!
+    _connectionStatus
+        .postValue(ConnectionStatus.CONNECTING)
+
+    // Exécuté sur daemon thread
+    thread(isDaemon = true) {
+        val startTime = System.currentTimeMillis()
+        repository.checkApiHealth(
+            onSuccess = { response ->
+                val elapsed =
+                    System.currentTimeMillis() - startTime
+
+                // ALWAYS postValue from background
+                _connectionStatus
+                    .postValue(ConnectionStatus.CONNECTED)
+                _waitTime
+                    .postValue("Connected in ${elapsed}ms")
+            },
+            onError = { error ->
+                // ALWAYS postValue from background
+                _connectionStatus
+                    .postValue(ConnectionStatus.ERROR)
+                _waitTime.postValue("")
+            }
+        )
+    }
+}</div>
+            </div>
+
+            <div class="section">
+                <h2>Observers Pattern</h2>
+
+                <h3>Enregistrer les Observers</h3>
+                <div class="code-block">viewModel.connectionStatus
+    .observe(this) { status ->
+    updateConnectionUI(status)
+}
+
+viewModel.waitTime
+    .observe(this) { time ->
+    waitTimeText.text = time
+}
+
+viewModel.errorMessage
+    .observe(this) { error ->
+    if (error.isNotEmpty()) {
+        errorText.text = "Error: $error"
+    }
+}</div>
+
+                <h3>Lifecycle-Aware</h3>
+                <div class="card">
+                    <strong>Important :</strong> Les observers sont lifecycle-aware<br><br>
+                    • Automatiquement arrêtés quand Activity est en pause<br>
+                    • Redémarrés quand Activity reprend<br>
+                    • Nettoyés quand Activity est détruite<br><br>
+                    → Pas de fuites mémoire, pas de NullPointerException
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>State Machine: ConnectionStatus</h2>
+
+                <div class="card">
+                    <strong>DISCONNECTED</strong> (initial)<br>
+                    ↓ user clicks test<br>
+                    <strong>CONNECTING</strong> (spinner visible)<br>
+                    ↓ API responds<br>
+                    <strong>CONNECTED</strong> ou <strong>ERROR</strong><br>
+                    ↓ user clicks cancel<br>
+                    <strong>DISCONNECTED</strong>
+                </div>
+
+                <div class="code-block">fun updateConnectionUI(
+    status: ConnectionStatus
+) {
+    when (status) {
+        ConnectionStatus.DISCONNECTED -> {
+            connectionStatusText.text =
+                "Disconnected"
+            connectionSpinner.visibility =
+                View.GONE
+            testApiButton.isEnabled = false
+        }
+        ConnectionStatus.CONNECTING -> {
+            connectionStatusText.text =
+                "Connecting..."
+            connectionSpinner.visibility =
+                View.VISIBLE
+            testApiButton.isEnabled = false
+        }
+        ConnectionStatus.CONNECTED -> {
+            connectionStatusText.text =
+                "Connected ✅"
+            connectionSpinner.visibility =
+                View.GONE
+            testApiButton.isEnabled = true
+        }
+        ConnectionStatus.ERROR -> {
+            connectionStatusText.text =
+                "Connection Failed ❌"
+            testApiButton.isEnabled = false
+        }
+    }
+}</div>
+            </div>
+
+            <div class="section">
+                <h2>Points Clés</h2>
+                <div class="card">
+                    ✅ <strong>postValue() toujours pour background threads</strong><br>
+                    ✅ <strong>LiveData pour état partagé View-ViewModel</strong><br>
+                    ✅ <strong>Observers immédiatement actifs au onCreate()</strong><br>
+                    ✅ <strong>State machine claire et prévisible</strong><br>
+                    ✅ <strong>UI suit toujours l'état du ViewModel</strong>
+                </div>
+            </div>
+
+            <a href="index.html" class="back-link">← Retour à l'index</a>
+        </div>
+
+        <footer>
+            <p>POC Stock App - Étape 5 | Généré automatiquement</p>
+        </footer>
+    </div>
+</body>
+</html>
