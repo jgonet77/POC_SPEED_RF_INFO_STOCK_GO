@@ -30,9 +30,18 @@ class Settings:
 
     @property
     def connection_string(self) -> str:
+        # For named instances (e.g., SERVERNAME\INSTANCENAME), don't add port
+        # For default instance, add port
+        if "\\" in self.sql_server_host:
+            # Named instance - don't add port
+            server_part = f"Server={self.sql_server_host};"
+        else:
+            # Default instance - add port
+            server_part = f"Server={self.sql_server_host},{self.sql_server_port};"
+
         return (
             f"Driver={{ODBC Driver 17 for SQL Server}};"
-            f"Server={self.sql_server_host},{self.sql_server_port};"
+            f"{server_part}"
             f"Database={self.sql_server_db};"
             f"UID={self.sql_server_user};"
             f"PWD={self.sql_server_password};"
