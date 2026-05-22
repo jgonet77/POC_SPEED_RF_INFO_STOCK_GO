@@ -3,6 +3,21 @@ from config import settings
 from typing import Optional
 
 
+class RepositoryError(Exception):
+    """Base repository error"""
+    pass
+
+
+class DatabaseConnectionError(RepositoryError):
+    """Database connection failed"""
+    pass
+
+
+class QueryError(RepositoryError):
+    """Query execution failed"""
+    pass
+
+
 class BaseRepository:
     """Base class for database access"""
 
@@ -16,7 +31,7 @@ class BaseRepository:
             try:
                 self._connection = pyodbc.connect(self.connection_string)
             except pyodbc.Error as e:
-                raise Exception(f"Database connection failed: {str(e)}")
+                raise DatabaseConnectionError(f"Database connection failed: {str(e)}") from e
         return self._connection
 
     def execute_query(self, query: str, params: tuple = ()) -> list:
@@ -24,14 +39,13 @@ class BaseRepository:
         try:
             connection = self._get_connection()
             cursor = connection.cursor()
-            cursor.execute(query, params)
-            return cursor.fetchall()
+            try:
+                cursor.execute(query, params)
+                return cursor.fetchall()
+            finally:
+                cursor.close()
         except pyodbc.Error as e:
-            raise Exception(f"Query execution failed: {str(e)}")
-
-    def __del__(self):
-        """Cleanup on object destruction"""
-        self.close()
+            raise QueryError(f"Query execution failed: {str(e)}") from e
 
     def close(self):
         """Close database connection"""

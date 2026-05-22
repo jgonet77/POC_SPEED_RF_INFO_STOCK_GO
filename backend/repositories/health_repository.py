@@ -1,4 +1,4 @@
-from .base_repository import BaseRepository
+from .base_repository import BaseRepository, DatabaseConnectionError, QueryError
 
 
 class HealthRepository(BaseRepository):
@@ -6,8 +6,10 @@ class HealthRepository(BaseRepository):
 
     def check_database_connection(self) -> dict:
         """
-        Test connection to SQL Server by executing a simple query
-        Returns: Dict with connection status and server info
+        Test connection to SQL Server
+        Returns: Dict with status, server_version, and server_time
+        Raises: DatabaseConnectionError on connection failure
+                QueryError on query failure
         """
         try:
             query = "SELECT @@VERSION as version, GETDATE() as server_time"
@@ -21,10 +23,9 @@ class HealthRepository(BaseRepository):
                     "server_time": str(row[1])
                 }
             else:
-                return {"status": "error", "message": "Query executed but no results"}
+                raise QueryError("Query executed but returned no results")
 
+        except (DatabaseConnectionError, QueryError):
+            raise  # re-raise our custom exceptions
         except Exception as e:
-            return {
-                "status": "error",
-                "message": str(e)
-            }
+            raise QueryError(f"Unexpected error: {str(e)}") from e
