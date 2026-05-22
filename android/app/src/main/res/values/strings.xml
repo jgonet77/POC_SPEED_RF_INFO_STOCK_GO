@@ -9,4 +9,12 @@
     <string name="version_label">Server Version: </string>
     <string name="time_label">Server Time: </string>
     <string name="error_label">Error: </string>
+
+    <!-- LogsViewerActivity -->
+    <string name="logs_viewer_title">Debug Logs</string>
+    <string name="loading_logs">Loading logs...</string>
+    <string name="no_logs_available">No logs available</string>
+    <string name="clear_logs_button">Clear Logs</string>
+    <string name="export_logs_button">Export Logs</string>
+    <string name="export_logs">Share Logs</string>
 </resources>
