@@ -1,30 +1,39 @@
 # backend/config.py
 import os
-from typing import Optional
+
 
 class Settings:
     """Database and app configuration"""
 
-    # SQL Server connection
-    SQL_SERVER_HOST: str = os.getenv("SQL_SERVER_HOST", "localhost")
-    SQL_SERVER_PORT: int = int(os.getenv("SQL_SERVER_PORT", "1433"))
-    SQL_SERVER_DB: str = os.getenv("SQL_SERVER_DB", "WMS_SPEED")
-    SQL_SERVER_USER: str = os.getenv("SQL_SERVER_USER", "sa")
-    SQL_SERVER_PASSWORD: str = os.getenv("SQL_SERVER_PASSWORD", "")
+    def __init__(self):
+        # SQL Server connection
+        self.sql_server_host = os.getenv("SQL_SERVER_HOST", "localhost")
+        self.sql_server_port = self._env_int("SQL_SERVER_PORT", 1433)
+        self.sql_server_db = os.getenv("SQL_SERVER_DB", "WMS_SPEED")
+        self.sql_server_user = os.getenv("SQL_SERVER_USER", "sa")
+        self.sql_server_password = os.environ["SQL_SERVER_PASSWORD"]  # required
 
-    # Connection string for pyodbc
+        # API settings
+        self.api_host = os.getenv("API_HOST", "0.0.0.0")
+        self.api_port = self._env_int("API_PORT", 8000)
+
+    @staticmethod
+    def _env_int(name: str, default: int) -> int:
+        raw = os.getenv(name, str(default))
+        try:
+            return int(raw)
+        except ValueError:
+            raise RuntimeError(f"Env var {name} must be an integer, got {raw!r}")
+
     @property
     def connection_string(self) -> str:
         return (
             f"Driver={{ODBC Driver 17 for SQL Server}};"
-            f"Server={self.SQL_SERVER_HOST},{self.SQL_SERVER_PORT};"
-            f"Database={self.SQL_SERVER_DB};"
-            f"UID={self.SQL_SERVER_USER};"
-            f"PWD={self.SQL_SERVER_PASSWORD};"
+            f"Server={self.sql_server_host},{self.sql_server_port};"
+            f"Database={self.sql_server_db};"
+            f"UID={self.sql_server_user};"
+            f"PWD={self.sql_server_password};"
         )
 
-    # API settings
-    API_HOST: str = os.getenv("API_HOST", "0.0.0.0")
-    API_PORT: int = int(os.getenv("API_PORT", "8000"))
 
 settings = Settings()

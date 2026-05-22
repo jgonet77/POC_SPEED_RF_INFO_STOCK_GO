@@ -1,4 +1,5 @@
 # backend/main.py
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.health import router as health_router
@@ -11,9 +12,10 @@ app = FastAPI(
 )
 
 # Enable CORS for Android app
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://10.0.2.2:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins (POC only, not production!)
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,9 +31,10 @@ def read_root():
 
 if __name__ == "__main__":
     import uvicorn
+    reload = os.getenv("API_RELOAD", "false").lower() == "true"
     uvicorn.run(
         app,
-        host=settings.API_HOST,
-        port=settings.API_PORT,
-        reload=True
+        host=settings.api_host,
+        port=settings.api_port,
+        reload=reload
     )
