@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide de Test - Application Stock Android</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        header p {
+            margin: 10px 0 0 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .step {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 5px;
+        }
+
+        .step h2 {
+            color: #667eea;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .test-section {
+            background: #f3e5f5;
+            border-left: 4px solid #764ba2;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .test-section h3 {
+            color: #764ba2;
+            margin-top: 0;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        ul, ol {
+            padding-left: 25px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding-left: 35px;
+            position: relative;
+            margin: 10px 0;
+        }
+
+        .checklist li:before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            font-size: 1.3em;
+            color: #667eea;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Guide de Test - Application Stock</h1>
+            <p>Teste ton app Android sans Android Studio!</p>
+        </header>
+
+        <div class="content">
+            <!-- ÉTAPE 0: PRÉPARATION -->
+            <div class="step">
+                <h2><span class="step-number">0</span>Avant de commencer - Préparation</h2>
+
+                <p>Tu dois vérifier que tu as tout ce qu'il faut:</p>
+
+                <ul class="checklist">
+                    <li>Un téléphone Android connecté à ton ordinateur par USB</li>
+                    <li>OU un émulateur Android lancé</li>
+                    <li>Ton serveur Python backend en cours d'exécution</li>
+                    <li>Un terminal (cmd.exe ou PowerShell sur Windows)</li>
+                </ul>
+
+                <div class="warning-box">
+                    <strong>⚠️ Point important:</strong> Tu dois d'abord connaître l'adresse IP et le port du serveur backend!<br>
+                    <strong>Exemple:</strong> <code>192.168.1.20:8000</code> ou <code>localhost:8000</code> (pour émulateur)
+                </div>
+            </div>
+
+            <!-- ÉTAPE 1: TÉLÉCHARGER GRADLE -->
+            <div class="step">
+                <h2><span class="step-number">1</span>Ouvrir le terminal et aller dans le dossier du projet</h2>
+
+                <p>Ouvre le terminal (cmd.exe ou PowerShell) et tape:</p>
+
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copier</button>
+                    <pre>cd D:\Projects\POC_SPEED_RF_INFO_STOCK\android</pre>
+                </div>
+
+                <p>Tu dois voir quelque chose qui ressemble à:</p>
+                <div class="code-block">
+                    <pre>D:\Projects\POC_SPEED_RF_INFO_STOCK\android></pre>
+                </div>
+
+                <div class="info-box">
+                    <strong>💡 Astuce:</strong> Si tu copies le chemin d'un dossier, tu peux faire un clic droit dans le terminal pour coller!
+                </div>
+            </div>
+
+            <!-- ÉTAPE 2: COMPILER -->
+            <div class="step">
+                <h2><span class="step-number">2</span>Compiler l'application Android</h2>
+
+                <p>Tape cette commande pour créer l'app:</p>
+
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copier</button>
+                    <pre>gradlew build</pre>
+                </div>
+
+                <p><strong>⏳ C'est normal que ça prenne du temps!</strong> (2-5 minutes la première fois)</p>
+
+                <div class="success-box">
+                    <strong>✅ Quand c'est terminé, tu dois voir:</strong><br>
+                    <code>BUILD SUCCESSFUL</code>
+                </div>
+
+                <div class="warning-box">
+                    <strong>❌ Si tu vois une erreur:</strong><br>
+                    - Vérifie que tu es dans le bon dossier (D:\...\android)<br>
+                    - Vérifie que Java est installé<br>
+                    - Relance la commande
+                </div>
+            </div>
+
+            <!-- ÉTAPE 3: INSTALLER -->
+            <div class="step">
+                <h2><span class="step-number">3</span>Installer l'app sur ton téléphone ou émulateur</h2>
+
+                <p>Tape cette commande:</p>
+
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copier</button>
+                    <pre>gradlew installDebug</pre>
+                </div>
+
+                <p><strong>⏳ Ça va prendre quelques secondes...</strong></p>
+
+                <div class="success-box">
+                    <strong>✅ Quand c'est fait, tu dois voir:</strong><br>
+                    <code>BUILD SUCCESSFUL</code><br>
+                    Et l'app s'installera automatiquement sur ton téléphone!
+                </div>
+
+                <div class="warning-box">
+                    <strong>❌ Si rien ne se passe:</strong><br>
+                    - Vérifie que ton téléphone est connecté en USB<br>
+                    - Ou que l'émulateur est lancé<br>
+                    - Déverrouille ton téléphone et accepte les permissions
+                </div>
+            </div>
+
+            <!-- ÉTAPE 4: LANCER L'APP -->
+            <div class="step">
+                <h2><span class="step-number">4</span>Lancer l'application</h2>
+
+                <p>Sur ton téléphone, cherche l'app <strong>"Stock App POC"</strong> et appuie dessus.</p>
+
+                <p>Tu devrais voir cet écran:</p>
+
+                <div class="info-box">
+                    <pre>╔═══════════════════════════════════╗
+║ Stock App - Connection Tester   ║
+╠═══════════════════════════════════╣
+║  ┌─ Settings ─┐  ┌─ View Logs ─┐  ║
+║  └────────────┘  └─────────────┘  ║
+║                                   ║
+║  ▼ API Health                     ║
+║  [Test API Connection]            ║
+║                                   ║
+║  ▼ Database Health                ║
+║  [Test Database Connection]       ║
+╚═══════════════════════════════════╝</pre>
+                </div>
+            </div>
+
+            <!-- SECTION TESTS -->
+            <div class="test-section">
+                <h2>🧪 Maintenant... TESTONS L'APP!</h2>
+
+                <!-- TEST 1 -->
+                <div class="step">
+                    <h3><span class="emoji">⚙️</span>TEST 1: Configurer l'adresse du serveur</h3>
+
+                    <ol>
+                        <li>Appuie sur le bouton <strong>Settings</strong></li>
+                        <li>Tu verras deux champs:
+                            <ul>
+                                <li><strong>API Host</strong> (adresse du serveur)</li>
+                                <li><strong>API Port</strong> (port, normalement 8000)</li>
+                            </ul>
+                        </li>
+                        <li>Efface ce qui est écrit et remplace par:
+                            <ul>
+                                <li><strong>Si tu testes sur un téléphone physique:</strong> L'adresse IP de ton PC (ex: 192.168.1.20)</li>
+                                <li><strong>Si tu testes sur l'émulateur:</strong> Écris <code>10.0.2.2</code> (c'est l'adresse spéciale pour accéder à ton PC)</li>
+                            </ul>
+                        </li>
+                        <li>Pour le port, mets <strong>8000</strong> (ou le port que tu utilises)</li>
+                        <li>Appuie sur <strong>Save</strong></li>
+                    </ol>
+
+                    <div class="success-box">
+                        <strong>✅ C'est bon si:</strong> Tu reviens à l'écran principal et les paramètres sont sauvegardés
+                    </div>
+                </div>
+
+                <!-- TEST 2 -->
+                <div class="step">
+                    <h3><span class="emoji">🌐</span>TEST 2: Tester la connexion à l'API</h3>
+
+                    <ol>
+                        <li>Sur l'écran principal, appuie sur <strong>Test API Connection</strong></li>
+                        <li>Attends 2-3 secondes...</li>
+                    </ol>
+
+                    <div class="success-box">
+                        <strong>✅ C'est bon si tu vois:</strong><br>
+                        Status: <strong>✅ healthy</strong> (en vert)
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>❌ Si tu vois une erreur:</strong><br>
+                        - Vérifie que le serveur backend est en cours d'exécution<br>
+                        - Vérifie l'adresse IP et le port que tu as configurés<br>
+                        - Essaie de tester depuis ton PC d'abord (curl ou navigateur)
+                    </div>
+                </div>
+
+                <!-- TEST 3 -->
+                <div class="step">
+                    <h3><span class="emoji">🗄️</span>TEST 3: Tester la connexion à la base de données</h3>
+
+                    <ol>
+                        <li>Sur l'écran principal, appuie sur <strong>Test Database Connection</strong></li>
+                        <li>Attends 2-3 secondes...</li>
+                    </ol>
+
+                    <div class="success-box">
+                        <strong>✅ C'est bon si tu vois:</strong><br>
+                        Status: <strong>✅ connected</strong> (en vert)<br>
+                        Version: [Version de SQL Server]<br>
+                        Server Time: [Heure du serveur]
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>❌ Si tu vois une erreur:</strong><br>
+                        - Le serveur backend n'a pas pu se connecter à la base de données SQL Server<br>
+                        - Vérifie que SQL Server est en cours d'exécution<br>
+                        - Vérifie les identifiants dans le fichier .env du backend
+                    </div>
+                </div>
+
+                <!-- TEST 4 -->
+                <div class="step">
+                    <h3><span class="emoji">📝</span>TEST 4: Voir les logs (journaux)</h3>
+
+                    <ol>
+                        <li>Appuie sur le bouton <strong>View Logs</strong></li>
+                        <li>Tu devrais voir une liste de tous les appels API que tu as faits</li>
+                    </ol>
+
+                    <div class="success-box">
+                        <strong>✅ Tu devrais voir quelque chose comme:</strong><br>
+                        <pre>[2026-05-22 14:30:15] API CALL: GET api/health/database
+[2026-05-22 14:30:15] API RESPONSE: api/health/database - 200
+[2026-05-22 14:30:20] API CALL: GET api/health/api
+[2026-05-22 14:30:20] API RESPONSE: api/health/api - 200</pre>
+                    </div>
+
+                    <p>Tu peux aussi:</p>
+                    <ul>
+                        <li><strong>Exporter les logs:</strong> Appuie sur "Export Logs" pour les envoyer par email ou SMS</li>
+                        <li><strong>Effacer les logs:</strong> Appuie sur "Clear Logs" pour recommencer</li>
+                    </ul>
+                </div>
+
+                <!-- TEST 5 -->
+                <div class="step">
+                    <h3><span class="emoji">🔄</span>TEST 5: Tester que la configuration se sauvegarde</h3>
+
+                    <ol>
+                        <li>Configure l'adresse IP et le port (TEST 1)</li>
+                        <li>Ferme complètement l'app (glisse-la vers le haut ou appuie sur "Quitter")</li>
+                        <li>Relance l'app depuis le menu principal de ton téléphone</li>
+                        <li>Appuie sur Settings</li>
+                    </ol>
+
+                    <div class="success-box">
+                        <strong>✅ C'est bon si:</strong> Les paramètres que tu as sauvegardés sont toujours là!<br>
+                        (L'app se souvient de ton IP et ton port même après fermeture)
+                    </div>
+                </div>
+            </div>
+
+            <!-- RÉSUMÉ -->
+            <div class="step">
+                <h2><span class="emoji">🎉</span>Félicitations!</h2>
+
+                <p>Si tous les tests sont verts, ton app marche parfaitement!</p>
+
+                <div class="success-box">
+                    <h3>Voici ce que tu peux faire maintenant:</h3>
+                    <ul>
+                        <li>✅ <strong>Configurer l'IP</strong> sans réinstaller l'app</li>
+                        <li>✅ <strong>Voir tous les appels</strong> que l'app fait à l'API</li>
+                        <li>✅ <strong>Exporter les logs</strong> pour les analyser</li>
+                        <li>✅ <strong>Tester la connexion</strong> à la base de données SQL Server</li>
+                    </ul>
+                </div>
+
+                <h3>Prochaines étapes:</h3>
+                <ul>
+                    <li>Ajouter la fonctionnalité de recherche de stock</li>
+                    <li>Ajouter l'authentification (login/password)</li>
+                    <li>Afficher les détails du stock</li>
+                    <li>Ajouter le scan de code-barres</li>
+                </ul>
+            </div>
+
+            <!-- DÉPANNAGE -->
+            <div class="step">
+                <h2><span class="emoji">🔧</span>Aide au dépannage</h2>
+
+                <div class="warning-box">
+                    <h3>❌ L'app ne s'installe pas</h3>
+                    <ul>
+                        <li>Vérifie que gradlew build a réussi (BUILD SUCCESSFUL)</li>
+                        <li>Vérifie que ton téléphone/émulateur est connecté</li>
+                        <li>Essaie de brancher ton téléphone en USB avec mode de développement activé</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <h3>❌ L'API Connection échoue</h3>
+                    <ul>
+                        <li>Vérifie que le serveur backend Python s'exécute</li>
+                        <li>Teste depuis ton navigateur: <code>http://[IP]:8000/api/health/api</code></li>
+                        <li>Vérifie que tu as sauvegardé les bons paramètres</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <h3>❌ La Database Connection échoue</h3>
+                    <ul>
+                        <li>Vérifie que SQL Server s'exécute</li>
+                        <li>Vérifie que le fichier .env du backend a les bons identifiants</li>
+                        <li>Teste depuis ton PC: <code>python main.py</code> puis visite <code>http://localhost:8000/api/health/database</code></li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <h3>💡 Comment trouver l'adresse IP de ton PC</h3>
+                    <p>Ouvre le terminal et tape:</p>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copier</button>
+                        <pre>ipconfig</pre>
+                    </div>
+                    <p>Cherche "Adresse IPv4" - ça ressemble à <strong>192.168.x.x</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Guide de Test - Application Stock Android POC 🚀</p>
+            <p>Pour plus d'aide, consulte les logs exportés depuis l'app!</p>
+        </footer>
+    </div>
+
+    <script>
+        function copyToClipboard(button) {
+            const codeBlock = button.nextElementSibling;
+            const text = codeBlock.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✅ Copié!';
+                button.style.background = '#4caf50';
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '#667eea';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
