@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mode Opératoire - POC Stock Mobile</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 20px; text-align: center; }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .content { padding: 40px; }
+        h2 { color: #667eea; margin-top: 40px; margin-bottom: 20px; font-size: 1.8em; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+        h3 { color: #764ba2; margin-top: 25px; margin-bottom: 15px; font-size: 1.3em; }
+        .step-box { background: #f0f4ff; border-left: 5px solid #667eea; padding: 20px; margin: 15px 0; border-radius: 8px; }
+        .step-number { display: inline-block; background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; margin-right: 10px; }
+        .code-block { background: #1e1e1e; color: #d4d4d4; padding: 15px; margin: 15px 0; border-radius: 8px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.5; }
+        .warning { background: #fff3cd; border: 2px solid #ffc107; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .success { background: #d4edda; border: 2px solid #28a745; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .info { background: #d1ecf1; border: 2px solid #17a2b8; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .section-box { background: #f9f9f9; border: 2px solid #667eea; padding: 20px; margin: 15px 0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        table th { background: #667eea; color: white; padding: 12px; text-align: left; }
+        table td { padding: 12px; border-bottom: 1px solid #ddd; }
+        table tr:hover { background: #f5f5f5; }
+        .checklist { background: #f0f4ff; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .checklist li { margin: 8px 0; }
+        .emoji { font-size: 1.5em; margin-right: 8px; }
+        .screenshot { background: #f5f5f5; border: 2px solid #ddd; padding: 20px; margin: 20px 0; border-radius: 8px; text-align: center; }
+        footer { background: #f9f9f9; padding: 20px; text-align: center; color: #666; border-top: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Mode Opératoire - POC Stock Mobile</h1>
+            <p>Guide complet d'installation, configuration et tests</p>
+        </header>
+
+        <div class="content">
+            <!-- Intro -->
+            <div class="info">
+                <h3><span class="emoji">📍</span>Important</h3>
+                <p>
+                    Ce guide explique comment mettre en place le POC sur votre machine et le tester
+                    à la fois sur PC (backend) et sur smartphone (frontend).
+                </p>
+                <p style="margin-top: 10px;">
+                    <strong>Durée estimée:</strong> 30-45 minutes (première fois)
+                </p>
+            </div>
+
+            <!-- Section 1: Prérequis -->
+            <h2><span class="emoji">✅</span>Partie 1: Prérequis</h2>
+
+            <h3>Sur votre PC</h3>
+            <div class="step-box">
+                <p><strong>Vous devez avoir:</strong></p>
+                <ul>
+                    <li>✅ Python 3.10+ installé (vérifiez avec: <code>python --version</code>)</li>
+                    <li>✅ Git installé</li>
+                    <li>✅ Microsoft SQL Server accessible (local ou réseau)</li>
+                    <li>✅ ODBC Driver 17 for SQL Server installé (for pyodbc)</li>
+                </ul>
+            </div>
+
+            <h3>Sur votre smartphone Android</h3>
+            <div class="step-box">
+                <p><strong>Vous devez avoir:</strong></p>
+                <ul>
+                    <li>✅ Android 7.0+ (API 24+)</li>
+                    <li>✅ Connecté au même réseau WiFi que votre PC (important!)</li>
+                </ul>
+            </div>
+
+            <h3>Sur votre PC (pour développement Android)</h3>
+            <div class="step-box">
+                <p><strong>Optionnel (si vous voulez compiler l'app):</strong></p>
+                <ul>
+                    <li>Android Studio installé</li>
+                    <li>Android SDK 24+</li>
+                    <li>Emulateur Android (ou téléphone physique connecté en USB)</li>
+                </ul>
+                <p style="margin-top: 10px;">
+                    <strong>NOTE:</strong> Pour le POC, vous pouvez aussi juste utiliser une APK pré-compilée
+                    (sera fournie séparément après le développement).
+                </p>
+            </div>
+
+            <!-- Section 2: Configuration SQL Server -->
+            <h2><span class="emoji">🗄️</span>Partie 2: Vérifier la connexion SQL Server</h2>
+
+            <div class="step-box">
+                <p><span class="step-number">1</span><strong>Connaître vos identifiants SQL Server</strong></p>
+                <p>Vous avez besoin de:</p>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li><strong>Host:</strong> localhost ou IP du serveur (ex: 192.168.1.100)</li>
+                    <li><strong>Port:</strong> 1433 (défaut)</li>
+                    <li><strong>Database:</strong> WMS_SPEED</li>
+                    <li><strong>Username:</strong> sa (ou autre compte)</li>
+                    <li><strong>Password:</strong> votre password SQL Server</li>
+                </ul>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">2</span><strong>Tester la connexion avec SQL Server Management Studio</strong></p>
+                <p>
+                    Ouvrez SSMS et essayez de vous connecter avec ces identifiants.
+                    Assurez-vous que ça fonctionne avant de continuer.
+                </p>
+            </div>
+
+            <div class="warning">
+                <h4>⚠️ Important pour pyodbc</h4>
+                <p>
+                    Vous devez avoir installé <strong>ODBC Driver 17 for SQL Server</strong> sur votre PC.
+                    <br><br>
+                    <strong>Pour Windows:</strong>
+                    <a href="https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server" target="_blank">
+                    Téléchargez depuis Microsoft</a> ou installez via:
+                </p>
+                <div class="code-block">
+# Windows PowerShell
+choco install sql-server-odbc-driver
+                </div>
+            </div>
+
+            <!-- Section 3: Setup Backend -->
+            <h2><span class="emoji">⚙️</span>Partie 3: Mettre en place le Backend (Python)</h2>
+
+            <div class="step-box">
+                <p><span class="step-number">1</span><strong>Cloner ou télécharger le projet</strong></p>
+                <div class="code-block">
+cd D:\
+git clone <repo-url> POC_SPEED_RF_INFO_STOCK
+cd POC_SPEED_RF_INFO_STOCK
+                </div>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">2</span><strong>Créer un environnement virtuel Python</strong></p>
+                <div class="code-block">
+cd backend
+python -m venv venv
+.\venv\Scripts\activate  # Windows
+# ou: source venv/bin/activate  # Mac/Linux
+                </div>
+                <p style="margin-top: 10px;">
+                    Après activation, votre terminal doit afficher <code>(venv)</code> au début de chaque ligne.
+                </p>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">3</span><strong>Installer les dépendances</strong></p>
+                <div class="code-block">
+pip install -r requirements.txt
+                </div>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">4</span><strong>Configurer les variables d'environnement SQL Server</strong></p>
+                <p>
+                    Créez un fichier <code>.env</code> dans le dossier <code>backend/</code>:
+                </p>
+                <div class="code-block">
+SQL_SERVER_HOST=localhost
+SQL_SERVER_PORT=1433
+SQL_SERVER_DB=WMS_SPEED
+SQL_SERVER_USER=sa
+SQL_SERVER_PASSWORD=YourPassword123!
+API_HOST=0.0.0.0
+API_PORT=8000
+                </div>
+                <p style="margin-top: 10px;">
+                    <strong>Remplacez les valeurs</strong> par vos identifiants SQL Server réels.
+                </p>
+            </div>
+
+            <div class="warning">
+                <h4>⚠️ Sécurité (POC only)</h4>
+                <p>
+                    Les variables d'environnement en dur sont OK pour le POC,
+                    mais JAMAIS en production! Utilisez un secret manager (Azure Key Vault, etc.)
+                </p>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">5</span><strong>Lancer le backend</strong></p>
+                <div class="code-block">
+python main.py
+                </div>
+                <p style="margin-top: 10px;">
+                    <strong>Sortie attendue:</strong>
+                </p>
+                <div class="code-block" style="margin-top: 10px;">
+INFO:     Started server process [1234]
+INFO:     Uvicorn running on http://0.0.0.0:8000
+INFO:     Application startup complete
+                </div>
+            </div>
+
+            <div class="success">
+                <h4>✅ Backend lancé!</h4>
+                <p>Le serveur tourne maintenant sur <code>http://localhost:8000</code> (sur votre PC)</p>
+            </div>
+
+            <!-- Section 4: Tester Backend depuis PC -->
+            <h2><span class="emoji">🧪</span>Partie 4: Tester le Backend depuis votre PC</h2>
+
+            <div class="step-box">
+                <p><span class="step-number">1</span><strong>Ouvrir un navigateur</strong></p>
+                <p>Allez à: <code>http://localhost:8000</code></p>
+                <p style="margin-top: 10px;">Vous devriez voir:</p>
+                <div class="code-block" style="margin-top: 10px;">
+{
+  "message": "Stock API is running"
+}
+                </div>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">2</span><strong>Tester l'endpoint API health</strong></p>
+                <p>Allez à: <code>http://localhost:8000/api/health/api</code></p>
+                <p style="margin-top: 10px;">Résultat:</p>
+                <div class="code-block" style="margin-top: 10px;">
+{
+  "status": "healthy",
+  "message": "API is running"
+}
+                </div>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">3</span><strong>Tester l'endpoint Database health</strong></p>
+                <p>Allez à: <code>http://localhost:8000/api/health/database</code></p>
+                <p style="margin-top: 10px;">
+                    <strong>Si SQL Server est connecté:</strong>
+                </p>
+                <div class="code-block" style="margin-top: 10px;">
+{
+  "service": "Database Connection Test",
+  "database_status": "connected",
+  "details": {
+    "version": "Microsoft SQL Server 2019 (RTM-CU10)...",
+    "server_time": "2026-05-22 14:30:45.123456"
+  }
+}
+                </div>
+                <p style="margin-top: 10px;">
+                    <strong>Si erreur de connexion:</strong>
+                </p>
+                <div class="code-block" style="margin-top: 10px;">
+{
+  "detail": "Database connection failed: ..."
+}
+                </div>
+                <p style="margin-top: 10px; color: #d9534f;">
+                    → Vérifiez vos identifiants SQL Server et relancez le serveur!
+                </p>
+            </div>
+
+            <div class="success">
+                <h4>✅ Backend fonctionne!</h4>
+                <p>Maintenant, testons depuis le téléphone Android.</p>
+            </div>
+
+            <!-- Section 5: Setup Android -->
+            <h2><span class="emoji">📱</span>Partie 5: Préparer l'app Android</h2>
+
+            <h3>Option A: Utiliser l'APK compilée (facile)</h3>
+            <div class="step-box">
+                <p><span class="step-number">1</span><strong>Télécharger l'APK</strong></p>
+                <p>Une APK pré-compilée sera fournie: <code>stock-app-poc.apk</code></p>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">2</span><strong>Transférer l'APK au téléphone</strong></p>
+                <ul>
+                    <li>Connectez votre téléphone en USB</li>
+                    <li>Copiez l'APK dans: <code>/sdcard/Download/</code></li>
+                    <li>Ou utilisez: <code>adb install stock-app-poc.apk</code></li>
+                </ul>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">3</span><strong>Installer l'app</strong></p>
+                <ul>
+                    <li>Ouvrez le gestionnaire de fichiers du téléphone</li>
+                    <li>Allez dans "Téléchargements" (Downloads)</li>
+                    <li>Cliquez sur l'APK</li>
+                    <li>Acceptez les permissions</li>
+                    <li>Installez</li>
+                </ul>
+            </div>
+
+            <h3>Option B: Compiler avec Android Studio (avancé)</h3>
+            <div class="step-box">
+                <p><span class="step-number">1</span><strong>Ouvrir le projet Android dans Android Studio</strong></p>
+                <div class="code-block">
+cd android
+# Ouvrez le fichier build.gradle dans Android Studio
+                </div>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">2</span><strong>Build et déployer</strong></p>
+                <p>
+                    Dans Android Studio: Build → Generate Signed Bundle/APK<br>
+                    Ou directement: Run sur votre téléphone (connecté en USB)
+                </p>
+            </div>
+
+            <!-- Section 6: Configuration Android -->
+            <h2><span class="emoji">⚙️</span>Partie 6: Configurer l'app Android pour accéder au backend</h2>
+
+            <div class="warning">
+                <h4>⚠️ Important: Adresse du backend</h4>
+                <p>
+                    L'app Android doit pouvoir accéder au backend Python qui tourne sur votre PC.
+                    <br><br>
+                    <strong>L'adresse du backend dépend de votre configuration:</strong>
+                </p>
+            </div>
+
+            <table>
+                <tr>
+                    <th>Scénario</th>
+                    <th>Adresse du backend dans l'app</th>
+                    <th>Conditions</th>
+                </tr>
+                <tr>
+                    <td><strong>Émulateur Android</strong></td>
+                    <td><code>http://10.0.2.2:8000</code></td>
+                    <td>10.0.2.2 = adresse spéciale pour l'emulateur qui pointe vers la machine hôte</td>
+                </tr>
+                <tr>
+                    <td><strong>Téléphone physique sur WiFi</strong></td>
+                    <td><code>http://192.168.X.X:8000</code></td>
+                    <td>Remplacez X.X par l'adresse IP de votre PC sur le réseau local</td>
+                </tr>
+                <tr>
+                    <td><strong>Téléphone connecté en USB (adb forward)</strong></td>
+                    <td><code>http://localhost:8000</code></td>
+                    <td>Après avoir configuré adb port forwarding</td>
+                </tr>
+            </table>
+
+            <div class="step-box">
+                <p><span class="step-number">1</span><strong>Trouver l'adresse IP de votre PC</strong></p>
+                <p>Ouvrez PowerShell et tapez:</p>
+                <div class="code-block">
+ipconfig
+                </div>
+                <p style="margin-top: 10px;">
+                    Cherchez "IPv4 Address" dans votre réseau WiFi (ex: <code>192.168.1.50</code>)
+                </p>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">2</span><strong>Modifier l'adresse du backend dans l'app</strong></p>
+                <p>
+                    Si vous compilez vous-même:
+                </p>
+                <p style="margin: 10px 0; font-style: italic;">
+                    Fichier: <code>android/app/src/main/java/com/example/stockapp/api/ApiClient.kt</code>
+                </p>
+                <div class="code-block">
+object ApiClient {
+    // CHANGER cette URL
+    private const val BASE_URL = "http://192.168.1.50:8000/"  // Votre IP PC
+    ...
+}
+                </div>
+            </div>
+
+            <!-- Section 7: Tester depuis le téléphone -->
+            <h2><span class="emoji">📱</span>Partie 7: Tester depuis le téléphone Android</h2>
+
+            <div class="step-box">
+                <p><span class="step-number">1</span><strong>Lancer l'app Stock</strong></p>
+                <p>
+                    Sur votre téléphone, trouvez l'app "Stock App POC" et ouvrez-la.
+                    <br>
+                    Vous verrez deux boutons: "Test API Connection" et "Test Database Connection"
+                </p>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">2</span><strong>Tester la connexion API</strong></p>
+                <p>Cliquez sur "Test API Connection"</p>
+                <p style="margin-top: 10px;"><strong>Résultat attendu:</strong></p>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>✅ <code>healthy</code> (en vert) = Connection au backend réussie</li>
+                    <li>❌ <code>Failed</code> (en rouge) = L'app ne peut pas accéder au backend</li>
+                </ul>
+                <p style="margin-top: 15px;">
+                    <strong>Si échoue:</strong>
+                </p>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>Vérifiez que l'adresse IP du backend est correcte</li>
+                    <li>Assurez-vous que le téléphone et le PC sont sur le même WiFi</li>
+                    <li>Vérifiez le firewall (le port 8000 doit être accessible)</li>
+                </ul>
+            </div>
+
+            <div class="step-box">
+                <p><span class="step-number">3</span><strong>Tester la connexion Database</strong></p>
+                <p>Cliquez sur "Test Database Connection"</p>
+                <p style="margin-top: 10px;"><strong>Résultat attendu:</strong></p>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>✅ <code>connected</code> = La DB est accessible (affiche version et heure)</li>
+                    <li>❌ <code>Failed</code> = Problème de connexion DB sur le backend</li>
+                </ul>
+                <p style="margin-top: 15px;">
+                    <strong>Si échoue:</strong>
+                </p>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>Vérifiez vos identifiants SQL Server sur le backend</li>
+                    <li>Vérifiez que SQL Server tourne</li>
+                    <li>Vérifiez les logs du backend (console Python)</li>
+                </ul>
+            </div>
+
+            <div class="success">
+                <h4>✅ POC fonctionne!</h4>
+                <p>
+                    Si vous voyez "connected" sur le Database Health test,
+                    c'est que votre app Android parle avec SQL Server via le backend! 🎉
+                </p>
+            </div>
+
+            <!-- Section 8: Troubleshooting -->
+            <h2><span class="emoji">🔧</span>Partie 8: Dépannage (Troubleshooting)</h2>
+
+            <h3>Backend ne démarre pas</h3>
+            <div class="section-box">
+                <p><strong>Erreur:</strong> "ModuleNotFoundError: No module named 'fastapi'"</p>
+                <p><strong>Solution:</strong></p>
+                <div class="code-block">
+pip install -r requirements.txt
+                </div>
+            </div>
+
+            <div class="section-box">
+                <p><strong>Erreur:</strong> "Database connection failed"</p>
+                <p><strong>Solutions:</strong></p>
+                <ul>
+                    <li>Vérifiez que SQL Server est en train de tourner</li>
+                    <li>Testez la connexion avec SQL Server Management Studio</li>
+                    <li>Vérifiez le host/port dans les variables d'environnement (.env)</li>
+                    <li>Vérifiez que ODBC Driver 17 est installé</li>
+                </ul>
+            </div>
+
+            <h3>App Android ne se connecte pas au backend</h3>
+            <div class="section-box">
+                <p><strong>Erreur:</strong> "Connection Error" dans l'app</p>
+                <p><strong>Solutions:</strong></p>
+                <ul>
+                    <li>Vérifiez que le PC et le téléphone sont sur le même WiFi</li>
+                    <li>Vérifiez l'adresse IP du backend (utilisez <code>ipconfig</code> sur PC)</li>
+                    <li>Testez: <code>ping 192.168.1.50</code> depuis le téléphone (connecté au WiFi)</li>
+                    <li>Vérifiez que le port 8000 n'est pas bloqué par le firewall</li>
+                    <li>Ouvrez PowerShell et lancez: <code>netsh advfirewall firewall add rule name="FastAPI" dir=in action=allow protocol=tcp localport=8000</code></li>
+                </ul>
+            </div>
+
+            <div class="section-box">
+                <p><strong>Erreur:</strong> "API Error: 500 Database connection failed"</p>
+                <p><strong>Solution:</strong> Le backend s'est connecté, mais la DB ne répond pas. Vérifiez SQL Server.</p>
+            </div>
+
+            <h3>Logs utiles</h3>
+            <div class="step-box">
+                <p>
+                    <strong>Pour déboguer:</strong>
+                </p>
+                <ul>
+                    <li>Regardez la console du backend Python (messages d'erreur)</li>
+                    <li>Utilisez Android Studio Logcat pour lire les logs de l'app</li>
+                    <li>Tesez les endpoints manuellement: <code>curl http://localhost:8000/api/health/database</code></li>
+                </ul>
+            </div>
+
+            <!-- Section 9: Résumé -->
+            <h2><span class="emoji">📋</span>Partie 9: Checklist finale</h2>
+
+            <div class="checklist">
+                <h3>Avant de démarrer les tests:</h3>
+                <ul>
+                    <li>☐ Python 3.10+ installé</li>
+                    <li>☐ ODBC Driver 17 installé</li>
+                    <li>☐ SQL Server accessible et testé avec SSMS</li>
+                    <li>☐ Dossier backend avec requirements.txt et .env</li>
+                    <li>☐ Variables d'environnement SQL Server correctes</li>
+                </ul>
+
+                <h3>Backend lancé:</h3>
+                <ul>
+                    <li>☐ Virtuel environment activé</li>
+                    <li>☐ <code>python main.py</code> lancé (console Python affiche "Application startup complete")</li>
+                    <li>☐ <code>http://localhost:8000</code> répond</li>
+                    <li>☐ <code>http://localhost:8000/api/health/api</code> retourne "healthy"</li>
+                    <li>☐ <code>http://localhost:8000/api/health/database</code> retourne "connected"</li>
+                </ul>
+
+                <h3>App Android prête:</h3>
+                <ul>
+                    <li>☐ APK installée OU compilée</li>
+                    <li>☐ Adresse IP du backend correcte dans ApiClient.kt (si compilé)</li>
+                    <li>☐ Téléphone et PC sur le même WiFi</li>
+                    <li>☐ Firewall autorise le port 8000</li>
+                </ul>
+
+                <h3>Tests passent:</h3>
+                <ul>
+                    <li>☐ "Test API Connection" retourne ✅</li>
+                    <li>☐ "Test Database Connection" retourne ✅</li>
+                    <li>☐ Version et heure du serveur affichées</li>
+                </ul>
+            </div>
+
+            <div class="success" style="text-align: center; margin-top: 40px;">
+                <h3>🎉 Vous avez validé la faisabilité technique!</h3>
+                <p>
+                    Android ↔ Backend Python ↔ SQL Server<br>
+                    C'est la base du POC. Bravo! 🚀
+                </p>
+            </div>
+
+            <!-- Section 10: Prochaines étapes -->
+            <h2><span class="emoji">🚀</span>Partie 10: Prochaines étapes</h2>
+
+            <div class="section-box">
+                <h3>Phase 2 (Après validation technique)</h3>
+                <p>Une fois que les deux tests passent, on peut continuer:</p>
+                <ol>
+                    <li><strong>Ajouter l'authentification:</strong> Endpoint login + token</li>
+                    <li><strong>Ajouter la recherche:</strong> Endpoint pour chercher un SKU</li>
+                    <li><strong>Ajouter les détails:</strong> Endpoint pour avoir les infos complètes d'un produit</li>
+                    <li><strong>Améliorer l'UI Android:</strong> Écrans Login, Recherche, Détails</li>
+                </ol>
+            </div>
+
+        </div>
+
+        <footer>
+            <p>Mode Opératoire - POC Stock Mobile | Document technique pour mise en œuvre</p>
+        </footer>
+    </div>
+</body>
+</html>
