@@ -14,6 +14,15 @@
     <string name="settings_button">Settings</string>
     <string name="view_logs_button">View Logs</string>
 
+    <!-- Connection Status -->
+    <string name="connection_status_title">Connection Status</string>
+    <string name="connecting">Connecting to API…</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="connection_error">Connection Error</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="retry_button">Retry</string>
+
     <!-- LogsViewerActivity -->
     <string name="logs_viewer_title">Debug Logs</string>
     <string name="loading_logs">Loading logs...</string>
@@ -21,4 +30,11 @@
     <string name="clear_logs_button">Clear Logs</string>
     <string name="export_logs_button">Export Logs</string>
     <string name="export_logs">Share Logs</string>
+
+    <!-- SettingsActivity -->
+    <string name="settings_title">API Configuration</string>
+    <string name="settings_api_host_label">API Host (IP or hostname)</string>
+    <string name="settings_api_port_label">API Port (1-65535)</string>
+    <string name="settings_save_button">Save Configuration</string>
+    <string name="settings_retry_button">Retry Connection</string>
 </resources>

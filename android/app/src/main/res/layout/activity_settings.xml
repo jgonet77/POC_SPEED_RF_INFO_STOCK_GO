@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="API Configuration"
+        android:text="@string/settings_title"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginBottom="24dp" />
@@ -16,7 +16,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="API Host (IP or hostname)"
+        android:text="@string/settings_api_host_label"
         android:textSize="14sp"
         android:layout_marginBottom="8dp" />
 
@@ -31,7 +31,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="API Port"
+        android:text="@string/settings_api_port_label"
         android:textSize="14sp"
         android:layout_marginBottom="8dp" />
 
@@ -43,10 +43,27 @@
         android:inputType="number"
         android:layout_marginBottom="20dp" />
 
-    <Button
-        android:id="@+id/saveButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Configuration" />
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="@string/settings_save_button" />
+
+        <Button
+            android:id="@+id/retryButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="@string/settings_retry_button" />
+    </LinearLayout>
 
 </LinearLayout>
