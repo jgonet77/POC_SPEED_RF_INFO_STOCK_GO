@@ -1,5 +1,8 @@
 # backend/config.py
+from dotenv import load_dotenv
 import os
+
+load_dotenv()  # Charger automatiquement le fichier .env
 
 
 class Settings:
