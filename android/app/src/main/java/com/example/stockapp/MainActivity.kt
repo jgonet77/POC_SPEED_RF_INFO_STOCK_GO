@@ -1,5 +1,6 @@
 package com.example.stockapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -20,6 +21,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var errorText: TextView
     private lateinit var testApiButton: Button
     private lateinit var testDatabaseButton: Button
+    private lateinit var settingsButton: Button
+    private lateinit var viewLogsButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +46,8 @@ class MainActivity : AppCompatActivity() {
         errorText = findViewById(R.id.errorText)
         testApiButton = findViewById(R.id.testApiButton)
         testDatabaseButton = findViewById(R.id.testDatabaseButton)
+        settingsButton = findViewById(R.id.settingsButton)
+        viewLogsButton = findViewById(R.id.viewLogsButton)
 
         // Setup observers
         viewModel.apiHealthStatus.observe(this) { status ->
@@ -72,6 +77,16 @@ class MainActivity : AppCompatActivity() {
 
         testDatabaseButton.setOnClickListener {
             viewModel.checkDatabaseHealth()
+        }
+
+        settingsButton.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+
+        viewLogsButton.setOnClickListener {
+            val intent = Intent(this, LogsViewerActivity::class.java)
+            startActivity(intent)
         }
     }
 }

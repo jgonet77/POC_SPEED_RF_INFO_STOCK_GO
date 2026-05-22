@@ -10,6 +10,10 @@
     <string name="time_label">Server Time: </string>
     <string name="error_label">Error: </string>
 
+    <!-- Navigation buttons -->
+    <string name="settings_button">Settings</string>
+    <string name="view_logs_button">View Logs</string>
+
     <!-- LogsViewerActivity -->
     <string name="logs_viewer_title">Debug Logs</string>
     <string name="loading_logs">Loading logs...</string>
