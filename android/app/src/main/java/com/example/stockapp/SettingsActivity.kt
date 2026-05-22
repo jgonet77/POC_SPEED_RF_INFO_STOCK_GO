@@ -5,6 +5,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.stockapp.api.ApiClient
 import com.example.stockapp.config.ConfigManager
 
 class SettingsActivity : AppCompatActivity() {
@@ -44,6 +45,8 @@ class SettingsActivity : AppCompatActivity() {
             }
 
             configManager.setApiConfig(host, port)
+            // Rebuild the Retrofit client so subsequent calls hit the new URL.
+            ApiClient.refreshApiUrl()
             Toast.makeText(this, "Configuration saved", Toast.LENGTH_SHORT).show()
             finish()
         }

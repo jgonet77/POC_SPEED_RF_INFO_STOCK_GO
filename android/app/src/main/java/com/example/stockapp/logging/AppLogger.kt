@@ -44,6 +44,26 @@ class AppLogger(context: Context) {
             val ctx = appContext ?: return
             AppLogger(ctx).info(message)
         }
+
+        /**
+         * Static API-call logging helpers. They forward to an AppLogger
+         * instance backed by the stored application context. No-ops if
+         * AppLogger has never been constructed.
+         */
+        fun logApiCall(endpoint: String, method: String = "GET") {
+            val ctx = appContext ?: return
+            AppLogger(ctx).logApiCall(endpoint, method)
+        }
+
+        fun logApiResponse(endpoint: String, statusCode: Int, responseBody: String) {
+            val ctx = appContext ?: return
+            AppLogger(ctx).logApiResponse(endpoint, statusCode, responseBody)
+        }
+
+        fun logApiError(endpoint: String, error: String) {
+            val ctx = appContext ?: return
+            AppLogger(ctx).logApiError(endpoint, error)
+        }
     }
 
     private val logFile: File
@@ -87,7 +107,7 @@ class AppLogger(context: Context) {
     }
 
     fun logApiError(endpoint: String, error: String) {
-        error("API ERROR: $endpoint\n$error")
+        this.error("API ERROR: $endpoint\n$error")
     }
 
     fun getLogs(): String {

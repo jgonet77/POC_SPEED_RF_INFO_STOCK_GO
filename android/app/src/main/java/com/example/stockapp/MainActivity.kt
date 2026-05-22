@@ -5,6 +5,8 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.stockapp.api.ApiClient
+import com.example.stockapp.logging.AppLogger
 import com.example.stockapp.viewmodels.HealthViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -22,6 +24,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Initialize app-wide singletons. AppLogger must be constructed once
+        // so its companion-object helpers (logApiCall, etc.) can resolve the
+        // application context. ApiClient.init() reads the latest API URL from
+        // ConfigManager and builds the Retrofit instance.
+        AppLogger(this)
+        ApiClient.init(this)
 
         // Initialize ViewModel
         viewModel = ViewModelProvider(this).get(HealthViewModel::class.java)
