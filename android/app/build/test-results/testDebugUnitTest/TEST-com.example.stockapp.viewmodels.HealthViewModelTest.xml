@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.stockapp.viewmodels.HealthViewModelTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-05-26T13:01:41" hostname="LAPVMI116" time="0.081">
+  <properties/>
+  <testcase name="apiHealthStatus initial value is 'Not tested'" classname="com.example.stockapp.viewmodels.HealthViewModelTest" time="0.057"/>
+  <testcase name="connectionStatus initial value is DISCONNECTED" classname="com.example.stockapp.viewmodels.HealthViewModelTest" time="0.004"/>
+  <testcase name="testConnection transitions connectionStatus to CONNECTING" classname="com.example.stockapp.viewmodels.HealthViewModelTest" time="0.015"/>
+  <testcase name="databaseHealthStatus initial value is 'Not tested'" classname="com.example.stockapp.viewmodels.HealthViewModelTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
