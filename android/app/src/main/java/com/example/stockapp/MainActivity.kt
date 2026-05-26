@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.stockapp.api.ApiClient
 import com.example.stockapp.logging.AppLogger
+import com.example.stockapp.managers.TokenManager
 import com.example.stockapp.viewmodels.HealthViewModel
 import com.example.stockapp.viewmodels.ConnectionStatus
 import kotlin.concurrent.thread
@@ -39,6 +40,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Check token validity before showing MainActivity
+        val token = TokenManager.getToken(this)
+        if (token == null) {
+            // Token is missing or expired, redirect to login
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_main)
 
         // Initialize app-wide singletons in background thread to avoid ANR

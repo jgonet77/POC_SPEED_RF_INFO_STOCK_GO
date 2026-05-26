@@ -37,4 +37,21 @@
     <string name="settings_api_port_label">API Port (1-65535)</string>
     <string name="settings_save_button">Save Configuration</string>
     <string name="settings_retry_button">Retry Connection</string>
+
+    <!-- LoginActivity -->
+    <string name="login_title">Stock App Login</string>
+    <string name="login_username_label">Username</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_hash_method_label">Password Hash Method</string>
+    <string name="login_hash_clair">CLAIR (Unencrypted)</string>
+    <string name="login_hash_md5">MD5</string>
+    <string name="login_hash_sha256">SHA256</string>
+    <string name="login_button">Login</string>
+    <string name="login_cancel_button">Cancel</string>
+    <string name="login_error_empty_login">Username cannot be empty</string>
+    <string name="login_error_empty_password">Password cannot be empty</string>
+    <string name="login_error_invalid_credentials">Invalid login or password</string>
+    <string name="login_error_network">Network error. Please check your API configuration.</string>
+    <string name="login_error_unknown">An error occurred. Please try again.</string>
+    <string name="login_loading">Logging in…</string>
 </resources>
