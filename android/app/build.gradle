@@ -29,6 +29,13 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+
+    testOptions {
+        unitTests.all {
+            // Byte Buddy (used by Mockito) needs this flag on Java 23+
+            jvmArgs '-Dnet.bytebuddy.experimental=true'
+        }
+    }
 }
 
 dependencies {
@@ -50,5 +57,7 @@ dependencies {
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:5.14.2'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:5.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
