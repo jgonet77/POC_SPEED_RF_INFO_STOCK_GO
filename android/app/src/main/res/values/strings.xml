@@ -66,4 +66,20 @@
     <string name="activity_selection_error_empty">No activities available.</string>
     <string name="activity_selection_error_unknown">An error occurred. Please try again.</string>
     <string name="activity_selection_error_select">Please select an activity.</string>
+
+    <!-- StockSearchActivity -->
+    <string name="stock_search_title">Stock Search</string>
+    <string name="stock_search_article_label">Article Code</string>
+    <string name="stock_search_location_label">Storage Location</string>
+    <string name="stock_search_storage_label">Storage Number</string>
+    <string name="stock_search_button">Search</string>
+    <string name="stock_search_clear_button">Clear</string>
+    <string name="stock_search_no_results">No results found</string>
+    <string name="stock_search_error_criteria">Please provide at least one search criterion</string>
+    <string name="stock_search_column_article">Article</string>
+    <string name="stock_search_column_location">Location</string>
+    <string name="stock_search_column_storage">Storage</string>
+    <string name="stock_search_column_quality">Quality</string>
+    <string name="stock_search_column_quantity">Quantity</string>
+    <string name="stock_search_loading">Searching…</string>
 </resources>

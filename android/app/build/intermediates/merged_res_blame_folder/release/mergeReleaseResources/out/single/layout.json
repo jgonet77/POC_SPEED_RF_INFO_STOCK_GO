@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.example.stockapp-mergeReleaseResources-26:/layout/activity_login.xml",
+        "source": "com.example.stockapp-main-28:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.example.stockapp-mergeReleaseResources-26:/layout/activity_logs_viewer.xml",
+        "source": "com.example.stockapp-main-28:/layout/activity_logs_viewer.xml"
+    },
+    {
+        "merged": "com.example.stockapp-mergeReleaseResources-26:/layout/activity_selection.xml",
+        "source": "com.example.stockapp-main-28:/layout/activity_selection.xml"
+    },
+    {
+        "merged": "com.example.stockapp-mergeReleaseResources-26:/layout/activity_settings.xml",
+        "source": "com.example.stockapp-main-28:/layout/activity_settings.xml"
+    },
+    {
+        "merged": "com.example.stockapp-mergeReleaseResources-26:/layout/activity_stock_search.xml",
+        "source": "com.example.stockapp-main-28:/layout/activity_stock_search.xml"
+    },
+    {
+        "merged": "com.example.stockapp-mergeReleaseResources-26:/layout/activity_main.xml",
+        "source": "com.example.stockapp-main-28:/layout/activity_main.xml"
+    }
+]

@@ -51,6 +51,9 @@
         <activity
             android:name="com.example.stockapp.LogsViewerActivity"
             android:exported="false" />
+        <activity
+            android:name="com.example.stockapp.StockSearchActivity"
+            android:exported="false" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

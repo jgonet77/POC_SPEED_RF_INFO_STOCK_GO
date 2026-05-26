@@ -40,5 +40,9 @@
             android:name=".LogsViewerActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".StockSearchActivity"
+            android:exported="false" />
+
     </application>
 </manifest>
