@@ -76,6 +76,7 @@
     <string name="stock_search_clear_button">Clear</string>
     <string name="stock_search_no_results">No results found</string>
     <string name="stock_search_error_criteria">Please provide at least one search criterion</string>
+    <string name="stock_search_empty_fields_error">Please provide at least one search criterion</string>
     <string name="stock_search_column_article">Article</string>
     <string name="stock_search_column_location">Location</string>
     <string name="stock_search_column_storage">Storage</string>

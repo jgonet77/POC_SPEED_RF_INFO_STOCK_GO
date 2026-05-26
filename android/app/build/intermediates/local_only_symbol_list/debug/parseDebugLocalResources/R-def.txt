@@ -123,6 +123,7 @@ string stock_search_column_location
 string stock_search_column_quality
 string stock_search_column_quantity
 string stock_search_column_storage
+string stock_search_empty_fields_error
 string stock_search_error_criteria
 string stock_search_loading
 string stock_search_location_label

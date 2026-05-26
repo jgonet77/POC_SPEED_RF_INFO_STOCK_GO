@@ -4,11 +4,27 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.stockapp.databinding.ActivityStockSearchBinding
 import com.example.stockapp.logging.AppLogger
 import com.example.stockapp.models.StockItem
 import com.example.stockapp.viewmodels.StockSearchViewModel
+
+/**
+ * ViewModel factory for StockSearchViewModel.
+ *
+ * Provides Context-dependent injection for StockSearchViewModel while
+ * maintaining proper lifecycle management to avoid memory leaks.
+ */
+class StockSearchViewModelFactory(
+    private val context: android.content.Context
+) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return StockSearchViewModel(context) as T
+    }
+}
 
 /**
  * Activity for searching stock items.
@@ -32,14 +48,10 @@ class StockSearchActivity : AppCompatActivity() {
         binding = ActivityStockSearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize ViewModel with factory
+        // Initialize ViewModel with named factory to avoid memory leaks
         viewModel = ViewModelProvider(
             this,
-            object : ViewModelProvider.Factory {
-                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                    return StockSearchViewModel(this@StockSearchActivity) as T
-                }
-            }
+            StockSearchViewModelFactory(this)
         ).get(StockSearchViewModel::class.java)
 
         // Initialize results adapter
@@ -90,6 +102,12 @@ class StockSearchActivity : AppCompatActivity() {
         val articleCode = binding.articleCodeInput.text.toString().trim()
         val location = binding.locationInput.text.toString().trim()
         val storageNumber = binding.storageNumberInput.text.toString().trim()
+
+        // Client-side validation: check if all fields are empty
+        if (articleCode.isEmpty() && location.isEmpty() && storageNumber.isEmpty()) {
+            showError(getString(R.string.stock_search_empty_fields_error))
+            return
+        }
 
         AppLogger.log(
             "SEARCH_BUTTON_TAPPED article_code=$articleCode location=$location storage=$storageNumber"
@@ -186,17 +204,26 @@ class StockSearchActivity : AppCompatActivity() {
     /**
      * Displays an error message to the user.
      *
-     * Shows the error in the status message TextView.
+     * Shows the error in the status message TextView with truncation to 200 characters
+     * to prevent layout overflow. Full message is logged.
      *
      * @param errorMessage The error message to display
      */
     private fun showError(errorMessage: String) {
-        binding.statusMessage.text = errorMessage
+        // Log full message for debugging
+        AppLogger.log("ERROR_SHOWN error=$errorMessage")
+
+        // Truncate message to 200 chars with ellipsis for display
+        val displayMessage = if (errorMessage.length > 200) {
+            errorMessage.substring(0, 200) + "…"
+        } else {
+            errorMessage
+        }
+
+        binding.statusMessage.text = displayMessage
         binding.loadingSpinner.visibility = View.GONE
         hideResults()
         binding.emptyStateMessage.visibility = View.VISIBLE
-        binding.emptyStateMessage.text = errorMessage
-
-        AppLogger.log("ERROR_SHOWN error=$errorMessage")
+        binding.emptyStateMessage.text = displayMessage
     }
 }
