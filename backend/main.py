@@ -3,6 +3,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.health import router as health_router
+from routes.auth import router as auth_router
 from config import settings
 
 app = FastAPI(
@@ -23,6 +24,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(health_router, prefix="/api", tags=["health"])
+app.include_router(auth_router, prefix="/api", tags=["auth"])
 
 @app.get("/")
 def read_root():

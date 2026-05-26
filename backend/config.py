@@ -20,6 +20,9 @@ class Settings:
         self.api_host = os.getenv("API_HOST", "0.0.0.0")
         self.api_port = self._env_int("API_PORT", 8000)
 
+        # Auth settings
+        self.secret_key = os.getenv("SECRET_KEY", "dev-secret-key-change-in-prod")
+
     @staticmethod
     def _env_int(name: str, default: int) -> int:
         raw = os.getenv(name, str(default))
