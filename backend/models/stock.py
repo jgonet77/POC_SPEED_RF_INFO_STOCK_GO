@@ -56,7 +56,7 @@ class StockItem(BaseModel):
 class StockSearchResponse(BaseModel):
     """Response model for stock search."""
     status: str  # "success" or "error"
-    message: str
+    message: Optional[str] = None
     items: List[StockItem] = []
 
     model_config = ConfigDict(

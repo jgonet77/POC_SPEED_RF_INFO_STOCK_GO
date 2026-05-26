@@ -1,7 +1,11 @@
 from typing import List
+from logging import getLogger
 from models.stock import StockSearchRequest, StockItem, StockSearchResponse
 from repositories.stock_repository import StockRepository
 from repositories.base_repository import QueryError
+
+
+logger = getLogger(__name__)
 
 
 class StockService:
@@ -17,10 +21,13 @@ class StockService:
         Returns:
             StockSearchResponse with items matching any criterion within activity
         """
+        logger.info(f"STOCK_SEARCH_INITIATED act_code={request.act_code}")
+
         try:
             # Request validation is handled by Pydantic model_validator
 
             # Query repository
+            logger.debug(f"Querying repository with criteria: art_code={request.art_code}, stk_lieu={request.stk_lieu}, stk_nosu={request.stk_nosu}")
             results = self.repository.search_by_activity(request)
 
             # Convert to StockItem objects
@@ -35,36 +42,24 @@ class StockService:
                 for row in results
             ]
 
-            # Build response
-            if len(items) == 0:
-                message = "No stock items found matching criteria"
-            else:
-                message = f"Found {len(items)} item(s)"
+            logger.info(f"STOCK_SEARCH_COMPLETED act_code={request.act_code} items_count={len(items)}")
 
             return StockSearchResponse(
                 status="success",
-                message=message,
                 items=items
             )
 
         except ValueError as e:
             # Validation error
+            logger.warning(f"Validation error in stock search: {str(e)}")
             return StockSearchResponse(
                 status="error",
-                message=f"Invalid search criteria: {str(e)}",
                 items=[]
             )
         except QueryError as e:
             # Database error
+            logger.error(f"Query error in stock search: {str(e)}")
             return StockSearchResponse(
                 status="error",
-                message=f"Database error: {str(e)}",
-                items=[]
-            )
-        except Exception as e:
-            # Unexpected error
-            return StockSearchResponse(
-                status="error",
-                message=f"Unexpected error: {str(e)}",
                 items=[]
             )

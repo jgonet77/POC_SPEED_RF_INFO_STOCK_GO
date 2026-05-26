@@ -14,7 +14,6 @@ from middleware.auth import verify_token
 logger = getLogger(__name__)
 
 router = APIRouter()
-stock_service = StockService()
 
 
 @router.post("/stock/search")
@@ -42,7 +41,21 @@ async def search_stock(
         f"user={current_user.get('login')}"
     )
 
+    # Instantiate service per-request to avoid shared state
+    stock_service = StockService()
     response = stock_service.search_stock(request)
+
+    # Construct user-friendly message based on response status
+    if response.status == "success":
+        if len(response.items) == 0:
+            response.message = "No stock items found matching criteria"
+        else:
+            response.message = f"Found {len(response.items)} item(s)"
+    else:
+        # For error responses, construct appropriate message
+        if not response.items:
+            # Empty items list indicates an error
+            response.message = "Search failed due to invalid criteria or database error"
 
     logger.info(
         f"STOCK_SEARCH_RESPONSE act_code={request.act_code} "
