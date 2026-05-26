@@ -30,7 +30,15 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request, exc):
-    """Handle HTTP exceptions with consistent response format."""
+    """Handle HTTP exceptions with consistent response format.
+
+    All HTTP error responses follow the same structure:
+    {
+        "status": "error",
+        "message": "<general message>",
+        "detail": "<specific detail>"
+    }
+    """
     if exc.status_code == 401:
         return JSONResponse(
             status_code=401,
@@ -40,10 +48,14 @@ async def http_exception_handler(request, exc):
                 "detail": "Please login first",
             }
         )
-    # For other status codes, use default handling - just return as JSON
+    # For other status codes, use consistent format with status and message
     return JSONResponse(
         status_code=exc.status_code,
-        content={"detail": exc.detail}
+        content={
+            "status": "error",
+            "message": exc.detail or "An error occurred",
+            "detail": exc.detail or "An error occurred",
+        }
     )
 
 

@@ -62,7 +62,7 @@ def invalid_signature_token():
 @pytest.fixture(autouse=True)
 def clear_active_tokens():
     """Clear active_tokens before each test to avoid cross-test contamination."""
-    from routes.auth import active_tokens
+    from services.token_store import active_tokens
     active_tokens.clear()
     yield
     active_tokens.clear()
@@ -80,7 +80,7 @@ def test_search_endpoint_requires_auth_header(client):
 
 def test_search_endpoint_with_valid_token_passes_auth(client, valid_token):
     """GET /api/search with valid Authorization header passes auth."""
-    from routes.auth import active_tokens
+    from services.token_store import active_tokens
     active_tokens[valid_token] = "testuser"
 
     response = client.get(

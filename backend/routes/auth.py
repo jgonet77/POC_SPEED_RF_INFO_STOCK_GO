@@ -10,11 +10,9 @@ from fastapi.responses import JSONResponse
 from config import settings
 from models.auth import LoginRequest, LoginResponse
 from repositories.auth_repository import AuthRepository, AuthRepositoryError
+from services.token_store import active_tokens
 
 router = APIRouter()
-
-# In-memory token store — maps token string to login
-active_tokens: dict[str, str] = {}
 
 LOG_PATH = "logs/auth.log"
 VALID_HASH_METHODS = {"CLAIR", "MD5", "SHA256"}
