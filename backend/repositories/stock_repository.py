@@ -38,7 +38,7 @@ class StockRepository(BaseRepository):
 
         query = f"""
             SELECT ART_CODE, STK_LIEU, STK_NOSU, QUA_CODE, STK_QTE
-            FROM STK_PAR
+            FROM STK_DAT
             WHERE {where_clause}
             ORDER BY ART_CODE, STK_LIEU
         """
