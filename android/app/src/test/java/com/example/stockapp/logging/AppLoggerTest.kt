@@ -35,6 +35,13 @@ class AppLoggerTest {
 
     @Before
     fun setUp() {
+        // Reset companion state first (before any AppLogger construction) so
+        // each test starts with a clean slate and never references a previous
+        // test's (now-deleted) TemporaryFolder.
+        val field = AppLogger::class.java.getDeclaredField("appContext")
+        field.isAccessible = true
+        field.set(null, null)
+
         mockContext = mock()
 
         // getExternalFilesDir(null) must return a File so AppLogger can build
