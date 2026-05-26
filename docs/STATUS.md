@@ -1,7 +1,7 @@
 # 📋 STATUS - POC Stock App (Android + API Python)
 
 **Dernière mise à jour:** 2026-05-26  
-**État du projet:** Phase 6 Testing & QA - Automated testing suite COMPLETE  
+**État du projet:** Phase 7 Part 1 & Part 2 COMPLETE - Activity Selection & Advanced Stock Search  
 
 ---
 
@@ -225,6 +225,109 @@ docs/
 └── superpowers/plans/               ✅ Implementation plans
 ```
 
+### Phase 7 Part 1: Activity Selection (TERMINÉE) ✅
+**Objectif:** Permettre à l'utilisateur de sélectionner une activité après login
+
+**Complété:**
+- ✅ Endpoint backend `/api/activities` - récupère liste ACT_PAR avec ACT_ACTF=1
+- ✅ ActivityManager - gère l'activité sélectionnée (SharedPreferences)
+- ✅ ActivitySelectionActivity - UI spinner, confirmation, redirection MainActivity
+- ✅ AuthInterceptor - token envoyé sur /api/activities
+- ✅ JSON deserialization - @SerializedName pour act_keyu, act_code, act_lib
+
+**Bugs fixés:**
+- ✅ 401 Unauthorized: AuthInterceptor n'envoyait pas token sur /api/activities
+- ✅ NULL activity display: JSON field mapping (camelCase ↔ snake_case)
+
+**Commits:**
+- `feat: add activity selection UI and endpoint protection`
+- `fix: add /api/activities to AuthInterceptor protected endpoints`
+- `fix: add @SerializedName annotations to ActivityItem for JSON deserialization`
+
+**Test result:** ✅ Flow complet Login → Activity Selection → MainActivity OK
+
+---
+
+### Phase 7 Part 2: Advanced Stock Search (TERMINÉE) ✅
+**Objectif:** Recherche stock flexible par code article, emplacement, ou numéro de support
+
+#### Backend (2 tasks):
+**Task B1 - Stock Models & Repository ✅**
+- ✅ Pydantic models: StockSearchRequest, StockItem, StockSearchResponse
+- ✅ Repository: search_by_activity() avec parameterized queries (SQL injection protection)
+- ✅ Flexible OR logic: résultats matchant ANY critère
+
+**Bugs fixés:**
+- ✅ SQL injection: f-string interpolation → parameterized queries avec `?` placeholders
+
+**Task B2 - Stock Service & API Endpoint ✅**
+- ✅ FastAPI service layer: search_stock() avec gestion d'erreurs
+- ✅ Endpoint POST `/api/stock/search` avec Bearer token
+- ✅ DI améliorée: StockService instantié per-request
+- ✅ Logging: request (criterias) + response (items count)
+
+**Commits:**
+- `feat: add stock search models and repository with flexible criteria matching`
+- `fix: use parameterized queries to prevent SQL injection in stock search`
+- `feat: add stock search service and API endpoint with activity filtering`
+- `fix: improve error handling, logging, and dependency injection in stock service`
+
+#### Android (4 tasks):
+**Task A1 - Stock Models ✅**
+- ✅ StockModels.kt: StockSearchRequest, StockItem, StockSearchResponse
+- ✅ @SerializedName annotations pour JSON mapping
+
+**Task A2 - Stock Repository & API ✅**
+- ✅ StockApiService: @POST endpoint
+- ✅ StockRepository: searchStock() avec StockSearchCallback
+- ✅ Activity code validation (ActivityManager.hasActivity())
+
+**Bugs fixés:**
+- ✅ Endpoint path: `/api/stock/search` → `api/stock/search` (Retrofit relative path)
+- ✅ AuthInterceptor: ajouté `/api/stock` aux protected endpoints
+- ✅ Callback pattern: lambda Result → named StockSearchCallback interface (cohérence codebase)
+- ✅ Logging: removed duplicate SimpleDateFormat, utilise AppLogger
+
+**Task A3 - ViewModel ✅**
+- ✅ StockSearchViewModel: LiveData (searchResults, isLoading, errorMessage, hasSearched)
+- ✅ Validation: au moins 1 critère requis
+- ✅ Logging: search initiated, success, error
+
+**Task A4 - Activity & Layout ✅**
+- ✅ StockSearchActivity: 3 EditText (article, location, storage)
+- ✅ Search & Clear buttons
+- ✅ ListView affichage résultats (ART_CODE | STK_LIEU | STK_NOSU | QUA_CODE | STK_QTE)
+- ✅ Loading spinner, empty state, error messages
+- ✅ MainActivity: bouton "Stock Search" pour accès
+
+**Bugs fixés:**
+- ✅ Validation client-side: empty fields check before API call
+- ✅ Error truncation: messages > 200 chars avec ellipsis
+- ✅ ViewModel factory: refactorisée pour cohérence
+
+**Plus:**
+- ✅ 13 string resources ajoutées (i18n)
+- ✅ Manifest registration de StockSearchActivity
+
+**Commits:**
+- `feat: add stock search data models with JSON serialization`
+- `feat: add stock API interface and repository with activity filtering`
+- `fix: improve callback pattern, activity validation, and logging consistency in stock repository`
+- `feat: add stock search ViewModel with LiveData observables`
+- `feat: add stock search activity with layout and string resources`
+- `fix: add client-side validation, truncate error messages, and improve ViewModel factory`
+- `feat: add Stock Search button to MainActivity`
+- `fix: correct stock search endpoint path in Retrofit interface`
+- `fix: add /api/stock to protected endpoints in AuthInterceptor`
+- `fix: correct table name from STK_PAR to STK_DAT in stock repository`
+
+**Test result:** ✅ Flow complet Login → Activity Selection → Stock Search → Results OK
+
+**Bugs corrigés lors du test:**
+- ✅ Déconnexion lors de recherche stock: AuthInterceptor ne reconnaissait pas /api/stock/search
+- ✅ Endpoint path incorrect: `/api/stock/search` vs `api/stock/search`
+- ✅ Table inexistante: STK_PAR → STK_DAT
+
 ---
 
 ## ❓ CE QUI RESTE À FAIRE (Futures phases)
@@ -237,13 +340,14 @@ docs/
 - ⏳ Tests UI Espresso (Phase 7+)
 - ⏳ Performance testing (Phase 7+)
 
-### Phase 7: Fonctionnalités additionnelles (À faire)
-- [ ] Authentification real (login + token)
-- [ ] Recherche stock avancée (filtres, tri)
-- [ ] Historique requêtes utilisateur
-- [ ] Scan code-barres intégration
-- [ ] Offline mode (cache local)
-- [ ] Notifications push
+### Phase 7: Fonctionnalités additionnelles
+- [x] **Part 1: Activity Selection** ✅ - COMPLÉTÉ
+- [x] **Part 2: Advanced Stock Search** ✅ - COMPLÉTÉ
+- [ ] Part 3: Stock Details (détails article sélectionné)
+- [ ] Part 4: Barcode Scanner integration
+- [ ] Part 5: Historique requêtes utilisateur
+- [ ] Part 6: Offline mode (cache local)
+- [ ] Part 7: Notifications push
 
 ### Phase 8: Production Deployment (À faire)
 - [ ] HTTPS/TLS configuration
@@ -331,25 +435,45 @@ python main.py
 
 ---
 
-## 🚀 PROCHAINES ÉTAPES (Immédiate)
+## 🚀 POUR REPRENDRE LE PROJET
 
-1. **Tester APK compilée sur appareil:**
-   - Changer IP dans Settings
-   - Vérifier que app se reconnecte avec NOUVELLE IP
-   - Vérifier port validation
-   - Vérifier navigation back button
+### 1. Redémarrer le backend
+```bash
+cd D:\Projects\POC_SPEED_RF_INFO_STOCK\backend
+python main.py
+```
+Backend s'écoute sur `http://192.168.1.20:8000` (ou l'IP configurée dans `.env`)
 
-2. **Valider logs:**
-   - Créer >2000 lignes
-   - Vérifier rotation
-   - Vérifier truncation réponses API
+### 2. Redémarrer l'app sur smartphone
+```bash
+# Build APK
+cd D:\Projects\POC_SPEED_RF_INFO_STOCK\android
+.\gradlew.bat assembleDebug -x lint
 
-3. **Nettoyer & commit:**
-   - Vérifier tous les commits sont présents
-   - Push branch si applicable
-   - Créer PR pour review si en équipe
+# Install
+adb install -r app/build/outputs/apk/debug/app-debug.apk
 
-4. **Phase 6:** Commencer testing & QA si validations passent
+# Lancez l'app
+# Login → Activity Selection → Stock Search
+```
+
+### 3. Flow complet testé ✅
+```
+1. Login (ex: admin / admin / CLAIR)
+2. Activity Selection → Choisir "BKS"
+3. MainActivity + "Stock Search" button
+4. Stock Search Activity:
+   - Entrez Article Code, Location, ou Storage Number
+   - Cliquez "Search"
+   - Résultats affichés ou message d'erreur
+5. View Logs pour vérifier STOCK_SEARCH_REQUEST/RESPONSE
+```
+
+### 4. Prochaines étapes possibles
+- **Phase 7 Part 3:** Stock Details (détails d'un article)
+- **Phase 8:** Barcode scanner integration
+- **Phase 9:** Offline mode (cache local)
+- **Production:** HTTPS, rate limiting, DB pooling, monitoring
 
 ---
 
