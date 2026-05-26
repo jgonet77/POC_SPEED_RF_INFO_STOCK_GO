@@ -4,35 +4,53 @@ Stock information endpoints (search and details).
 Protected endpoints requiring JWT token verification.
 """
 from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
+from logging import getLogger
 
+from models.stock import StockSearchRequest, StockSearchResponse
+from services.stock_service import StockService
 from middleware.auth import verify_token
 
 
+logger = getLogger(__name__)
+
 router = APIRouter()
+stock_service = StockService()
 
 
-@router.get("/search")
+@router.post("/search")
 async def search_stock(
-    sku: str,
+    request: StockSearchRequest,
     current_user: dict = Depends(verify_token)
-) -> dict:
+) -> StockSearchResponse:
     """
-    Search for stock by SKU.
+    Search stock by article code, location, or storage number.
 
-    Query Parameters:
-        sku: Product SKU to search for
+    Filters results by activity code (act_code).
+    Returns 0-N results matching any criterion.
 
-    Returns:
-        dict: Stock search results
-    """
-    # TODO: Implement stock search logic
-    return {
-        "status": "success",
-        "message": "Search endpoint (not yet implemented)",
-        "sku": sku,
-        "user": current_user.get("login"),
+    Request:
+    {
+        "art_code": "ABC123",     (optional)
+        "stk_lieu": "A-01",       (optional)
+        "stk_nosu": "SUPP-001",   (optional)
+        "act_code": "BKS"         (required)
     }
+    """
+    logger.info(
+        f"STOCK_SEARCH_REQUEST act_code={request.act_code} "
+        f"art_code={request.art_code} stk_lieu={request.stk_lieu} stk_nosu={request.stk_nosu} "
+        f"user={current_user.get('login')}"
+    )
+
+    response = stock_service.search_stock(request)
+
+    logger.info(
+        f"STOCK_SEARCH_RESPONSE act_code={request.act_code} "
+        f"status={response.status} items_found={len(response.items)} "
+        f"user={current_user.get('login')}"
+    )
+
+    return response
 
 
 @router.get("/details/{sku}")
