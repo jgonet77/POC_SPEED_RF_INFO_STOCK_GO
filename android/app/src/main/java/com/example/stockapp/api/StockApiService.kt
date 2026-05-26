@@ -7,6 +7,8 @@ import com.example.stockapp.models.LoginResponse
 import com.example.stockapp.models.StockResponse
 import com.example.stockapp.models.StockDetailsResponse
 import com.example.stockapp.models.ActivityListResponse
+import com.example.stockapp.models.StockSearchRequest
+import com.example.stockapp.models.StockSearchResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -32,4 +34,7 @@ interface StockApiService {
 
     @GET("api/activities")
     fun getActivities(): Call<ActivityListResponse>
+
+    @POST("/api/stock/search")
+    fun searchStockByActivity(@Body request: StockSearchRequest): Call<StockSearchResponse>
 }
