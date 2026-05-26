@@ -11,9 +11,16 @@ import com.example.stockapp.models.StockSearchRequest
 import com.example.stockapp.models.StockItem
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+
+/**
+ * Callback interface for stock search operations.
+ *
+ * Provides success and error callbacks for handling stock search results.
+ */
+interface StockSearchCallback {
+    fun onSuccess(items: List<StockItem>)
+    fun onError(error: String)
+}
 
 /**
  * Repository for stock-related API calls.
@@ -25,12 +32,14 @@ import java.util.Locale
  *
  * Uses [ApiClient] singleton to access the Retrofit service.
  */
-class StockRepository(private val context: Context? = null) {
+class StockRepository(private val context: Context) {
 
     private val apiService: StockApiService
         get() = ApiClient.apiService
 
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
+    companion object {
+        private const val SUCCESS_STATUS = "success"
+    }
 
     /**
      * Searches for stock information by SKU (legacy).
@@ -66,19 +75,26 @@ class StockRepository(private val context: Context? = null) {
      * @param artCode Article code (optional)
      * @param stkLieu Storage location (optional)
      * @param stkNosu Storage number (optional)
-     * @param callback Callback with Result<List<StockItem>>
+     * @param callback Callback to handle success/error results
      */
     fun searchStock(
         artCode: String?,
         stkLieu: String?,
         stkNosu: String?,
-        callback: (Result<List<StockItem>>) -> Unit
+        callback: StockSearchCallback
     ) {
+        // Validate activity is selected
+        if (!ActivityManager.hasActivity(context)) {
+            AppLogger.log("STOCK_SEARCH_FAILED error=no_activity_selected")
+            callback.onError("No activity selected")
+            return
+        }
+
         // Get selected activity code
-        val actCode = context?.let { ActivityManager.getActivityCode(it) }
+        val actCode = ActivityManager.getActivityCode(context)
         if (actCode.isNullOrEmpty()) {
-            AppLogger.log("[${getCurrentTimestamp()}] STOCK_SEARCH_FAILED error=no_activity_selected")
-            callback(Result.failure(Exception("No activity selected")))
+            AppLogger.log("STOCK_SEARCH_FAILED error=activity_code_missing")
+            callback.onError("Activity code missing")
             return
         }
 
@@ -92,8 +108,7 @@ class StockRepository(private val context: Context? = null) {
 
         // Log request
         AppLogger.log(
-            "[${getCurrentTimestamp()}] STOCK_SEARCH_REQUEST " +
-            "act_code=$actCode art_code=$artCode stk_lieu=$stkLieu stk_nosu=$stkNosu"
+            "STOCK_SEARCH_REQUEST act_code=$actCode art_code=$artCode stk_lieu=$stkLieu stk_nosu=$stkNosu"
         )
 
         // Make API call
@@ -106,18 +121,18 @@ class StockRepository(private val context: Context? = null) {
             ) {
                 response.body()?.let { body ->
                     AppLogger.log(
-                        "[${getCurrentTimestamp()}] STOCK_SEARCH_RESPONSE " +
-                        "status=${body.status} items_count=${body.items.size}"
+                        "STOCK_SEARCH_RESPONSE status=${body.status} items_count=${body.items.size}"
                     )
 
-                    if (response.isSuccessful && body.status == "success") {
-                        callback(Result.success(body.items))
+                    if (response.isSuccessful && body.status == SUCCESS_STATUS) {
+                        callback.onSuccess(body.items)
                     } else {
-                        callback(Result.failure(Exception(body.message)))
+                        val errorMsg = body.message.ifEmpty { "Unknown error" }
+                        callback.onError(errorMsg)
                     }
                 } ?: run {
-                    AppLogger.log("[${getCurrentTimestamp()}] STOCK_SEARCH_FAILED error=null_response")
-                    callback(Result.failure(Exception("Empty response from server")))
+                    AppLogger.log("STOCK_SEARCH_FAILED error=null_response")
+                    callback.onError("Empty response from server")
                 }
             }
 
@@ -125,16 +140,9 @@ class StockRepository(private val context: Context? = null) {
                 call: retrofit2.Call<com.example.stockapp.models.StockSearchResponse>,
                 t: Throwable
             ) {
-                AppLogger.log(
-                    "[${getCurrentTimestamp()}] STOCK_SEARCH_FAILED " +
-                    "error=${t.message?.take(100)}"
-                )
-                callback(Result.failure(t))
+                AppLogger.log("STOCK_SEARCH_FAILED error=${t.message?.take(100)}")
+                callback.onError(t.message ?: "Unknown error")
             }
         })
-    }
-
-    private fun getCurrentTimestamp(): String {
-        return dateFormat.format(Date())
     }
 }
