@@ -35,6 +35,6 @@ interface StockApiService {
     @GET("api/activities")
     fun getActivities(): Call<ActivityListResponse>
 
-    @POST("/api/stock/search")
+    @POST("api/stock/search")
     fun searchStockByActivity(@Body request: StockSearchRequest): Call<StockSearchResponse>
 }
