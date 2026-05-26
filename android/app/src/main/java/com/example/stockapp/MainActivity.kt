@@ -144,6 +144,12 @@ class MainActivity : AppCompatActivity(), AuthInterceptor.OnUnauthorizedListener
             finish()
         }
 
+        binding.stockSearchButton.setOnClickListener {
+            AppLogger.log("STOCK_SEARCH_BUTTON tapped")
+            val intent = Intent(this, StockSearchActivity::class.java)
+            startActivity(intent)
+        }
+
         // Start connection test on app launch
         viewModel.testConnection()
     }
