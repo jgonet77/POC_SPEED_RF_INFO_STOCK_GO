@@ -2,9 +2,11 @@ package com.example.stockapp.viewmodels
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.stockapp.repositories.HealthRepository
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -14,17 +16,17 @@ import org.mockito.kotlin.whenever
 /**
  * Unit tests for HealthViewModel.
  *
- * These tests validate the initial LiveData state of the ViewModel and that
- * public methods can be called without throwing exceptions. No network I/O is
- * exercised — all assertions run on the JVM without a device or emulator.
+ * InstantTaskExecutorRule replaces the Architecture Components background executor
+ * with a synchronous one, so LiveData.postValue() updates are immediately visible
+ * in assertions without Thread.sleep() or await helpers.
  *
- * android.util.Log calls inside the ViewModel are handled by
- * returnDefaultValues = true in build.gradle testOptions.
- *
- * LiveData initial values are set synchronously in MutableLiveData constructors,
- * so .value is readable without InstantTaskExecutorRule for these tests.
+ * HealthRepository is injected as a mock to prevent any real network I/O.
+ * android.util.Log calls are handled by returnDefaultValues = true in build.gradle.
  */
 class HealthViewModelTest {
+
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Mock
     private lateinit var mockContext: Context
@@ -34,6 +36,9 @@ class HealthViewModelTest {
 
     @Mock
     private lateinit var mockEditor: SharedPreferences.Editor
+
+    @Mock
+    private lateinit var mockRepository: HealthRepository
 
     private lateinit var viewModel: HealthViewModel
 
@@ -51,7 +56,7 @@ class HealthViewModelTest {
             invocation.arguments[1] as? String
         }
 
-        viewModel = HealthViewModel(mockContext)
+        viewModel = HealthViewModel(mockContext, mockRepository)
     }
 
     // -------------------------------------------------------------------------
@@ -100,27 +105,15 @@ class HealthViewModelTest {
     }
 
     // -------------------------------------------------------------------------
-    // 4. testConnection() can be called without arguments
+    // 4. testConnection() transitions status to CONNECTING
     // -------------------------------------------------------------------------
 
     @Test
-    fun `testConnection can be called without arguments and does not throw`() {
-        // Arrange — ViewModel already in DISCONNECTED state
+    fun `testConnection transitions connectionStatus to CONNECTING`() {
+        // Act
+        viewModel.testConnection()
 
-        // Act — testConnection() reads host/port from ConfigManager (mocked above).
-        // The actual network call runs on a daemon background thread; we only
-        // verify that the call does not throw synchronously.
-        var thrownException: Throwable? = null
-        try {
-            viewModel.testConnection()
-        } catch (e: Throwable) {
-            thrownException = e
-        }
-
-        // Assert — no exception thrown
-        assertEquals(null, thrownException)
-
-        // Assert — ViewModel is no longer DISCONNECTED (it moved to CONNECTING)
-        assertNotNull(viewModel.connectionStatus.value)
+        // Assert — postValue is synchronous thanks to InstantTaskExecutorRule
+        assertEquals(ConnectionStatus.CONNECTING, viewModel.connectionStatus.value)
     }
 }

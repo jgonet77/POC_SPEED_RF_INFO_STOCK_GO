@@ -15,9 +15,10 @@ enum class ConnectionStatus {
     DISCONNECTED, CONNECTING, CONNECTED, ERROR
 }
 
-class HealthViewModel(val context: Context? = null) : ViewModel() {
-
-    private val repository = HealthRepository()
+class HealthViewModel(
+    val context: Context? = null,
+    private val repository: HealthRepository = HealthRepository()
+) : ViewModel() {
     private val configManager = context?.let { ConfigManager(it) }
 
     private val _connectionStatus = MutableLiveData<ConnectionStatus>(ConnectionStatus.DISCONNECTED)
