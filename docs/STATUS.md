@@ -343,11 +343,17 @@ docs/
 ### Phase 7: Fonctionnalités additionnelles
 - [x] **Part 1: Activity Selection** ✅ - COMPLÉTÉ
 - [x] **Part 2: Advanced Stock Search** ✅ - COMPLÉTÉ
-- [ ] Part 3: Stock Details (détails article sélectionné)
-- [ ] Part 4: Barcode Scanner integration
-- [ ] Part 5: Historique requêtes utilisateur
-- [ ] Part 6: Offline mode (cache local)
-- [ ] Part 7: Notifications push
+- [ ] **Part 3: Login UX Improvement** - À faire
+  - [ ] Ajouter roue crantée (settings icon) sur LoginActivity
+  - [ ] Permettre configuration serveur API (IP/Port) AVANT login
+  - [ ] Tests de connexion depuis l'écran de login
+  - [ ] **Navigation post-login:** Après authentification réussie, aller directement à StockSearchActivity (au lieu de MainActivity)
+  - [ ] Simplifier le flux: Login → Stock Search (skip MainActivity & Activity Selection si une seule activité)
+- [ ] Part 4: Stock Details (détails article sélectionné)
+- [ ] Part 5: Barcode Scanner integration
+- [ ] Part 6: Historique requêtes utilisateur
+- [ ] Part 7: Offline mode (cache local)
+- [ ] Part 8: Notifications push
 
 ### Phase 8: Production Deployment (À faire)
 - [ ] HTTPS/TLS configuration
