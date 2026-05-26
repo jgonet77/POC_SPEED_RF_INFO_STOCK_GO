@@ -120,12 +120,12 @@ class LoginActivity : AppCompatActivity() {
                     "login=$login hash=$hashMethod token_saved=true expires_in=${response.expires_in}"
             )
 
-            // Show success message briefly before launching MainActivity
+            // Show success message briefly before launching ActivitySelectionActivity
             binding.statusMessageTextView.text = response.message
             binding.statusMessageTextView.setTextColor(getColor(R.color.success_green))
 
-            // Launch MainActivity and finish LoginActivity
-            val intent = Intent(this, MainActivity::class.java)
+            // Launch ActivitySelectionActivity and finish LoginActivity
+            val intent = Intent(this, ActivitySelectionActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()

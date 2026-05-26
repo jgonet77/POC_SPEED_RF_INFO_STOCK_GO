@@ -25,6 +25,10 @@
         </activity>
 
         <activity
+            android:name=".ActivitySelectionActivity"
+            android:exported="true" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="true" />
 

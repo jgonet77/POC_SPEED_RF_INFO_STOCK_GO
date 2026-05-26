@@ -54,4 +54,15 @@
     <string name="login_error_network">Network error. Please check your API configuration.</string>
     <string name="login_error_unknown">An error occurred. Please try again.</string>
     <string name="login_loading">Logging in…</string>
+
+    <!-- ActivitySelectionActivity -->
+    <string name="activity_selection_title">Select Activity</string>
+    <string name="activity_selection_label">Choose your activity:</string>
+    <string name="activity_selection_confirm_button">Confirm</string>
+    <string name="activity_selection_cancel_button">Cancel</string>
+    <string name="activity_selection_loading">Loading activities…</string>
+    <string name="activity_selection_error_network">Network error. Please check your API configuration.</string>
+    <string name="activity_selection_error_empty">No activities available.</string>
+    <string name="activity_selection_error_unknown">An error occurred. Please try again.</string>
+    <string name="activity_selection_error_select">Please select an activity.</string>
 </resources>

@@ -11,6 +11,7 @@ import com.example.stockapp.api.AuthInterceptor
 import com.example.stockapp.databinding.ActivityMainBinding
 import com.example.stockapp.logging.AppLogger
 import com.example.stockapp.managers.TokenManager
+import com.example.stockapp.managers.ActivityManager
 import com.example.stockapp.viewmodels.HealthViewModel
 import com.example.stockapp.viewmodels.ConnectionStatus
 import kotlin.concurrent.thread
@@ -28,6 +29,16 @@ class MainActivity : AppCompatActivity(), AuthInterceptor.OnUnauthorizedListener
         if (token == null) {
             // Token is missing or expired, redirect to login
             val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
+
+        // Check if activity has been selected
+        if (!ActivityManager.hasActivity(this)) {
+            // No activity selected, redirect to ActivitySelectionActivity
+            val intent = Intent(this, ActivitySelectionActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
@@ -57,7 +68,9 @@ class MainActivity : AppCompatActivity(), AuthInterceptor.OnUnauthorizedListener
         }
 
         viewModel.connectionDetails.observe(this) { details ->
-            binding.connectionDetailsText.text = details
+            val activityLib = ActivityManager.getActivityLib(this)
+            val activityInfo = if (activityLib != null) "Activity: $activityLib\n" else ""
+            binding.connectionDetailsText.text = activityInfo + details
         }
 
         viewModel.waitTime.observe(this) { time ->
@@ -123,6 +136,7 @@ class MainActivity : AppCompatActivity(), AuthInterceptor.OnUnauthorizedListener
         binding.logoutButton.setOnClickListener {
             AppLogger.log("USER_LOGOUT button tapped")
             TokenManager.clearToken(this)
+            ActivityManager.clearActivity(this)
             val intent = Intent(this, LoginActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
