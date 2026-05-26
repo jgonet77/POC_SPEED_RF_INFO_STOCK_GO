@@ -88,6 +88,10 @@ class ActivitySelectionActivity : AppCompatActivity() {
 
                 // Use safe null handling with .let {} instead of !! (IMPORTANT FIX #6)
                 response.body()?.let { activityResponse ->
+                    AppLogger.log("ACTIVITY_RESPONSE status=${activityResponse.status} message=${activityResponse.message} count=${activityResponse.activities.size}")
+                    activityResponse.activities.forEach { activity ->
+                        AppLogger.log("ACTIVITY_ITEM keyu=${activity.actKeyu} code=${activity.actCode} lib=${activity.actLib}")
+                    }
                     if (response.isSuccessful) {
                         activity.handleLoadSuccess(activityResponse)
                     } else {

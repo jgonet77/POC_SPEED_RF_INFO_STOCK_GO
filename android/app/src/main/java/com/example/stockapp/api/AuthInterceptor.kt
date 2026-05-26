@@ -54,6 +54,6 @@ class AuthInterceptor(
     }
 
     private fun isProtectedEndpoint(url: String): Boolean {
-        return url.contains("/api/search") || url.contains("/api/details")
+        return url.contains("/api/search") || url.contains("/api/details") || url.contains("/api/activities")
     }
 }
