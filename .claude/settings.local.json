@@ -97,7 +97,11 @@
       "Bash(Get-ChildItem -Path \"D:\\\\Projects\\\\POC_SPEED_RF_INFO_STOCK\\\\backend\" -Recurse)",
       "PowerShell(head *)",
       "Bash(./gradlew testDebugUnitTest)",
-      "Bash(gradle build *)"
+      "Bash(gradle build *)",
+      "Bash(.\\\\gradlew assembleDebug)",
+      "PowerShell(adb devices *)",
+      "PowerShell(adb *)",
+      "Bash(adb logcat *)"
     ]
   }
 }

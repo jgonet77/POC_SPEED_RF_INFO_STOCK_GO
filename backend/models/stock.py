@@ -31,13 +31,6 @@ class StockSearchRequest(BaseModel):
             raise ValueError("At least one of art_code, stk_lieu, or stk_nosu must be provided")
         return self
 
-    def has_criteria(self) -> bool:
-        """Ensure at least one search criterion is provided."""
-        has_any = bool(self.art_code or self.stk_lieu or self.stk_nosu)
-        if not has_any:
-            raise ValueError("At least one of art_code, stk_lieu, or stk_nosu must be provided")
-        return True
-
 
 class StockItem(BaseModel):
     """Single stock item in search results."""

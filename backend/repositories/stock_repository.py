@@ -17,18 +17,21 @@ class StockRepository(BaseRepository):
             QueryError: on database query failure
             DatabaseConnectionError: on connection failure
         """
-        # Validate request
-        request.has_criteria()
+        # Validation is handled by Pydantic model_validator
 
-        # Build WHERE clause with OR logic
-        conditions = [f"ACT_CODE = '{request.act_code}'"]
+        # Build WHERE clause with parameterized query (activity filter is AND, rest are OR)
+        conditions = ["ACT_CODE = ?"]
+        params = [request.act_code]
 
         if request.art_code:
-            conditions.append(f"ART_CODE LIKE '%{request.art_code}%'")
+            conditions.append("ART_CODE LIKE ?")
+            params.append(f"%{request.art_code}%")
         if request.stk_lieu:
-            conditions.append(f"STK_LIEU LIKE '%{request.stk_lieu}%'")
+            conditions.append("STK_LIEU LIKE ?")
+            params.append(f"%{request.stk_lieu}%")
         if request.stk_nosu:
-            conditions.append(f"STK_NOSU LIKE '%{request.stk_nosu}%'")
+            conditions.append("STK_NOSU LIKE ?")
+            params.append(f"%{request.stk_nosu}%")
 
         # First condition is activity filter (AND), rest are OR
         where_clause = conditions[0] + " AND (" + " OR ".join(conditions[1:]) + ")"
@@ -41,7 +44,7 @@ class StockRepository(BaseRepository):
         """
 
         try:
-            rows = self.execute_query(query)
+            rows = self.execute_query(query, tuple(params))
         except (DatabaseConnectionError, QueryError) as exc:
             raise QueryError(f"Stock search failed: {str(exc)}") from exc
 

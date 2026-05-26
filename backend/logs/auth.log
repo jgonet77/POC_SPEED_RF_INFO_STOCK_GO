@@ -263,3 +263,34 @@
 [2026-05-26 19:06:44] LOGIN_ATTEMPT login=bks hash=CLAIR status=FAILED error=Password mismatch
 [2026-05-26 19:06:50] LOGIN_ATTEMPT login=bks hash=CLAIR status=SUCCESS
 [2026-05-26 19:10:18] LOGIN_ATTEMPT login=bks hash=CLAIR status=SUCCESS
+[2026-05-26 20:10:14] LOGIN_ATTEMPT login=bks hash=CLAIR status=SUCCESS
+[2026-05-26 20:11:01] LOGIN_ATTEMPT login=bks hash=CLAIR status=SUCCESS
+[2026-05-26 20:11:01] AUTH_FAILED endpoint=protected token=MISSING reason=MISSING
+[2026-05-26 20:13:51] LOGIN_ATTEMPT login=bks hash=CLAIR status=SUCCESS
+[2026-05-26 20:17:28] LOGIN_ATTEMPT login=bks hash=CLAIR status=SUCCESS
+[2026-05-26 20:20:37] LOGIN_ATTEMPT login=bks hash=CLAIR status=SUCCESS
+[2026-05-26 20:23:16] LOGIN_ATTEMPT login=bks hash=CLAIR status=SUCCESS
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=MISSING reason=MISSING
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=342f9ab7e41bc862 reason=INVALID_SIGNATURE
+[2026-05-26 20:48:32] LOGIN_ATTEMPT login=admin hash=CLAIR status=SUCCESS
+[2026-05-26 20:48:32] LOGIN_ATTEMPT login=user1 hash=MD5 status=SUCCESS
+[2026-05-26 20:48:32] LOGIN_ATTEMPT login=user2 hash=SHA256 status=SUCCESS
+[2026-05-26 20:48:32] LOGIN_ATTEMPT login=nonexistent hash=CLAIR status=FAILED error=User not found
+[2026-05-26 20:48:32] LOGIN_ATTEMPT login=admin hash=CLAIR status=FAILED error=Password mismatch
+[2026-05-26 20:48:32] LOGIN_ATTEMPT login=admin hash=MD5 status=FAILED error=Password mismatch
+[2026-05-26 20:48:32] LOGIN_ATTEMPT login=admin hash=INVALID status=FAILED error=Invalid hash method
+[2026-05-26 20:48:32] LOGIN_ATTEMPT login=admin hash=CLAIR status=FAILED error=DB_ERROR: Connection refused
+[2026-05-26 20:48:32] LOGIN_ATTEMPT login=admin hash=CLAIR status=SUCCESS
+[2026-05-26 20:48:32] LOGIN_ATTEMPT login=admin hash=CLAIR status=SUCCESS
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=MISSING reason=MISSING
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=692e9da749ec595e reason=MALFORMED_HEADER
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=82febdd58e5683e6 reason=MALFORMED_HEADER
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=1b6cec05ff161b56 reason=EXPIRED
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=1b10c06ed29633fa reason=INVALID_SIGNATURE
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=692e9da749ec595e reason=NOT_IN_ACTIVE_TOKENS
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=MISSING reason=MISSING
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=1b6cec05ff161b56 reason=EXPIRED
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=MISSING reason=MISSING
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=1b10c06ed29633fa reason=INVALID_SIGNATURE
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=MISSING reason=MISSING
+[2026-05-26 20:48:32] AUTH_FAILED endpoint=protected token=644d0c3b82bfe5e0 reason=INVALID_SIGNATURE
