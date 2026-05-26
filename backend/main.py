@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from routes.health import router as health_router
 from routes.auth import router as auth_router
 from routes.stock import router as stock_router
+from routes.activity import router as activity_router
 from config import settings
 
 app = FastAPI(
@@ -63,6 +64,7 @@ async def http_exception_handler(request, exc):
 app.include_router(health_router, prefix="/api", tags=["health"])
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 app.include_router(stock_router, prefix="/api", tags=["stock"])
+app.include_router(activity_router, prefix="/api", tags=["activities"])
 
 @app.get("/")
 def read_root():

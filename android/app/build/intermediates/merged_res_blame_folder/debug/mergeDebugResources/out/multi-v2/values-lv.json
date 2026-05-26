@@ -4,7 +4,7 @@
             "outputFile": "com.example.stockapp-mergeDebugResources-25:/values-lv/values-lv.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\jerome.gouez\\.gradle\\caches\\8.9\\transforms\\8fcaf82556e0068bbe2b63db50cefd89\\transformed\\appcompat-1.6.1\\res\\values-lv\\values-lv.xml",
+                    "source": "C:\\Users\\jerome.gouez\\.gradle\\caches\\8.11.1\\transforms\\097e0f308d596dc59b1288848fe537d3\\transformed\\appcompat-1.6.1\\res\\values-lv\\values-lv.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\jerome.gouez\\.gradle\\caches\\8.9\\transforms\\576c782de9bd1644fb9e0055c4092f31\\transformed\\core-1.9.0\\res\\values-lv\\values-lv.xml",
+                    "source": "C:\\Users\\jerome.gouez\\.gradle\\caches\\8.11.1\\transforms\\eefa256f8b4ee15b6ed1664a5331664e\\transformed\\core-1.9.0\\res\\values-lv\\values-lv.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

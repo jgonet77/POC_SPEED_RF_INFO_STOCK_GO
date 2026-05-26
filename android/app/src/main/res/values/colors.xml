@@ -9,4 +9,6 @@
     <color name="success_green">#4CAF50</color>
     <color name="button_enabled">#6200EE</color>
     <color name="button_disabled">#CCCCCC</color>
+    <color name="status_success">#00C853</color>
+    <color name="status_error">#D32F2F</color>
 </resources>

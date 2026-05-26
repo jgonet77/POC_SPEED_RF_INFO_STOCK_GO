@@ -4,10 +4,13 @@ import com.example.stockapp.models.HealthCheckResponse
 import com.example.stockapp.models.ApiHealthResponse
 import com.example.stockapp.models.LoginRequest
 import com.example.stockapp.models.LoginResponse
+import com.example.stockapp.models.StockResponse
+import com.example.stockapp.models.StockDetailsResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Body
+import retrofit2.http.Query
 
 interface StockApiService {
 
@@ -19,4 +22,10 @@ interface StockApiService {
 
     @POST("api/login")
     fun login(@Body request: LoginRequest): Call<LoginResponse>
+
+    @GET("api/search")
+    fun searchStock(@Query("sku") sku: String): Call<StockResponse>
+
+    @GET("api/details")
+    fun getStockDetails(@Query("sku") sku: String): Call<StockDetailsResponse>
 }

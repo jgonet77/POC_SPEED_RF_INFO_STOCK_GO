@@ -3,14 +3,9 @@ package com.example.stockapp
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.stockapp.api.ApiClient
+import com.example.stockapp.databinding.ActivityLoginBinding
 import com.example.stockapp.logging.AppLogger
 import com.example.stockapp.managers.TokenManager
 import com.example.stockapp.models.LoginRequest
@@ -30,47 +25,39 @@ import java.util.Locale
  */
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var loginEditText: EditText
-    private lateinit var passwordEditText: EditText
-    private lateinit var hashMethodRadioGroup: RadioGroup
-    private lateinit var statusMessageTextView: TextView
-    private lateinit var loginProgressBar: ProgressBar
-    private lateinit var loginButton: Button
-    private lateinit var cancelButton: Button
+    private lateinit var binding: ActivityLoginBinding
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
+    private var isActivityAlive = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Initialize app-wide singletons
         AppLogger(this)
         ApiClient.init(this)
 
-        // Find views
-        loginEditText = findViewById(R.id.loginEditText)
-        passwordEditText = findViewById(R.id.passwordEditText)
-        hashMethodRadioGroup = findViewById(R.id.hashMethodRadioGroup)
-        statusMessageTextView = findViewById(R.id.statusMessageTextView)
-        loginProgressBar = findViewById(R.id.loginProgressBar)
-        loginButton = findViewById(R.id.loginButton)
-        cancelButton = findViewById(R.id.cancelButton)
-
         // Setup button listeners
-        loginButton.setOnClickListener { performLogin() }
-        cancelButton.setOnClickListener { exitApp() }
+        binding.loginButton.setOnClickListener { performLogin() }
+        binding.cancelButton.setOnClickListener { exitApp() }
+    }
+
+    override fun onDestroy() {
+        isActivityAlive = false
+        super.onDestroy()
     }
 
     private fun performLogin() {
         // Validate inputs
-        val login = loginEditText.text.toString().trim()
+        val login = binding.loginEditText.text.toString().trim()
         if (login.isEmpty()) {
             showError(getString(R.string.login_error_empty_login))
             return
         }
 
-        val password = passwordEditText.text.toString()
+        val password = binding.passwordEditText.text.toString()
         if (password.isEmpty()) {
             showError(getString(R.string.login_error_empty_password))
             return
@@ -81,8 +68,8 @@ class LoginActivity : AppCompatActivity() {
 
         // Show loading state
         setLoadingState(true)
-        statusMessageTextView.text = getString(R.string.login_loading)
-        statusMessageTextView.setTextColor(getColor(android.R.color.black))
+        binding.statusMessageTextView.text = getString(R.string.login_loading)
+        binding.statusMessageTextView.setTextColor(getColor(R.color.black))
 
         // Log login attempt
         AppLogger.log(
@@ -117,61 +104,73 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun handleLoginSuccess(login: String, hashMethod: String, response: LoginResponse) {
-        setLoadingState(false)
+        if (!isActivityAlive) return
 
-        // Store token
-        TokenManager.saveToken(this, response.token, response.expires_in)
+        runOnUiThread {
+            if (!isActivityAlive) return@runOnUiThread
 
-        // Log successful login
-        AppLogger.log(
-            "[${getCurrentTimestamp()}] LOGIN_SUCCESS " +
-                "login=$login hash=$hashMethod token_saved=true expires_in=${response.expires_in}"
-        )
+            setLoadingState(false)
 
-        // Show success message briefly before launching MainActivity
-        statusMessageTextView.text = response.message
-        statusMessageTextView.setTextColor(getColor(android.R.color.holo_green_dark))
+            // Store token
+            TokenManager.saveToken(this, response.token, response.expires_in)
 
-        // Launch MainActivity and finish LoginActivity
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
+            // Log successful login
+            AppLogger.log(
+                "[${getCurrentTimestamp()}] LOGIN_SUCCESS " +
+                    "login=$login hash=$hashMethod token_saved=true expires_in=${response.expires_in}"
+            )
+
+            // Show success message briefly before launching MainActivity
+            binding.statusMessageTextView.text = response.message
+            binding.statusMessageTextView.setTextColor(getColor(R.color.success_green))
+
+            // Launch MainActivity and finish LoginActivity
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun handleLoginFailure(login: String, hashMethod: String, errorMsg: String) {
-        setLoadingState(false)
+        if (!isActivityAlive) return
 
-        val displayError = when {
-            errorMsg.contains("Invalid", ignoreCase = true) -> getString(R.string.login_error_invalid_credentials)
-            errorMsg.contains("network", ignoreCase = true) -> getString(R.string.login_error_network)
-            else -> errorMsg.take(100) // Truncate long error messages
+        runOnUiThread {
+            if (!isActivityAlive) return@runOnUiThread
+
+            setLoadingState(false)
+
+            val displayError = when {
+                errorMsg.contains("Invalid", ignoreCase = true) -> getString(R.string.login_error_invalid_credentials)
+                errorMsg.contains("network", ignoreCase = true) -> getString(R.string.login_error_network)
+                else -> errorMsg.take(100) // Truncate long error messages
+            }
+
+            showError(displayError)
+
+            // Log failed login
+            AppLogger.log(
+                "[${getCurrentTimestamp()}] LOGIN_FAILED " +
+                    "login=$login hash=$hashMethod error=${errorMsg.take(50)}"
+            )
         }
-
-        showError(displayError)
-
-        // Log failed login
-        AppLogger.log(
-            "[${getCurrentTimestamp()}] LOGIN_FAILED " +
-                "login=$login hash=$hashMethod error=${errorMsg.take(50)}"
-        )
     }
 
     private fun showError(message: String) {
-        statusMessageTextView.text = message
-        statusMessageTextView.setTextColor(getColor(android.R.color.holo_red_dark))
+        binding.statusMessageTextView.text = message
+        binding.statusMessageTextView.setTextColor(getColor(R.color.error_red))
     }
 
     private fun setLoadingState(isLoading: Boolean) {
-        loginButton.isEnabled = !isLoading
-        passwordEditText.isEnabled = !isLoading
-        loginEditText.isEnabled = !isLoading
-        hashMethodRadioGroup.isEnabled = !isLoading
-        loginProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.loginButton.isEnabled = !isLoading
+        binding.passwordEditText.isEnabled = !isLoading
+        binding.loginEditText.isEnabled = !isLoading
+        binding.hashMethodRadioGroup.isEnabled = !isLoading
+        binding.loginProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun getSelectedHashMethod(): String {
-        return when (hashMethodRadioGroup.checkedRadioButtonId) {
+        return when (binding.hashMethodRadioGroup.checkedRadioButtonId) {
             R.id.radioButtonClair -> "CLAIR"
             R.id.radioButtonMd5 -> "MD5"
             R.id.radioButtonSha256 -> "SHA256"

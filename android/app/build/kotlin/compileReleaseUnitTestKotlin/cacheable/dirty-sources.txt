@@ -1,0 +1,9 @@
+D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\test\java\com\example\stockapp\repositories\HealthRepositoryTest.kt
+D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\test\java\com\example\stockapp\logging\AppLoggerTest.kt
+D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\test\java\com\example\stockapp\LogsViewerActivityTest.kt
+D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\test\java\com\example\stockapp\viewmodels\HealthViewModelTest.kt
+D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\test\java\com\example\stockapp\api\AuthInterceptorTest.kt
+D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\test\java\com\example\stockapp\config\ConfigManagerTest.kt
+D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\test\java\com\example\stockapp\repositories\StockRepositoryTest.kt
+D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\test\java\com\example\stockapp\managers\TokenManagerTest.kt
+D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\test\java\com\example\stockapp\LoginActivityTest.kt

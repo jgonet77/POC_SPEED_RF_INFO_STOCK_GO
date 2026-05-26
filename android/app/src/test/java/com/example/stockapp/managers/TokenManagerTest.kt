@@ -129,12 +129,13 @@ class TokenManagerTest {
     // -------------------------------------------------------------------------
 
     @Test
-    fun `clearToken removes token from SharedPreferences`() {
+    fun `clearToken removes token and expiry from SharedPreferences`() {
         // Act
         TokenManager.clearToken(mockContext)
 
         // Assert
         verify(mockEditor).remove("auth_token")
+        verify(mockEditor).remove("auth_token_expiry")
         verify(mockEditor).apply()
     }
 }

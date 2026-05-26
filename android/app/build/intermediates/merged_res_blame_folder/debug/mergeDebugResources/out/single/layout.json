@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "com.example.stockapp-mergeDebugResources-26:/layout/activity_main.xml",
+        "source": "com.example.stockapp-main-29:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.stockapp-mergeDebugResources-26:/layout/activity_settings.xml",
+        "source": "com.example.stockapp-main-29:/layout/activity_settings.xml"
+    },
+    {
+        "merged": "com.example.stockapp-mergeDebugResources-26:/layout/activity_login.xml",
+        "source": "com.example.stockapp-main-29:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.example.stockapp-mergeDebugResources-26:/layout/activity_logs_viewer.xml",
+        "source": "com.example.stockapp-main-29:/layout/activity_logs_viewer.xml"
+    }
+]

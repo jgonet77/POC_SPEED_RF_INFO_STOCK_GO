@@ -26,8 +26,8 @@ object TokenManager {
         val token = prefs.getString(KEY_AUTH_TOKEN, null)
         val expiry = prefs.getLong(KEY_AUTH_TOKEN_EXPIRY, 0)
 
-        // Check if expired
-        if (System.currentTimeMillis() > expiry) {
+        // Check if token is null first, then check if expired
+        if (token == null || System.currentTimeMillis() >= expiry) {
             clearToken(context)
             return null
         }
@@ -60,6 +60,10 @@ object TokenManager {
      */
     fun clearToken(context: Context) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().remove(KEY_AUTH_TOKEN).apply()
+        prefs.edit().apply {
+            remove(KEY_AUTH_TOKEN)
+            remove(KEY_AUTH_TOKEN_EXPIRY)
+            apply()
+        }
     }
 }

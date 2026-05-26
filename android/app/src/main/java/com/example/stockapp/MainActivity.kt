@@ -3,40 +3,22 @@ package com.example.stockapp
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.stockapp.api.ApiClient
+import com.example.stockapp.api.AuthInterceptor
+import com.example.stockapp.databinding.ActivityMainBinding
 import com.example.stockapp.logging.AppLogger
 import com.example.stockapp.managers.TokenManager
 import com.example.stockapp.viewmodels.HealthViewModel
 import com.example.stockapp.viewmodels.ConnectionStatus
 import kotlin.concurrent.thread
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AuthInterceptor.OnUnauthorizedListener {
 
+    private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: HealthViewModel
-
-    private lateinit var connectionSpinner: ProgressBar
-    private lateinit var connectionStatusIcon: ImageView
-    private lateinit var connectionStatusText: TextView
-    private lateinit var connectionDetailsText: TextView
-    private lateinit var waitTimeText: TextView
-    private lateinit var cancelConnectionButton: Button
-    private lateinit var apiStatusText: TextView
-    private lateinit var apiTestTimeText: TextView
-    private lateinit var databaseStatusText: TextView
-    private lateinit var databaseTestTimeText: TextView
-    private lateinit var databaseVersionText: TextView
-    private lateinit var databaseTimeText: TextView
-    private lateinit var errorText: TextView
-    private lateinit var testApiButton: Button
-    private lateinit var testDatabaseButton: Button
-    private lateinit var settingsButton: Button
-    private lateinit var viewLogsButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +34,14 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Initialize app-wide singletons in background thread to avoid ANR
         thread(isDaemon = true) {
             AppLogger(this@MainActivity)
-            ApiClient.init(this@MainActivity)
+            // Pass this Activity as the 401 listener so AuthInterceptor can notify us
+            ApiClient.init(this@MainActivity, this@MainActivity)
         }
 
         // Initialize ViewModel
@@ -67,77 +51,58 @@ class MainActivity : AppCompatActivity() {
             }
         }.let { ViewModelProvider(this, it).get(HealthViewModel::class.java) }
 
-        // Find views
-        connectionSpinner = findViewById(R.id.connectionSpinner)
-        connectionStatusIcon = findViewById(R.id.connectionStatusIcon)
-        connectionStatusText = findViewById(R.id.connectionStatusText)
-        connectionDetailsText = findViewById(R.id.connectionDetailsText)
-        waitTimeText = findViewById(R.id.waitTimeText)
-        cancelConnectionButton = findViewById(R.id.cancelConnectionButton)
-        apiStatusText = findViewById(R.id.apiStatusText)
-        apiTestTimeText = findViewById(R.id.apiTestTimeText)
-        databaseStatusText = findViewById(R.id.databaseStatusText)
-        databaseTestTimeText = findViewById(R.id.databaseTestTimeText)
-        databaseVersionText = findViewById(R.id.databaseVersionText)
-        databaseTimeText = findViewById(R.id.databaseTimeText)
-        errorText = findViewById(R.id.errorText)
-        testApiButton = findViewById(R.id.testApiButton)
-        testDatabaseButton = findViewById(R.id.testDatabaseButton)
-        settingsButton = findViewById(R.id.settingsButton)
-        viewLogsButton = findViewById(R.id.viewLogsButton)
-
         // Setup connection status observers
         viewModel.connectionStatus.observe(this) { status ->
             updateConnectionUI(status)
         }
 
         viewModel.connectionDetails.observe(this) { details ->
-            connectionDetailsText.text = details
+            binding.connectionDetailsText.text = details
         }
 
         viewModel.waitTime.observe(this) { time ->
-            waitTimeText.text = time
+            binding.waitTimeText.text = time
         }
 
         // Setup health status observers
         viewModel.apiHealthStatus.observe(this) { status ->
-            apiStatusText.text = status
+            binding.apiStatusText.text = status
         }
 
         viewModel.apiTestTime.observe(this) { time ->
-            apiTestTimeText.text = time
+            binding.apiTestTimeText.text = time
         }
 
         viewModel.databaseHealthStatus.observe(this) { status ->
-            databaseStatusText.text = status
+            binding.databaseStatusText.text = status
         }
 
         viewModel.databaseTestTime.observe(this) { time ->
-            databaseTestTimeText.text = time
+            binding.databaseTestTimeText.text = time
         }
 
         viewModel.databaseVersion.observe(this) { version ->
-            databaseVersionText.text = if (version.isNotEmpty()) "Version: $version" else ""
+            binding.databaseVersionText.text = if (version.isNotEmpty()) "Version: $version" else ""
         }
 
         viewModel.databaseTime.observe(this) { time ->
-            databaseTimeText.text = if (time.isNotEmpty()) "Server Time: $time" else ""
+            binding.databaseTimeText.text = if (time.isNotEmpty()) "Server Time: $time" else ""
         }
 
         viewModel.errorMessage.observe(this) { error ->
-            errorText.text = if (error.isNotEmpty()) "Error: $error" else ""
+            binding.errorText.text = if (error.isNotEmpty()) "Error: $error" else ""
         }
 
         // Setup button listeners
-        testApiButton.setOnClickListener {
+        binding.testApiButton.setOnClickListener {
             viewModel.checkApiHealth()
         }
 
-        testDatabaseButton.setOnClickListener {
+        binding.testDatabaseButton.setOnClickListener {
             viewModel.checkDatabaseHealth()
         }
 
-        cancelConnectionButton.setOnClickListener {
+        binding.cancelConnectionButton.setOnClickListener {
             if (viewModel.connectionStatus.value == ConnectionStatus.ERROR) {
                 viewModel.testConnection()
             } else {
@@ -145,14 +110,24 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        settingsButton.setOnClickListener {
+        binding.settingsButton.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
 
-        viewLogsButton.setOnClickListener {
+        binding.viewLogsButton.setOnClickListener {
             val intent = Intent(this, LogsViewerActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.logoutButton.setOnClickListener {
+            AppLogger.log("USER_LOGOUT button tapped")
+            TokenManager.clearToken(this)
+            val intent = Intent(this, LoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            startActivity(intent)
+            finish()
         }
 
         // Start connection test on app launch
@@ -168,42 +143,64 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onUnauthorized() {
+        // Handle 401 Unauthorized response: redirect to login
+        runOnUiThread {
+            // Show toast notification to user
+            Toast.makeText(
+                this,
+                "Session expired, please login again",
+                Toast.LENGTH_LONG
+            ).show()
+
+            // Clear token (if not already cleared by interceptor)
+            TokenManager.clearToken(this)
+
+            // Redirect to LoginActivity
+            val intent = Intent(this, LoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            startActivity(intent)
+            finish()
+        }
+    }
+
     private fun updateConnectionUI(status: ConnectionStatus) {
         when (status) {
             ConnectionStatus.DISCONNECTED -> {
-                connectionStatusText.text = "Disconnected"
-                connectionSpinner.visibility = View.GONE
-                connectionStatusIcon.visibility = View.GONE
-                cancelConnectionButton.visibility = View.GONE
-                testApiButton.isEnabled = false
-                testDatabaseButton.isEnabled = false
+                binding.connectionStatusText.text = "Disconnected"
+                binding.connectionSpinner.visibility = View.GONE
+                binding.connectionStatusIcon.visibility = View.GONE
+                binding.cancelConnectionButton.visibility = View.GONE
+                binding.testApiButton.isEnabled = false
+                binding.testDatabaseButton.isEnabled = false
             }
             ConnectionStatus.CONNECTING -> {
-                connectionStatusText.text = "Connecting..."
-                connectionSpinner.visibility = View.VISIBLE
-                connectionStatusIcon.visibility = View.GONE
-                cancelConnectionButton.visibility = View.VISIBLE
-                testApiButton.isEnabled = false
-                testDatabaseButton.isEnabled = false
+                binding.connectionStatusText.text = "Connecting..."
+                binding.connectionSpinner.visibility = View.VISIBLE
+                binding.connectionStatusIcon.visibility = View.GONE
+                binding.cancelConnectionButton.visibility = View.VISIBLE
+                binding.testApiButton.isEnabled = false
+                binding.testDatabaseButton.isEnabled = false
             }
             ConnectionStatus.CONNECTED -> {
-                connectionStatusText.text = "Connected ✅"
-                connectionSpinner.visibility = View.GONE
-                connectionStatusIcon.visibility = View.VISIBLE
-                connectionStatusIcon.setImageResource(android.R.drawable.ic_dialog_info)
-                cancelConnectionButton.visibility = View.GONE
-                testApiButton.isEnabled = true
-                testDatabaseButton.isEnabled = true
+                binding.connectionStatusText.text = "Connected ✅"
+                binding.connectionSpinner.visibility = View.GONE
+                binding.connectionStatusIcon.visibility = View.VISIBLE
+                binding.connectionStatusIcon.setImageResource(android.R.drawable.ic_dialog_info)
+                binding.cancelConnectionButton.visibility = View.GONE
+                binding.testApiButton.isEnabled = true
+                binding.testDatabaseButton.isEnabled = true
             }
             ConnectionStatus.ERROR -> {
-                connectionStatusText.text = "Connection Failed ❌"
-                connectionSpinner.visibility = View.GONE
-                connectionStatusIcon.visibility = View.VISIBLE
-                connectionStatusIcon.setImageResource(android.R.drawable.ic_dialog_alert)
-                cancelConnectionButton.text = "Retry"
-                cancelConnectionButton.visibility = View.VISIBLE
-                testApiButton.isEnabled = false
-                testDatabaseButton.isEnabled = false
+                binding.connectionStatusText.text = "Connection Failed ❌"
+                binding.connectionSpinner.visibility = View.GONE
+                binding.connectionStatusIcon.visibility = View.VISIBLE
+                binding.connectionStatusIcon.setImageResource(android.R.drawable.ic_dialog_alert)
+                binding.cancelConnectionButton.text = "Retry"
+                binding.cancelConnectionButton.visibility = View.VISIBLE
+                binding.testApiButton.isEnabled = false
+                binding.testDatabaseButton.isEnabled = false
             }
         }
     }
