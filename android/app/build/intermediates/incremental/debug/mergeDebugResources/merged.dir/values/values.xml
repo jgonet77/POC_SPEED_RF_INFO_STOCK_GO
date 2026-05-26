@@ -664,6 +664,16 @@
     <string name="abc_shareactionprovider_share_with">Share with</string>
     <string name="abc_shareactionprovider_share_with_application">Share with <ns1:g example="Mail" id="application_name">%s</ns1:g></string>
     <string name="abc_toolbar_collapse_description">Collapse</string>
+    <string name="activity_selection_cancel_button">Cancel</string>
+    <string name="activity_selection_confirm_button">Confirm</string>
+    <string name="activity_selection_error_auth">Authentication required. Please login again.</string>
+    <string name="activity_selection_error_empty">No activities available.</string>
+    <string name="activity_selection_error_network">Network error. Please check your API configuration.</string>
+    <string name="activity_selection_error_select">Please select an activity.</string>
+    <string name="activity_selection_error_unknown">An error occurred. Please try again.</string>
+    <string name="activity_selection_label">Choose your activity:</string>
+    <string name="activity_selection_loading">Loading activities…</string>
+    <string name="activity_selection_title">Select Activity</string>
     <string name="androidx_startup" translatable="false">androidx.startup</string>
     <string name="api_health_title">API Health</string>
     <string name="app_name">Stock App POC</string>

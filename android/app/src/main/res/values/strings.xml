@@ -61,6 +61,7 @@
     <string name="activity_selection_confirm_button">Confirm</string>
     <string name="activity_selection_cancel_button">Cancel</string>
     <string name="activity_selection_loading">Loading activities…</string>
+    <string name="activity_selection_error_auth">Authentication required. Please login again.</string>
     <string name="activity_selection_error_network">Network error. Please check your API configuration.</string>
     <string name="activity_selection_error_empty">No activities available.</string>
     <string name="activity_selection_error_unknown">An error occurred. Please try again.</string>

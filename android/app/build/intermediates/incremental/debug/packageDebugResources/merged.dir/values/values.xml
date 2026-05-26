@@ -11,6 +11,16 @@
     <color name="success_green">#4CAF50</color>
     <color name="teal_200">#03DAC5</color>
     <color name="white">#FFFFFF</color>
+    <string name="activity_selection_cancel_button">Cancel</string>
+    <string name="activity_selection_confirm_button">Confirm</string>
+    <string name="activity_selection_error_auth">Authentication required. Please login again.</string>
+    <string name="activity_selection_error_empty">No activities available.</string>
+    <string name="activity_selection_error_network">Network error. Please check your API configuration.</string>
+    <string name="activity_selection_error_select">Please select an activity.</string>
+    <string name="activity_selection_error_unknown">An error occurred. Please try again.</string>
+    <string name="activity_selection_label">Choose your activity:</string>
+    <string name="activity_selection_loading">Loading activities…</string>
+    <string name="activity_selection_title">Select Activity</string>
     <string name="api_health_title">API Health</string>
     <string name="app_name">Stock App POC</string>
     <string name="cancel_button">Cancel</string>

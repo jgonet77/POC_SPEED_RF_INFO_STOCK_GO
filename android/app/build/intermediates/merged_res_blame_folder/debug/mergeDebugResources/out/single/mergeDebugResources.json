@@ -1,5 +1,9 @@
 [
     {
+        "merged": "com.example.stockapp-debug-27:/layout_activity_selection.xml.flat",
+        "source": "com.example.stockapp-main-29:/layout/activity_selection.xml"
+    },
+    {
         "merged": "com.example.stockapp-debug-27:/layout_activity_settings.xml.flat",
         "source": "com.example.stockapp-main-29:/layout/activity_settings.xml"
     },

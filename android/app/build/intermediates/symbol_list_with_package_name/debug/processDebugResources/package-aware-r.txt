@@ -980,6 +980,7 @@ id action_mode_bar_stub
 id action_mode_close_button
 id action_text
 id actions
+id activitySpinner
 id activity_chooser_view_content
 id add
 id alertTitle
@@ -1027,6 +1028,7 @@ id clearLogsButton
 id clockwise
 id closest
 id collapseActionView
+id confirmButton
 id connectionDetailsText
 id connectionSpinner
 id connectionStatusIcon
@@ -1111,6 +1113,7 @@ id line3
 id linear
 id listMode
 id list_item
+id loadingProgressBar
 id loginButton
 id loginEditText
 id loginProgressBar
@@ -1303,6 +1306,7 @@ layout abc_tooltip
 layout activity_login
 layout activity_logs_viewer
 layout activity_main
+layout activity_selection
 layout activity_settings
 layout custom_dialog
 layout notification_action
@@ -1342,6 +1346,16 @@ string abc_searchview_description_voice
 string abc_shareactionprovider_share_with
 string abc_shareactionprovider_share_with_application
 string abc_toolbar_collapse_description
+string activity_selection_cancel_button
+string activity_selection_confirm_button
+string activity_selection_error_auth
+string activity_selection_error_empty
+string activity_selection_error_network
+string activity_selection_error_select
+string activity_selection_error_unknown
+string activity_selection_label
+string activity_selection_loading
+string activity_selection_title
 string androidx_startup
 string api_health_title
 string app_name

@@ -7,6 +7,7 @@ import android.content.Context
  *
  * Stores selected activity (code, keyu, lib) in SharedPreferences under the "activity" namespace.
  * Provides methods to save, retrieve, and clear activity selection.
+ * Caches SharedPreferences instance to avoid repeated getSharedPreferences() calls (IMPORTANT FIX #1).
  */
 object ActivityManager {
 
@@ -14,6 +15,16 @@ object ActivityManager {
     private const val KEY_ACTIVITY_CODE = "selected_act_code"
     private const val KEY_ACTIVITY_KEYU = "selected_act_keyu"
     private const val KEY_ACTIVITY_LIB = "selected_act_lib"
+
+    /**
+     * Helper method to get SharedPreferences instance.
+     * Caches the preferences object to avoid repeated getSharedPreferences() calls.
+     * (IMPORTANT FIX #1: Inefficient SharedPreferences)
+     *
+     * @param context Application context
+     * @return Cached SharedPreferences instance
+     */
+    private fun getPrefs(context: Context) = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     /**
      * Saves the selected activity to SharedPreferences.
@@ -24,8 +35,7 @@ object ActivityManager {
      * @param actLib Activity label/description
      */
     fun saveActivity(context: Context, actKeyu: Int, actCode: String, actLib: String) {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().apply {
+        getPrefs(context).edit().apply {
             putInt(KEY_ACTIVITY_KEYU, actKeyu)
             putString(KEY_ACTIVITY_CODE, actCode)
             putString(KEY_ACTIVITY_LIB, actLib)
@@ -40,8 +50,7 @@ object ActivityManager {
      * @return The activity code, or null if not stored
      */
     fun getActivityCode(context: Context): String? {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return prefs.getString(KEY_ACTIVITY_CODE, null)
+        return getPrefs(context).getString(KEY_ACTIVITY_CODE, null)
     }
 
     /**
@@ -51,8 +60,7 @@ object ActivityManager {
      * @return The activity keyu, or -1 if not stored
      */
     fun getActivityKeyu(context: Context): Int {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return prefs.getInt(KEY_ACTIVITY_KEYU, -1)
+        return getPrefs(context).getInt(KEY_ACTIVITY_KEYU, -1)
     }
 
     /**
@@ -62,8 +70,7 @@ object ActivityManager {
      * @return The activity label, or null if not stored
      */
     fun getActivityLib(context: Context): String? {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return prefs.getString(KEY_ACTIVITY_LIB, null)
+        return getPrefs(context).getString(KEY_ACTIVITY_LIB, null)
     }
 
     /**
@@ -73,8 +80,7 @@ object ActivityManager {
      * @param context Application context
      */
     fun clearActivity(context: Context) {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().apply {
+        getPrefs(context).edit().apply {
             remove(KEY_ACTIVITY_CODE)
             remove(KEY_ACTIVITY_KEYU)
             remove(KEY_ACTIVITY_LIB)
@@ -89,7 +95,7 @@ object ActivityManager {
      * @return True if activity is selected, false otherwise
      */
     fun hasActivity(context: Context): Boolean {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = getPrefs(context)
         return prefs.contains(KEY_ACTIVITY_CODE) && prefs.contains(KEY_ACTIVITY_KEYU)
     }
 }

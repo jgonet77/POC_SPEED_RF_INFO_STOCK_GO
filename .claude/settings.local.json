@@ -95,7 +95,9 @@
       "Read(//tmp/**)",
       "Bash(adb devices *)",
       "Bash(Get-ChildItem -Path \"D:\\\\Projects\\\\POC_SPEED_RF_INFO_STOCK\\\\backend\" -Recurse)",
-      "PowerShell(head *)"
+      "PowerShell(head *)",
+      "Bash(./gradlew testDebugUnitTest)",
+      "Bash(gradle build *)"
     ]
   }
 }

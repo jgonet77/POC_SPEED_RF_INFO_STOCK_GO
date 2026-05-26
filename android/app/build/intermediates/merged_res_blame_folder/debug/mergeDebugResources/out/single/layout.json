@@ -12,6 +12,10 @@
         "source": "com.example.stockapp-main-29:/layout/activity_login.xml"
     },
     {
+        "merged": "com.example.stockapp-mergeDebugResources-26:/layout/activity_selection.xml",
+        "source": "com.example.stockapp-main-29:/layout/activity_selection.xml"
+    },
+    {
         "merged": "com.example.stockapp-mergeDebugResources-26:/layout/activity_logs_viewer.xml",
         "source": "com.example.stockapp-main-29:/layout/activity_logs_viewer.xml"
     }

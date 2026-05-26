@@ -9,11 +9,13 @@ import com.example.stockapp.api.ApiClient
 import com.example.stockapp.databinding.ActivitySelectionBinding
 import com.example.stockapp.logging.AppLogger
 import com.example.stockapp.managers.ActivityManager
+import com.example.stockapp.managers.TokenManager
 import com.example.stockapp.models.ActivityItem
 import com.example.stockapp.models.ActivityListResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -55,6 +57,16 @@ class ActivitySelectionActivity : AppCompatActivity() {
     }
 
     private fun loadActivities() {
+        // Validate token before making API call (CRITICAL FIX #3: Token validation)
+        val token = TokenManager.getToken(this)
+        if (token == null) {
+            handleLoadFailure(getString(R.string.activity_selection_error_auth))
+            AppLogger.log(
+                "[${getCurrentTimestamp()}] ACTIVITY_LOAD_FAILED error=no_valid_token"
+            )
+            return
+        }
+
         // Show loading state
         setLoadingState(true)
         binding.statusMessageTextView.text = getString(R.string.activity_selection_loading)
@@ -65,21 +77,35 @@ class ActivitySelectionActivity : AppCompatActivity() {
             "[${getCurrentTimestamp()}] ACTIVITY_LOAD_REQUEST status=STARTED"
         )
 
-        // Make API call
+        // Make API call with WeakReference to prevent memory leak (CRITICAL FIX #1)
+        val activityRef = WeakReference(this)
         val call = ApiClient.apiService.getActivities()
         call.enqueue(object : Callback<ActivityListResponse> {
             override fun onResponse(call: Call<ActivityListResponse>, response: Response<ActivityListResponse>) {
-                if (response.isSuccessful && response.body() != null) {
-                    val activityResponse = response.body()!!
-                    handleLoadSuccess(activityResponse)
-                } else {
-                    val errorMsg = response.errorBody()?.string() ?: getString(R.string.activity_selection_error_unknown)
-                    handleLoadFailure(errorMsg)
+                // Check if activity is still alive before updating UI (CRITICAL FIX #2: Race condition check)
+                val activity = activityRef.get() ?: return
+                if (activity.isFinishing || activity.isDestroyed) return
+
+                // Use safe null handling with .let {} instead of !! (IMPORTANT FIX #6)
+                response.body()?.let { activityResponse ->
+                    if (response.isSuccessful) {
+                        activity.handleLoadSuccess(activityResponse)
+                    } else {
+                        val errorMsg = response.errorBody()?.string() ?: activity.getString(R.string.activity_selection_error_unknown)
+                        activity.handleLoadFailure(errorMsg)
+                    }
+                } ?: run {
+                    val errorMsg = activity.getString(R.string.activity_selection_error_unknown)
+                    activity.handleLoadFailure(errorMsg)
                 }
             }
 
             override fun onFailure(call: Call<ActivityListResponse>, t: Throwable) {
-                handleLoadFailure(t.message ?: getString(R.string.activity_selection_error_network))
+                // Check if activity is still alive before updating UI (CRITICAL FIX #2: Race condition check)
+                val activity = activityRef.get() ?: return
+                if (activity.isFinishing || activity.isDestroyed) return
+
+                activity.handleLoadFailure(t.message ?: activity.getString(R.string.activity_selection_error_network))
             }
         })
     }
@@ -144,6 +170,12 @@ class ActivitySelectionActivity : AppCompatActivity() {
     }
 
     private fun populateSpinner(activityList: List<ActivityItem>) {
+        // Guard clause: Check if activities list is empty (IMPORTANT FIX #2)
+        if (activityList.isEmpty()) {
+            showError(getString(R.string.activity_selection_error_empty))
+            return
+        }
+
         // Create formatted display list: "ACT_CODE - ACT_LIB"
         val displayList = activityList.map { "${it.actCode} - ${it.actLib}" }
 
@@ -159,9 +191,7 @@ class ActivitySelectionActivity : AppCompatActivity() {
         binding.activitySpinner.adapter = adapter
 
         // Set first item as selected by default
-        if (activityList.isNotEmpty()) {
-            binding.activitySpinner.setSelection(0)
-        }
+        binding.activitySpinner.setSelection(0)
     }
 
     private fun performActivitySelection() {

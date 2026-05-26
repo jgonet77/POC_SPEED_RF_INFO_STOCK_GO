@@ -26,3 +26,7 @@
 [2026-05-26 19:36:47] AUTH_FAILED endpoint=protected token=6c423b8043bc2ba9 reason=INVALID_SIGNATURE
 [2026-05-26 19:36:47] AUTH_FAILED endpoint=protected token=MISSING reason=MISSING
 [2026-05-26 19:36:47] AUTH_FAILED endpoint=protected token=644d0c3b82bfe5e0 reason=INVALID_SIGNATURE
+[2026-05-26 19:37:10] AUTH_FAILED endpoint=protected token=MISSING reason=MISSING
+[2026-05-26 19:37:10] AUTH_FAILED endpoint=protected token=342f9ab7e41bc862 reason=INVALID_SIGNATURE
+[2026-05-26 19:42:01] AUTH_FAILED endpoint=protected token=MISSING reason=MISSING
+[2026-05-26 19:42:01] AUTH_FAILED endpoint=protected token=342f9ab7e41bc862 reason=INVALID_SIGNATURE

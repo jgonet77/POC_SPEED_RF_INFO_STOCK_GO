@@ -40,6 +40,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.example.stockapp.ActivitySelectionActivity"
+            android:exported="true" />
+        <activity
             android:name="com.example.stockapp.MainActivity"
             android:exported="true" />
         <activity
