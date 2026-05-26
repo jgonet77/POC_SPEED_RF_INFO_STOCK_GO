@@ -17,7 +17,7 @@ router = APIRouter()
 stock_service = StockService()
 
 
-@router.post("/search")
+@router.post("/stock/search")
 async def search_stock(
     request: StockSearchRequest,
     current_user: dict = Depends(verify_token)
@@ -53,7 +53,7 @@ async def search_stock(
     return response
 
 
-@router.get("/details/{sku}")
+@router.get("/stock/details/{sku}")
 async def get_stock_details(
     sku: str,
     current_user: dict = Depends(verify_token)
