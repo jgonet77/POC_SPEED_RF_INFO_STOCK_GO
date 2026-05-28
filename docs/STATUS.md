@@ -1,7 +1,7 @@
 # 📋 STATUS - POC Stock App (Android + API Python)
 
-**Dernière mise à jour:** 2026-05-26  
-**État du projet:** Phase 7 Part 1 & Part 2 COMPLETE - Activity Selection & Advanced Stock Search  
+**Dernière mise à jour:** 2026-05-28  
+**État du projet:** Phase 7 Part 1, 2 & 3 COMPLETE - Activity Selection, Advanced Stock Search & Login UX Improvement  
 
 ---
 
@@ -330,6 +330,34 @@ docs/
 
 ---
 
+### Phase 7 Part 3: Login UX Improvement (TERMINÉE) ✅
+**Objectif:** Permettre configuration serveur API sans login, simplifier navigation post-login
+
+**Complété:**
+- ✅ Settings icon (⚙) sur LoginActivity → ouvre PreLoginSettingsActivity
+- ✅ PreLoginSettingsActivity: Configuration IP/Port sans authentification requise
+- ✅ Test Connection button: 2-step diagnostic (API + Database checks via API)
+- ✅ View Test Logs button: Dialog showing connection test results
+- ✅ Post-login navigation: LoginActivity → StockSearchActivity directement (skip MainActivity)
+- ✅ Auto-selection: Si une seule activité, la sélectionner automatiquement
+- ✅ Flow simplifié: Login → Stock Search (4 screens → 2 screens)
+
+**Commits:**
+- `feat: add settings icon button to login activity layout`
+- `feat: create PreLoginSettingsActivity for pre-login API configuration`
+- `feat: add layout for PreLoginSettingsActivity`
+- `fix: add accessibility descriptor to settings button`
+- `feat: add TestConnectionHelper for API and database diagnostics`
+- `fix: improve thread safety and error handling in TestConnectionHelper`
+- `feat: register PreLoginSettingsActivity in manifest`
+- `feat: add settings button listener to LoginActivity`
+- `feat: redirect post-login to StockSearchActivity instead of MainActivity`
+- `feat: auto-select single activity and redirect to StockSearchActivity`
+
+**Test result:** ✅ APK builds successfully (4.17 MB), all 10 tasks completed
+
+---
+
 ## ❓ CE QUI RESTE À FAIRE (Futures phases)
 
 ### Phase 6: Testing & QA (COMPLÉTÉE ✅)
@@ -343,12 +371,12 @@ docs/
 ### Phase 7: Fonctionnalités additionnelles
 - [x] **Part 1: Activity Selection** ✅ - COMPLÉTÉ
 - [x] **Part 2: Advanced Stock Search** ✅ - COMPLÉTÉ
-- [ ] **Part 3: Login UX Improvement** - À faire
-  - [ ] Ajouter roue crantée (settings icon) sur LoginActivity
-  - [ ] Permettre configuration serveur API (IP/Port) AVANT login
-  - [ ] Tests de connexion depuis l'écran de login
-  - [ ] **Navigation post-login:** Après authentification réussie, aller directement à StockSearchActivity (au lieu de MainActivity)
-  - [ ] Simplifier le flux: Login → Stock Search (skip MainActivity & Activity Selection si une seule activité)
+- [x] **Part 3: Login UX Improvement** ✅ - COMPLÉTÉ
+  - [x] Ajouter roue crantée (settings icon) sur LoginActivity
+  - [x] Permettre configuration serveur API (IP/Port) AVANT login
+  - [x] Tests de connexion depuis l'écran de login
+  - [x] **Navigation post-login:** Après authentification réussie, aller directement à StockSearchActivity (au lieu de MainActivity)
+  - [x] Simplifier le flux: Login → Stock Search (skip MainActivity & Activity Selection si une seule activité)
 - [ ] Part 4: Stock Details (détails article sélectionné)
 - [ ] Part 5: Barcode Scanner integration
 - [ ] Part 6: Historique requêtes utilisateur
