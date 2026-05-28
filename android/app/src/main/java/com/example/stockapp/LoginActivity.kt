@@ -21,7 +21,7 @@ import java.util.Locale
  * Login Activity for user authentication.
  *
  * Presents login UI with username, password, and hash method selection.
- * On successful login, stores JWT token via TokenManager and launches StockSearchActivity.
+ * On successful login, stores JWT token via TokenManager and launches ActivitySelectionActivity.
  */
 class LoginActivity : AppCompatActivity() {
 
@@ -132,8 +132,8 @@ class LoginActivity : AppCompatActivity() {
             binding.statusMessageTextView.text = response.message
             binding.statusMessageTextView.setTextColor(getColor(R.color.success_green))
 
-            // Launch StockSearchActivity and finish LoginActivity
-            val intent = Intent(this, StockSearchActivity::class.java)
+            // Launch ActivitySelectionActivity and finish LoginActivity
+            val intent = Intent(this, ActivitySelectionActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
