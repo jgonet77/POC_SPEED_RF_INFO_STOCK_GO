@@ -10,6 +10,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.Collections
 
 /**
  * Test Connection Helper Interface for diagnostic callback.
@@ -35,8 +36,7 @@ interface TestConnectionCallback {
  */
 class TestConnectionHelper(private val context: Context) {
 
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
-    private val testLogs = mutableListOf<String>()
+    private val testLogs = Collections.synchronizedList(mutableListOf<String>())
 
     /**
      * Executes a 2-step connection diagnostic test.
@@ -79,32 +79,27 @@ class TestConnectionHelper(private val context: Context) {
     private fun testApiHealth(callback: (Boolean) -> Unit) {
         logTest("API_TEST_START", "Testing API health endpoint")
 
-        try {
-            ApiClient.apiService.checkApiHealth().enqueue(
-                object : Callback<ApiHealthResponse> {
-                    override fun onResponse(
-                        call: Call<ApiHealthResponse>,
-                        response: Response<ApiHealthResponse>
-                    ) {
-                        if (response.isSuccessful) {
-                            logTest("API_TEST_SUCCESS", "API health check passed with status ${response.code()}")
-                            callback(true)
-                        } else {
-                            logTest("API_TEST_FAILURE", "API returned status ${response.code()}: ${response.message()}")
-                            callback(false)
-                        }
-                    }
-
-                    override fun onFailure(call: Call<ApiHealthResponse>, t: Throwable) {
-                        logTest("API_TEST_FAILURE", "API test failed: ${t.message}")
+        ApiClient.apiService.checkApiHealth().enqueue(
+            object : Callback<ApiHealthResponse> {
+                override fun onResponse(
+                    call: Call<ApiHealthResponse>,
+                    response: Response<ApiHealthResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        logTest("API_TEST_SUCCESS", "API health check passed with status ${response.code()}")
+                        callback(true)
+                    } else {
+                        logTest("API_TEST_FAILURE", "API returned status ${response.code()}: ${response.message()}")
                         callback(false)
                     }
                 }
-            )
-        } catch (e: Exception) {
-            logTest("API_TEST_FAILURE", "API test exception: ${e.message}")
-            callback(false)
-        }
+
+                override fun onFailure(call: Call<ApiHealthResponse>, t: Throwable) {
+                    logTest("API_TEST_FAILURE", "API test failed: ${t.message ?: "Unknown error"}")
+                    callback(false)
+                }
+            }
+        )
     }
 
     /**
@@ -118,32 +113,27 @@ class TestConnectionHelper(private val context: Context) {
     private fun testDatabaseHealth(callback: (Boolean) -> Unit) {
         logTest("DB_TEST_START", "Testing database health endpoint")
 
-        try {
-            ApiClient.apiService.checkDatabaseHealth().enqueue(
-                object : Callback<HealthCheckResponse> {
-                    override fun onResponse(
-                        call: Call<HealthCheckResponse>,
-                        response: Response<HealthCheckResponse>
-                    ) {
-                        if (response.isSuccessful) {
-                            logTest("DB_TEST_SUCCESS", "Database health check passed with status ${response.code()}")
-                            callback(true)
-                        } else {
-                            logTest("DB_TEST_FAILURE", "Database returned status ${response.code()}: ${response.message()}")
-                            callback(false)
-                        }
-                    }
-
-                    override fun onFailure(call: Call<HealthCheckResponse>, t: Throwable) {
-                        logTest("DB_TEST_FAILURE", "Database test failed: ${t.message}")
+        ApiClient.apiService.checkDatabaseHealth().enqueue(
+            object : Callback<HealthCheckResponse> {
+                override fun onResponse(
+                    call: Call<HealthCheckResponse>,
+                    response: Response<HealthCheckResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        logTest("DB_TEST_SUCCESS", "Database health check passed with status ${response.code()}")
+                        callback(true)
+                    } else {
+                        logTest("DB_TEST_FAILURE", "Database returned status ${response.code()}: ${response.message()}")
                         callback(false)
                     }
                 }
-            )
-        } catch (e: Exception) {
-            logTest("DB_TEST_FAILURE", "Database test exception: ${e.message}")
-            callback(false)
-        }
+
+                override fun onFailure(call: Call<HealthCheckResponse>, t: Throwable) {
+                    logTest("DB_TEST_FAILURE", "Database test failed: ${t.message ?: "Unknown error"}")
+                    callback(false)
+                }
+            }
+        )
     }
 
     /**
@@ -156,10 +146,10 @@ class TestConnectionHelper(private val context: Context) {
      * @param details Description of the event
      */
     private fun logTest(type: String, details: String) {
-        val timestamp = dateFormat.format(Date())
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US).format(Date())
         val logEntry = "[$timestamp] $type: $details"
         testLogs.add(logEntry)
-        AppLogger.log(logEntry)
+        AppLogger.log("TestConnection: $logEntry")
     }
 
     /**
@@ -190,10 +180,10 @@ class TestConnectionHelper(private val context: Context) {
      */
     private fun buildSummary(apiSuccess: Boolean, dbSuccess: Boolean): String {
         return when {
-            apiSuccess && dbSuccess -> "✓ All systems operational (API and Database)"
-            apiSuccess && !dbSuccess -> "⚠ API operational but Database issue detected"
-            !apiSuccess && !dbSuccess -> "✗ Connection failed - API unreachable"
-            else -> "? Unexpected test state"
+            apiSuccess && dbSuccess -> "All systems operational (API and Database)"
+            apiSuccess && !dbSuccess -> "API operational but Database issue detected"
+            !apiSuccess && !dbSuccess -> "Connection failed - API unreachable"
+            else -> "Unexpected test state"
         }
     }
 }
