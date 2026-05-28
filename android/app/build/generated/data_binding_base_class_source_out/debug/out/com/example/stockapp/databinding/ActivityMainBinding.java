@@ -65,6 +65,9 @@ public final class ActivityMainBinding implements ViewBinding {
   public final Button settingsButton;
 
   @NonNull
+  public final Button stockSearchButton;
+
+  @NonNull
   public final Button testApiButton;
 
   @NonNull
@@ -83,8 +86,9 @@ public final class ActivityMainBinding implements ViewBinding {
       @NonNull TextView databaseStatusText, @NonNull TextView databaseTestTimeText,
       @NonNull TextView databaseTimeText, @NonNull TextView databaseVersionText,
       @NonNull TextView errorText, @NonNull Button logoutButton, @NonNull Button settingsButton,
-      @NonNull Button testApiButton, @NonNull Button testDatabaseButton,
-      @NonNull Button viewLogsButton, @NonNull TextView waitTimeText) {
+      @NonNull Button stockSearchButton, @NonNull Button testApiButton,
+      @NonNull Button testDatabaseButton, @NonNull Button viewLogsButton,
+      @NonNull TextView waitTimeText) {
     this.rootView = rootView;
     this.apiStatusText = apiStatusText;
     this.apiTestTimeText = apiTestTimeText;
@@ -100,6 +104,7 @@ public final class ActivityMainBinding implements ViewBinding {
     this.errorText = errorText;
     this.logoutButton = logoutButton;
     this.settingsButton = settingsButton;
+    this.stockSearchButton = stockSearchButton;
     this.testApiButton = testApiButton;
     this.testDatabaseButton = testDatabaseButton;
     this.viewLogsButton = viewLogsButton;
@@ -217,6 +222,12 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.stockSearchButton;
+      Button stockSearchButton = ViewBindings.findChildViewById(rootView, id);
+      if (stockSearchButton == null) {
+        break missingId;
+      }
+
       id = R.id.testApiButton;
       Button testApiButton = ViewBindings.findChildViewById(rootView, id);
       if (testApiButton == null) {
@@ -244,8 +255,8 @@ public final class ActivityMainBinding implements ViewBinding {
       return new ActivityMainBinding((LinearLayout) rootView, apiStatusText, apiTestTimeText,
           cancelConnectionButton, connectionDetailsText, connectionSpinner, connectionStatusIcon,
           connectionStatusText, databaseStatusText, databaseTestTimeText, databaseTimeText,
-          databaseVersionText, errorText, logoutButton, settingsButton, testApiButton,
-          testDatabaseButton, viewLogsButton, waitTimeText);
+          databaseVersionText, errorText, logoutButton, settingsButton, stockSearchButton,
+          testApiButton, testDatabaseButton, viewLogsButton, waitTimeText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

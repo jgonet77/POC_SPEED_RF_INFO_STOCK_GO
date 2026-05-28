@@ -105,7 +105,12 @@
       "Bash(curl -X POST http://192.168.1.20:8000/api/stock/search -H 'Content-Type: application/json' -H 'Authorization: Bearer test-token' -d '{\"art_code\": \"ARTICLE\", \"stk_lieu\": null, \"stk_nosu\": null, \"act_code\": \"BKS\"}' -v)",
       "PowerShell(Get-Job *)",
       "Bash(Get-ChildItem -Path \"D:\\\\Projects\\\\POC_SPEED_RF_INFO_STOCK\" -Recurse -Filter \"*.kt\")",
-      "Bash(./gradlew assemble *)"
+      "Bash(./gradlew assemble *)",
+      "Bash(start *)",
+      "PowerShell(Start-Process \"D:\\\\Projects\\\\POC_SPEED_RF_INFO_STOCK\\\\docs\\\\phase7-part3-mockup.html\")",
+      "Bash(./gradlew.bat compileDebugKotlin)",
+      "Bash(.\\\\gradlew.bat compileDebugKotlin)",
+      "Bash(Get-ChildItem -Path \"D:\\\\Projects\\\\POC_SPEED_RF_INFO_STOCK\\\\android\\\\app\\\\src\\\\main\\\\java\\\\com\\\\example\\\\stockapp\" -Recurse -Directory)"
     ]
   }
 }

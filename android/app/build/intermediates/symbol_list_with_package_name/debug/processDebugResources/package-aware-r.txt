@@ -1123,6 +1123,7 @@ id loginButton
 id loginEditText
 id loginProgressBar
 id logoutButton
+id logsButton
 id logsTextView
 id match_constraint
 id match_parent
@@ -1188,6 +1189,7 @@ id search_src_text
 id search_voice_btn
 id select_dialog_listview
 id settingsButton
+id settingsIconButton
 id sharedValueSet
 id sharedValueUnset
 id shortcut
@@ -1216,6 +1218,7 @@ id staticLayout
 id staticPostLayout
 id statusMessage
 id statusMessageTextView
+id stockSearchButton
 id stop
 id storageNumberInput
 id submenuarrow
@@ -1236,6 +1239,7 @@ id tag_unhandled_key_event_manager
 id tag_unhandled_key_listeners
 id tag_window_insets_animation_callback
 id testApiButton
+id testButton
 id testDatabaseButton
 id text
 id text2
@@ -1315,6 +1319,7 @@ layout abc_tooltip
 layout activity_login
 layout activity_logs_viewer
 layout activity_main
+layout activity_pre_login_settings
 layout activity_selection
 layout activity_settings
 layout activity_stock_search
@@ -1394,6 +1399,7 @@ string login_hash_method_label
 string login_hash_sha256
 string login_loading
 string login_password_label
+string login_settings_button
 string login_title
 string login_username_label
 string logs_viewer_title
@@ -1403,8 +1409,10 @@ string search_menu_title
 string settings_api_host_label
 string settings_api_port_label
 string settings_button
+string settings_logs_button
 string settings_retry_button
 string settings_save_button
+string settings_test_button
 string settings_title
 string status_bar_notification_info_overflow
 string status_label

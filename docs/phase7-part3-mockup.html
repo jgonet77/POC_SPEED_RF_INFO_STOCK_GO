@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 7 Part 3 - Mockup Écrans</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 15px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .screen {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .phone-frame {
+            background: #f5f5f5;
+            padding: 30px 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 600px;
+            position: relative;
+        }
+
+        .phone-border {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: inset 0 0 0 8px #333;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .status-bar {
+            height: 40px;
+            background: #333;
+            border-radius: 15px 15px 0 0;
+            margin: -20px -20px 0 -20px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            font-size: 12px;
+        }
+
+        .screen-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #f9f9f9;
+        }
+
+        .radio-group {
+            margin-bottom: 20px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .radio-option input {
+            margin-right: 10px;
+        }
+
+        .radio-option label {
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e8e8e8;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d8d8d8;
+        }
+
+        .settings-btn {
+            position: absolute;
+            top: 30px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .settings-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .status-message {
+            min-height: 40px;
+            color: #999;
+            text-align: center;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        /* Flow diagram */
+        .flow-section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+        }
+
+        .flow-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 150px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .flow-arrow {
+            font-size: 30px;
+            color: #667eea;
+            flex-shrink: 0;
+        }
+
+        .flow-description {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .old-flow {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+
+        .new-flow {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+
+        .comparison-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: #333;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        footer {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            margin-top: 40px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Phase 7 Part 3 - Login UX Improvement</h1>
+        <p class="subtitle">Mockup des écrans avant développement</p>
+
+        <!-- COMPARISON SECTION -->
+        <div class="flow-section">
+            <h2 class="flow-title">📊 Avant vs Après</h2>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Aspect</th>
+                        <th>❌ Avant (Actuel)</th>
+                        <th>✅ Après (Phase 7.3)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Config API</strong></td>
+                        <td>Après login via MainActicity</td>
+                        <td>Avant login (settings icon)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nombre d'écrans</strong></td>
+                        <td>4: Login → MainActivity → ActivitySelection → StockSearch</td>
+                        <td>2: Login → StockSearch</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Auto-selection</strong></td>
+                        <td>Non, voir toujours ActivitySelectionActivity</td>
+                        <td>Oui, si 1 seule activité</td>
+                    </tr>
+                    <tr>
+                        <td><strong>UX Configurateur</strong></td>
+                        <td>Bouton "Settings" dans MainActivity</td>
+                        <td>Icon ⚙ en haut-droit LoginActivity</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SCREENS CONTENT -->
+        <div class="content">
+            <!-- Screen 1: LoginActivity -->
+            <div class="screen">
+                <div class="screen-header">🔐 LoginActivity (Avant)</div>
+                <div class="phone-frame">
+                    <div class="phone-border">
+                        <div class="status-bar">
+                            <span>9:41</span>
+                            <span>🔋</span>
+                        </div>
+                        <div class="screen-title">Stock App</div>
+
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-input" placeholder="Enter username" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-input" placeholder="Enter password" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Hash Method</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="clair" name="hash" checked>
+                                    <label for="clair">Clair (Plain text)</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="md5" name="hash">
+                                    <label for="md5">MD5</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="sha256" name="hash">
+                                    <label for="sha256">SHA256</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="status-message"></div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary">Login</button>
+                            <button class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 2: LoginActivity WITH settings icon -->
+            <div class="screen">
+                <div class="screen-header">✨ LoginActivity (Après)</div>
+                <div class="phone-frame">
+                    <button class="settings-btn">⚙</button>
+
+                    <div class="phone-border">
+                        <div class="status-bar">
+                            <span>9:41</span>
+                            <span>🔋</span>
+                        </div>
+                        <div class="screen-title">Stock App</div>
+
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-input" placeholder="Enter username" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-input" placeholder="Enter password" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Hash Method</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="clair2" name="hash2" checked>
+                                    <label for="clair2">Clair (Plain text)</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="md52" name="hash2">
+                                    <label for="md52">MD5</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="sha2562" name="hash2">
+                                    <label for="sha2562">SHA256</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="status-message"></div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary">Login</button>
+                            <button class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PreLoginSettingsActivity Screen -->
+        <div class="content">
+            <div class="screen">
+                <div class="screen-header">⚙️ PreLoginSettingsActivity (Nouveau)</div>
+                <div class="phone-frame">
+                    <div class="phone-border">
+                        <div class="status-bar">
+                            <span>9:41</span>
+                            <span>🔋</span>
+                        </div>
+                        <div class="screen-title" style="font-size: 18px;">API Configuration</div>
+
+                        <div class="form-group">
+                            <label class="form-label">API Host</label>
+                            <input type="text" class="form-input" placeholder="192.168.x.x" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">API Port</label>
+                            <input type="number" class="form-input" placeholder="8000" value="">
+                        </div>
+
+                        <div class="highlight">
+                            ⓘ Cette configuration est accessible <strong>avant</strong> le login
+                        </div>
+
+                        <div class="button-group" style="grid-template-columns: 1fr;">
+                            <button class="btn btn-primary">Save Configuration</button>
+                            <button class="btn btn-secondary">Test Connection</button>
+                            <button class="btn btn-secondary">📋 View Test Logs</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; justify-content: center;">
+                <div class="highlight" style="margin: 0;">
+                    <strong>✨ Fonctionnalités Diagnostic:</strong>
+                    <ul class="feature-list">
+                        <li><strong>Test Connection</strong> - Teste API + BD via API</li>
+                        <li><strong>View Test Logs</strong> - Affiche détails des tests</li>
+                        <li>Identification rapide des problèmes</li>
+                        <li>Utile en cas de changement d'IP/réseau</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Logs Dialog Screen -->
+        <div class="content" style="margin-top: 30px;">
+            <div class="screen">
+                <div class="screen-header">📋 Test Connection Results (Dialog)</div>
+                <div class="phone-frame">
+                    <div class="phone-border" style="padding: 15px;">
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 15px; color: #333;">Connection Test Results</div>
+
+                        <div style="background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-family: monospace; font-size: 11px; color: #333; max-height: 300px; overflow-y: auto; line-height: 1.4;">
+                            <div style="color: #4caf50;">✓ [2026-05-27 14:32:10.123] API_TEST_START http://192.168.1.25:8000/health</div>
+                            <div style="color: #4caf50;">✓ [2026-05-27 14:32:10.456] API_TEST_SUCCESS status_code=200 response_time=333ms</div>
+                            <div style="color: #4caf50;">✓ [2026-05-27 14:32:10.789] DB_TEST_START via /db-health endpoint</div>
+                            <div style="color: #4caf50;">✓ [2026-05-27 14:32:11.245] DB_TEST_SUCCESS SQL_Server connected response_time=456ms</div>
+                            <div style="color: #4caf50;">✓ [2026-05-27 14:32:11.246] OVERALL_RESULT SUCCESS - All systems operational</div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                            <button class="btn btn-secondary">Clear Logs</button>
+                            <button class="btn btn-primary">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; justify-content: center;">
+                <div class="highlight" style="margin: 0;">
+                    <strong>📊 Contenu des Logs:</strong>
+                    <ul class="feature-list">
+                        <li><strong>API_TEST</strong> - Ping /health endpoint</li>
+                        <li><strong>DB_TEST</strong> - Vérification connexion DB via API</li>
+                        <li><strong>Timestamps</strong> - Pour identifier délais/timeout</li>
+                        <li><strong>Response times</strong> - Diagnostic performance</li>
+                        <li><strong>Status codes</strong> - Erreurs HTTP/DB</li>
+                        <li>Color-coded: ✓ (success) vs ✗ (error)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- FLOW DIAGRAMS -->
+        <div class="flow-section">
+            <h2 class="flow-title">🔄 Navigation Flow</h2>
+
+            <h3 style="color: #d32f2f; margin-top: 30px; margin-bottom: 15px;">❌ AVANT (Actuel - 4 écrans)</h3>
+            <div class="flow-description old-flow">
+                <div class="flow-diagram">
+                    <div class="flow-step">Login</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">MainActivity</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">Activity Selection</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">Stock Search</div>
+                </div>
+                <p style="margin-top: 15px;">❌ Problème: Trop d'étapes, configuration API cachée, pas de settings depuis login</p>
+            </div>
+
+            <h3 style="color: #388e3c; margin-top: 30px; margin-bottom: 15px;">✅ APRÈS (Nouveau - 2 écrans)</h3>
+            <div class="flow-description new-flow">
+                <div class="flow-diagram">
+                    <div class="flow-step">Login (+ ⚙ settings)</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">Stock Search</div>
+                </div>
+                <p style="margin-top: 15px;">✅ Avantages: Direct au stock search, activity auto-sélectionnée si unique, settings avant login</p>
+            </div>
+
+            <h3 style="color: #1976d2; margin-top: 30px; margin-bottom: 15px;">⚙️ Flux Détaillé: Pre-Login Settings</h3>
+            <div class="flow-description">
+                <div class="flow-diagram">
+                    <div class="flow-step">LoginActivity</div>
+                    <div class="flow-arrow">↓ click ⚙</div>
+                    <div class="flow-step">PreLoginSettings</div>
+                    <div class="flow-arrow">← back</div>
+                    <div class="flow-step">LoginActivity</div>
+                </div>
+                <p style="margin-top: 15px;">✅ Settings accessibles SANS authentification → configurer IP → revenir login</p>
+            </div>
+        </div>
+
+        <!-- DETAILED CHANGES -->
+        <div class="flow-section">
+            <h2 class="flow-title">📋 Résumé des Changements</h2>
+
+            <h3 style="color: #333; margin-bottom: 15px;">📱 Fichiers modifiés/créés:</h3>
+            <ul class="feature-list">
+                <li><strong>activity_login.xml</strong> - Ajouter settings icon button (⚙) top-right</li>
+                <li><strong>LoginActivity.kt</strong> - Ajouter listener settings button + redirection post-login vers StockSearchActivity</li>
+                <li><strong>PreLoginSettingsActivity.kt</strong> (NOUVEAU) - Gestion config IP/Port sans auth</li>
+                <li><strong>activity_pre_login_settings.xml</strong> (NOUVEAU) - Layout pour settings</li>
+                <li><strong>ActivitySelectionActivity.kt</strong> - Auto-select si 1 seule activité + redirection vers StockSearchActivity</li>
+                <li><strong>AndroidManifest.xml</strong> - Enregistrer PreLoginSettingsActivity</li>
+                <li><strong>strings.xml</strong> - Ajouter ressources i18n pour settings</li>
+            </ul>
+
+            <h3 style="color: #333; margin: 30px 0 15px;">🎯 Fonctionnalités clés:</h3>
+            <ul class="feature-list">
+                <li>Settings icon ⚙ visible sur LoginActivity</li>
+                <li>PreLoginSettingsActivity accessible sans credentials</li>
+                <li>Configuration IP/Port persistée via ConfigManager (SharedPreferences)</li>
+                <li><strong>Test Connection complet (2 étapes):</strong>
+                    <ul style="margin-top: 8px; margin-left: 15px;">
+                        <li>1️⃣ <strong>API Test:</strong> Ping endpoint /health (vérifier API accessible)</li>
+                        <li>2️⃣ <strong>DB Test:</strong> Vérifier BD via /db-health endpoint</li>
+                        <li>📊 Logs détaillés: timestamps, response times, status codes</li>
+                        <li>🎨 Color-coded: ✓ success / ✗ error</li>
+                    </ul>
+                </li>
+                <li><strong>View Test Logs Dialog:</strong> Affiche résultats complets des tests pour débogage</li>
+                <li>Post-login: redirection directe vers StockSearchActivity</li>
+                <li>Auto-selection activité si unique (skip ActivitySelectionActivity)</li>
+                <li>Flux simplifié: 4 écrans → 2 écrans</li>
+            </ul>
+
+            <h3 style="color: #333; margin: 30px 0 15px;">🧪 Test Cases:</h3>
+            <ul class="feature-list">
+                <li>Click settings icon → PreLoginSettingsActivity opens</li>
+                <li>Modify IP → Save → Returns to LoginActivity with new IP</li>
+                <li>Login with new IP → Direct to StockSearchActivity (no MainActivity)</li>
+                <li>Single activity user → Auto-selected, skip ActivitySelectionActivity</li>
+                <li>Settings persist après fermeture app</li>
+                <li>Invalid port rejected (validation 1-65535)</li>
+                <li><strong>Test Connection (API):</strong>
+                    <ul style="margin-top: 8px; margin-left: 15px;">
+                        <li>Click "Test Connection" → appel POST /health endpoint</li>
+                        <li>Success: Status 200 → log success + response time</li>
+                        <li>Failure: Timeout/error → log détails erreur</li>
+                    </ul>
+                </li>
+                <li><strong>Test Connection (Database):</strong>
+                    <ul style="margin-top: 8px; margin-left: 15px;">
+                        <li>Si API OK → appel POST /db-health endpoint</li>
+                        <li>Success: BD accessible → log success + response time</li>
+                        <li>Failure: BD indisponible → log erreur DB spécifique</li>
+                    </ul>
+                </li>
+                <li><strong>View Test Logs:</strong>
+                    <ul style="margin-top: 8px; margin-left: 15px;">
+                        <li>Click "View Test Logs" → Dialog avec historique tests</li>
+                        <li>Affiche: timestamps, API/DB status, response times</li>
+                        <li>Clear Logs button → nettoie l'historique</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- TEST CONNECTION DETAILS -->
+        <div class="flow-section">
+            <h2 class="flow-title">🔍 Détails: Test Connection & Logs</h2>
+
+            <h3 style="color: #333; margin-bottom: 15px;">📡 Flux Test Connection:</h3>
+            <div class="flow-description">
+                <ol style="margin: 0; padding-left: 20px; color: #555;">
+                    <li><strong>User clique "Test Connection"</strong></li>
+                    <li style="margin-top: 10px;"><strong>App valide IP & Port</strong> (même validation que Save)</li>
+                    <li style="margin-top: 10px;"><strong>Test 1: API Health Check</strong>
+                        <ul style="margin-top: 5px;">
+                            <li>POST request to <code>http://{IP}:{PORT}/health</code></li>
+                            <li>Timeout: 5 secondes</li>
+                            <li>Si succès (200) → continue Test 2</li>
+                            <li>Si erreur → log erreur + STOP</li>
+                        </ul>
+                    </li>
+                    <li style="margin-top: 10px;"><strong>Test 2: Database Health Check</strong>
+                        <ul style="margin-top: 5px;">
+                            <li>POST request to <code>http://{IP}:{PORT}/db-health</code></li>
+                            <li>Timeout: 5 secondes</li>
+                            <li>Si succès (200 + BD responsive) → overall SUCCESS</li>
+                            <li>Si erreur → log erreur (BD disconnected, etc.)</li>
+                        </ul>
+                    </li>
+                    <li style="margin-top: 10px;"><strong>Logs Persistence</strong>
+                        <ul style="margin-top: 5px;">
+                            <li>Tous les tests loggés en mémoire (AppLogger)</li>
+                            <li>Historique persiste pendant la session</li>
+                            <li>User peut voir "View Test Logs" → Dialog</li>
+                        </ul>
+                    </li>
+                    <li style="margin-top: 10px;"><strong>Toast Message</strong>
+                        <ul style="margin-top: 5px;">
+                            <li>Overall result: "✓ All systems OK" ou "✗ Connection failed - see logs"</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <h3 style="color: #333; margin: 30px 0 15px;">📋 Contenu des Logs (Format):</h3>
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 12px; line-height: 1.6; color: #333; overflow-x: auto;">
+                <div style="color: #666;"># Test Logs Format (chaque ligne)</div>
+                <div style="margin-top: 10px; color: #333;">
+                    <div><strong>[timestamp HH:MM:SS.mmm] TEST_TYPE result [details]</strong></div>
+                    <div style="margin-top: 8px; color: #666; font-size: 11px;">Exemples:</div>
+                    <div style="margin-top: 5px; color: #4caf50;"><strong>✓</strong> [2026-05-27 14:32:10.123] API_PING_START http://192.168.1.25:8000/health</div>
+                    <div style="margin-top: 3px; color: #4caf50;"><strong>✓</strong> [2026-05-27 14:32:10.456] API_PING_SUCCESS status=200 response_time=333ms</div>
+                    <div style="margin-top: 3px; color: #4caf50;"><strong>✓</strong> [2026-05-27 14:32:10.789] DB_CHECK_START via /db-health endpoint</div>
+                    <div style="margin-top: 3px; color: #4caf50;"><strong>✓</strong> [2026-05-27 14:32:11.245] DB_CHECK_SUCCESS SQL_Server_connected response_time=456ms</div>
+                    <div style="margin-top: 8px; color: #d32f2f;"><strong>✗</strong> [2026-05-27 14:35:20.100] API_PING_TIMEOUT http://192.168.x.x:8000/health timeout_ms=5000</div>
+                    <div style="margin-top: 3px; color: #d32f2f;"><strong>✗</strong> [2026-05-27 14:35:20.150] DB_CHECK_SKIPPED reason=API_unreachable</div>
+                    <div style="margin-top: 8px; color: #ff6f00;"><strong>!</strong> [2026-05-27 14:36:30.500] OVERALL_RESULT PARTIAL_FAILURE API_OK Database_UNREACHABLE</div>
+                </div>
+            </div>
+
+            <h3 style="color: #333; margin: 30px 0 15px;">🎯 Diagnostic Quick-Win Examples:</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div style="background: #e8f5e9; padding: 15px; border-radius: 6px; border-left: 4px solid #4caf50;">
+                    <strong style="color: #2e7d32;">✓ Cas 1: Tout OK</strong>
+                    <div style="margin-top: 10px; font-size: 13px; color: #333;">
+                        <div>• API_PING_SUCCESS 200</div>
+                        <div>• DB_CHECK_SUCCESS</div>
+                        <div style="margin-top: 5px; color: #2e7d32;"><strong>→ Ready to Login!</strong></div>
+                    </div>
+                </div>
+                <div style="background: #ffebee; padding: 15px; border-radius: 6px; border-left: 4px solid #d32f2f;">
+                    <strong style="color: #c62828;">✗ Cas 2: API Unreachable</strong>
+                    <div style="margin-top: 10px; font-size: 13px; color: #333;">
+                        <div>• API_PING_TIMEOUT</div>
+                        <div>• DB_CHECK_SKIPPED</div>
+                        <div style="margin-top: 5px; color: #c62828;"><strong>→ Vérifier IP/Port/réseau</strong></div>
+                    </div>
+                </div>
+                <div style="background: #fff3e0; padding: 15px; border-radius: 6px; border-left: 4px solid #ff6f00;">
+                    <strong style="color: #e65100;">! Cas 3: API OK, BD Down</strong>
+                    <div style="margin-top: 10px; font-size: 13px; color: #333;">
+                        <div>• API_PING_SUCCESS 200</div>
+                        <div>• DB_CHECK_FAILURE SQL_Server_unavailable</div>
+                        <div style="margin-top: 5px; color: #e65100;"><strong>→ Vérifier SQL Server</strong></div>
+                    </div>
+                </div>
+                <div style="background: #f3e5f5; padding: 15px; border-radius: 6px; border-left: 4px solid #7b1fa2;">
+                    <strong style="color: #4a148c;">? Cas 4: DB Timeout</strong>
+                    <div style="margin-top: 10px; font-size: 13px; color: #333;">
+                        <div>• API_PING_SUCCESS 200</div>
+                        <div>• DB_CHECK_TIMEOUT 5000ms</div>
+                        <div style="margin-top: 5px; color: #4a148c;"><strong>→ BD slow, vérifier perf</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IMPLEMENTATION TIMELINE -->
+        <div class="flow-section">
+            <h2 class="flow-title">⏱️ Chronologie Implémentation (9 tasks)</h2>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Task</th>
+                        <th>Durée Est.</th>
+                        <th>Résultat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Add settings icon to LoginActivity layout</td>
+                        <td>5 min</td>
+                        <td>⚙ button visible top-right</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Create PreLoginSettingsActivity class</td>
+                        <td>10 min</td>
+                        <td>New activity with IP/Port config logic</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Create PreLoginSettingsActivity layout</td>
+                        <td>5 min</td>
+                        <td>Form layout with EditText + buttons</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Register PreLoginSettingsActivity in manifest</td>
+                        <td>2 min</td>
+                        <td>Activity declared in AndroidManifest.xml</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Add settings button listener to LoginActivity</td>
+                        <td>5 min</td>
+                        <td>Click ⚙ opens PreLoginSettingsActivity</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Change post-login navigation to StockSearchActivity</td>
+                        <td>5 min</td>
+                        <td>Login → direct to StockSearch (no MainActivity)</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Add auto-selection for single activity</td>
+                        <td>10 min</td>
+                        <td>If 1 activity, auto-select + skip ActivitySelection</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Build, install, test complete flow</td>
+                        <td>15 min</td>
+                        <td>APK tested on device (Pre-login Settings → Login → Stock Search)</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Update STATUS.md documentation</td>
+                        <td>5 min</td>
+                        <td>Phase 7.3 marked complete in docs</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="text-align: center; color: #666; margin-top: 15px;">⏱️ <strong>Total estimé: ~60 minutes</strong></p>
+        </div>
+
+        <!-- VALIDATION SECTION -->
+        <div class="flow-section" style="background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); border: 2px solid #667eea;">
+            <h2 class="flow-title">✅ Validation Avant Développement</h2>
+
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px;">
+                <p style="font-size: 16px; font-weight: 600; color: #333; margin-bottom: 15px;">Tu valides ce mockup?</p>
+
+                <ul class="feature-list" style="margin-bottom: 20px;">
+                    <li><strong>Settings icon ⚙ top-right LoginActivity</strong> - OK?</li>
+                    <li><strong>PreLoginSettingsActivity</strong> - Accessible sans credentials - OK?</li>
+                    <li><strong>Post-login navigation</strong> - Direct à StockSearchActivity - OK?</li>
+                    <li><strong>Auto-selection</strong> - Si 1 activité seulement - OK?</li>
+                    <li><strong>Configuration flow</strong> - Login (click ⚙) → PreLoginSettings → Save → Return Login → Login → StockSearch - OK?</li>
+                </ul>
+
+                <p style="color: #666; font-size: 14px;">Si tout est bon ✅, on peut lancer le développement avec:</p>
+                <p style="color: #667eea; font-weight: 600; margin-top: 10px;">→ Subagent-Driven (recommandé) OU Inline Execution</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>📄 Phase 7 Part 3 - Login UX Improvement Mockup</p>
+            <p>Généré pour validation avant développement</p>
+        </footer>
+    </div>
+</body>
+</html>

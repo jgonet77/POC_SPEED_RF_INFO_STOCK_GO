@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -22,7 +22,7 @@ import java.lang.String;
 
 public final class ActivityLoginBinding implements ViewBinding {
   @NonNull
-  private final LinearLayout rootView;
+  private final FrameLayout rootView;
 
   @NonNull
   public final Button cancelButton;
@@ -52,14 +52,17 @@ public final class ActivityLoginBinding implements ViewBinding {
   public final RadioButton radioButtonSha256;
 
   @NonNull
+  public final Button settingsIconButton;
+
+  @NonNull
   public final TextView statusMessageTextView;
 
-  private ActivityLoginBinding(@NonNull LinearLayout rootView, @NonNull Button cancelButton,
+  private ActivityLoginBinding(@NonNull FrameLayout rootView, @NonNull Button cancelButton,
       @NonNull RadioGroup hashMethodRadioGroup, @NonNull Button loginButton,
       @NonNull EditText loginEditText, @NonNull ProgressBar loginProgressBar,
       @NonNull EditText passwordEditText, @NonNull RadioButton radioButtonClair,
       @NonNull RadioButton radioButtonMd5, @NonNull RadioButton radioButtonSha256,
-      @NonNull TextView statusMessageTextView) {
+      @NonNull Button settingsIconButton, @NonNull TextView statusMessageTextView) {
     this.rootView = rootView;
     this.cancelButton = cancelButton;
     this.hashMethodRadioGroup = hashMethodRadioGroup;
@@ -70,12 +73,13 @@ public final class ActivityLoginBinding implements ViewBinding {
     this.radioButtonClair = radioButtonClair;
     this.radioButtonMd5 = radioButtonMd5;
     this.radioButtonSha256 = radioButtonSha256;
+    this.settingsIconButton = settingsIconButton;
     this.statusMessageTextView = statusMessageTextView;
   }
 
   @Override
   @NonNull
-  public LinearLayout getRoot() {
+  public FrameLayout getRoot() {
     return rootView;
   }
 
@@ -154,15 +158,21 @@ public final class ActivityLoginBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.settingsIconButton;
+      Button settingsIconButton = ViewBindings.findChildViewById(rootView, id);
+      if (settingsIconButton == null) {
+        break missingId;
+      }
+
       id = R.id.statusMessageTextView;
       TextView statusMessageTextView = ViewBindings.findChildViewById(rootView, id);
       if (statusMessageTextView == null) {
         break missingId;
       }
 
-      return new ActivityLoginBinding((LinearLayout) rootView, cancelButton, hashMethodRadioGroup,
+      return new ActivityLoginBinding((FrameLayout) rootView, cancelButton, hashMethodRadioGroup,
           loginButton, loginEditText, loginProgressBar, passwordEditText, radioButtonClair,
-          radioButtonMd5, radioButtonSha256, statusMessageTextView);
+          radioButtonMd5, radioButtonSha256, settingsIconButton, statusMessageTextView);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

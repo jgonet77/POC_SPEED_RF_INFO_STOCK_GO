@@ -1,5 +1,9 @@
 [
     {
+        "merged": "com.example.stockapp-mergeDebugResources-26:/layout/activity_pre_login_settings.xml",
+        "source": "com.example.stockapp-main-29:/layout/activity_pre_login_settings.xml"
+    },
+    {
         "merged": "C:\\Users\\jerome.gouez\\.gradle\\daemon\\8.11.1\\com.example.stockapp-mergeDebugResources-26:\\layout\\activity_login.xml",
         "source": "C:\\Users\\jerome.gouez\\.gradle\\daemon\\8.11.1\\com.example.stockapp-main-29:\\layout\\activity_login.xml"
     },
@@ -8,16 +12,16 @@
         "source": "C:\\Users\\jerome.gouez\\.gradle\\daemon\\8.11.1\\com.example.stockapp-main-29:\\layout\\activity_logs_viewer.xml"
     },
     {
-        "merged": "com.example.stockapp-mergeDebugResources-26:/layout/activity_stock_search.xml",
-        "source": "com.example.stockapp-main-29:/layout/activity_stock_search.xml"
-    },
-    {
         "merged": "C:\\Users\\jerome.gouez\\.gradle\\daemon\\8.11.1\\com.example.stockapp-mergeDebugResources-26:\\layout\\activity_selection.xml",
         "source": "C:\\Users\\jerome.gouez\\.gradle\\daemon\\8.11.1\\com.example.stockapp-main-29:\\layout\\activity_selection.xml"
     },
     {
         "merged": "C:\\Users\\jerome.gouez\\.gradle\\daemon\\8.11.1\\com.example.stockapp-mergeDebugResources-26:\\layout\\activity_main.xml",
         "source": "C:\\Users\\jerome.gouez\\.gradle\\daemon\\8.11.1\\com.example.stockapp-main-29:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\jerome.gouez\\.gradle\\daemon\\8.11.1\\com.example.stockapp-mergeDebugResources-26:\\layout\\activity_stock_search.xml",
+        "source": "C:\\Users\\jerome.gouez\\.gradle\\daemon\\8.11.1\\com.example.stockapp-main-29:\\layout\\activity_stock_search.xml"
     },
     {
         "merged": "C:\\Users\\jerome.gouez\\.gradle\\daemon\\8.11.1\\com.example.stockapp-mergeDebugResources-26:\\layout\\activity_settings.xml",
