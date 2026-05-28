@@ -15,7 +15,9 @@
         android:layout_marginBottom="20dp" />
 
     <!-- Connection Info Header -->
-    <include layout="@layout/header_connection_info" />
+    <include
+        android:id="@+id/headerConnectionInfo"
+        layout="@layout/header_connection_info" />
 
     <!-- Search Criteria Section -->
     <LinearLayout

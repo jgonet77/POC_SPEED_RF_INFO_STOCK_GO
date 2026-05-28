@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.stockapp.databinding.ActivityStockSearchBinding
 import com.example.stockapp.logging.AppLogger
+import com.example.stockapp.managers.ActivityManager
 import com.example.stockapp.models.StockItem
 import com.example.stockapp.viewmodels.StockSearchViewModel
 
@@ -87,6 +88,9 @@ class StockSearchActivity : AppCompatActivity() {
         binding.clearButton.setOnClickListener {
             clearSearch()
         }
+
+        // Populate connection info header
+        populateConnectionHeader()
 
         // Log activity creation
         AppLogger.log("STOCK_SEARCH_ACTIVITY_CREATED")
@@ -225,5 +229,39 @@ class StockSearchActivity : AppCompatActivity() {
         hideResults()
         binding.emptyStateMessage.visibility = View.VISIBLE
         binding.emptyStateMessage.text = displayMessage
+    }
+
+    /**
+     * Populates the connection info header with database name, user login, and activity code.
+     *
+     * Reads user login from SharedPreferences (stored during login) and activity code
+     * from ActivityManager. Database name is hardcoded as "DerreySpeed_Client".
+     * Logs the population with AppLogger for debugging.
+     */
+    private fun populateConnectionHeader() {
+        try {
+            // Get header TextViews from included layout
+            val headerDatabaseName = findViewById<android.widget.TextView>(R.id.headerDatabaseName)
+            val headerUserLogin = findViewById<android.widget.TextView>(R.id.headerUserLogin)
+            val headerActivityCode = findViewById<android.widget.TextView>(R.id.headerActivityCode)
+
+            // Database name
+            val databaseName = "DerreySpeed_Client"
+            headerDatabaseName.text = databaseName
+
+            // User login from SharedPreferences
+            val prefs = getSharedPreferences("auth", android.content.Context.MODE_PRIVATE)
+            val userLogin = prefs.getString("user_login", "Unknown") ?: "Unknown"
+            headerUserLogin.text = userLogin
+
+            // Activity code from ActivityManager
+            val activityCode = ActivityManager.getActivityCode(this) ?: "N/A"
+            headerActivityCode.text = activityCode
+
+            // Log header population
+            AppLogger.log("HEADER_POPULATED database=$databaseName user=$userLogin activity=$activityCode")
+        } catch (e: Exception) {
+            AppLogger.log("HEADER_POPULATION_ERROR error=${e.message}")
+        }
     }
 }

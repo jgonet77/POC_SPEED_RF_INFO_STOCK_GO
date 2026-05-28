@@ -1,5 +1,6 @@
 package com.example.stockapp
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -122,6 +123,9 @@ class LoginActivity : AppCompatActivity() {
             // Store token
             TokenManager.saveToken(this, response.token, response.expires_in)
 
+            // Store user login for header display
+            storeUserLogin(login)
+
             // Log successful login
             AppLogger.log(
                 "[${getCurrentTimestamp()}] LOGIN_SUCCESS " +
@@ -192,5 +196,13 @@ class LoginActivity : AppCompatActivity() {
 
     private fun getCurrentTimestamp(): String {
         return dateFormat.format(Date())
+    }
+
+    private fun storeUserLogin(login: String) {
+        val prefs = getSharedPreferences("auth", Context.MODE_PRIVATE)
+        prefs.edit().apply {
+            putString("user_login", login)
+            apply()
+        }
     }
 }
