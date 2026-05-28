@@ -70,6 +70,11 @@
     <string name="activity_selection_error_unknown">An error occurred. Please try again.</string>
     <string name="activity_selection_error_select">Please select an activity.</string>
 
+    <!-- Header Connection Info -->
+    <string name="header_label_database">Database</string>
+    <string name="header_label_user">User</string>
+    <string name="header_label_activity">Activity</string>
+
     <!-- StockSearchActivity -->
     <string name="stock_search_title">Stock Search</string>
     <string name="stock_search_article_label">Article Code</string>
