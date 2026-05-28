@@ -74,6 +74,8 @@
     <string name="header_label_database">Database</string>
     <string name="header_label_user">User</string>
     <string name="header_label_activity">Activity</string>
+    <string name="header_database_default">SPEED</string>
+    <string name="header_placeholder">—</string>
 
     <!-- StockSearchActivity -->
     <string name="stock_search_title">Stock Search</string>

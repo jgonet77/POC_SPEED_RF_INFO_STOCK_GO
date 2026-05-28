@@ -14,4 +14,6 @@
     <color name="purple_700">#4520C8</color>
     <color name="white_semi_transparent">#FFFFFF80</color>
     <color name="white_light_transparent">#FFFFFF40</color>
+    <color name="connection_bg_light">#f0f0f0</color>
+    <color name="connection_border">#cccccc</color>
 </resources>
