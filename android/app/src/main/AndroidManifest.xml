@@ -25,6 +25,11 @@
         </activity>
 
         <activity
+            android:name=".PreLoginSettingsActivity"
+            android:label="API Configuration"
+            android:parentActivityName=".LoginActivity" />
+
+        <activity
             android:name=".ActivitySelectionActivity"
             android:exported="true" />
 
