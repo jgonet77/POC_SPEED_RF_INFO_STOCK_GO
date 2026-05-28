@@ -111,7 +111,8 @@
       "Bash(./gradlew.bat compileDebugKotlin)",
       "Bash(.\\\\gradlew.bat compileDebugKotlin)",
       "Bash(Get-ChildItem -Path \"D:\\\\Projects\\\\POC_SPEED_RF_INFO_STOCK\\\\android\\\\app\\\\src\\\\main\\\\java\\\\com\\\\example\\\\stockapp\" -Recurse -Directory)",
-      "Bash(xargs grep -l \"health\\\\|@app.get\")"
+      "Bash(xargs grep -l \"health\\\\|@app.get\")",
+      "Bash(Find-Item *)"
     ]
   }
 }

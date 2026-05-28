@@ -5,34 +5,25 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.stockapp.api.ApiClient
 import com.example.stockapp.databinding.ActivitySelectionBinding
 import com.example.stockapp.logging.AppLogger
 import com.example.stockapp.managers.ActivityManager
-import com.example.stockapp.managers.TokenManager
 import com.example.stockapp.models.ActivityItem
-import com.example.stockapp.models.ActivityListResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.lang.ref.WeakReference
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.example.stockapp.viewmodels.ActivitySelectionViewModel
 
 /**
  * Activity for selecting which activity to work with.
  *
- * Loads available activities from API, displays them in a spinner,
- * and allows user to confirm selection before proceeding to MainActivity.
+ * Loads available activities from API. If only 1 activity exists, it auto-selects
+ * and navigates to StockSearchActivity. If multiple activities exist, user selects
+ * from a spinner before navigating.
  */
 class ActivitySelectionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySelectionBinding
-
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
-    private var isActivityAlive = true
-    private var activities: List<ActivityItem> = emptyList()
+    private lateinit var viewModel: ActivitySelectionViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,212 +34,96 @@ class ActivitySelectionActivity : AppCompatActivity() {
         AppLogger(this)
         ApiClient.init(this)
 
-        // Setup button listeners
-        binding.confirmButton.setOnClickListener { performActivitySelection() }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        // Initialize ViewModel and observe activities
+        viewModel = ViewModelProvider(this).get(ActivitySelectionViewModel::class.java)
+        viewModel.activities.observe(this) { activities ->
+            handleActivitiesLoaded(activities)
+        }
+
+        viewModel.error.observe(this) { error ->
+            if (error != null) {
+                binding.statusMessageTextView.text = error
+                binding.statusMessageTextView.setTextColor(getColor(R.color.error_red))
+                binding.confirmButton.isEnabled = false
+            }
+        }
+
+        viewModel.loading.observe(this) { isLoading ->
+            binding.confirmButton.isEnabled = !isLoading
+            binding.cancelButton.isEnabled = !isLoading
+            binding.activitySpinner.isEnabled = !isLoading
+            binding.loadingProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        // Setup cancel button
         binding.cancelButton.setOnClickListener { exitActivity() }
 
         // Load activities on startup
-        loadActivities()
+        viewModel.loadActivities()
     }
 
-    override fun onDestroy() {
-        isActivityAlive = false
-        super.onDestroy()
-    }
-
-    private fun loadActivities() {
-        // Validate token before making API call (CRITICAL FIX #3: Token validation)
-        val token = TokenManager.getToken(this)
-        if (token == null) {
-            handleLoadFailure(getString(R.string.activity_selection_error_auth))
-            AppLogger.log(
-                "[${getCurrentTimestamp()}] ACTIVITY_LOAD_FAILED error=no_valid_token"
+    private fun handleActivitiesLoaded(activities: List<ActivityItem>) {
+        if (activities.isEmpty()) {
+            binding.statusMessageTextView.text = "No activities available"
+            binding.statusMessageTextView.setTextColor(getColor(R.color.error_red))
+            binding.confirmButton.isEnabled = false
+            AppLogger.log("ActivitySelectionActivity: No activities available")
+        } else if (activities.size == 1) {
+            // Auto-select single activity
+            val selectedActivity = activities[0]
+            ActivityManager.saveActivity(
+                this,
+                selectedActivity.actKeyu,
+                selectedActivity.actCode,
+                selectedActivity.actLib
             )
-            return
-        }
+            AppLogger.log("ActivitySelectionActivity: Auto-selected activity ${selectedActivity.actLib}")
 
-        // Show loading state
-        setLoadingState(true)
-        binding.statusMessageTextView.text = getString(R.string.activity_selection_loading)
-        binding.statusMessageTextView.setTextColor(getColor(R.color.black))
+            // Navigate to StockSearchActivity
+            val intent = Intent(this, StockSearchActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        } else {
+            // Multiple activities: show spinner for selection
+            val displayList = activities.map { "${it.actCode} - ${it.actLib}" }
+            val adapter = ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                displayList
+            )
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.activitySpinner.adapter = adapter
+            binding.activitySpinner.setSelection(0)
 
-        // Log activity load attempt
-        AppLogger.log(
-            "[${getCurrentTimestamp()}] ACTIVITY_LOAD_REQUEST status=STARTED"
-        )
+            binding.confirmButton.setOnClickListener {
+                val selectedIndex = binding.activitySpinner.selectedItemPosition
+                if (selectedIndex >= 0 && selectedIndex < activities.size) {
+                    val selectedActivity = activities[selectedIndex]
+                    ActivityManager.saveActivity(
+                        this,
+                        selectedActivity.actKeyu,
+                        selectedActivity.actCode,
+                        selectedActivity.actLib
+                    )
+                    AppLogger.log("ActivitySelectionActivity: User selected activity ${selectedActivity.actLib}")
 
-        // Make API call with WeakReference to prevent memory leak (CRITICAL FIX #1)
-        val activityRef = WeakReference(this)
-        val call = ApiClient.apiService.getActivities()
-        call.enqueue(object : Callback<ActivityListResponse> {
-            override fun onResponse(call: Call<ActivityListResponse>, response: Response<ActivityListResponse>) {
-                // Check if activity is still alive before updating UI (CRITICAL FIX #2: Race condition check)
-                val activity = activityRef.get() ?: return
-                if (activity.isFinishing || activity.isDestroyed) return
-
-                // Use safe null handling with .let {} instead of !! (IMPORTANT FIX #6)
-                response.body()?.let { activityResponse ->
-                    AppLogger.log("ACTIVITY_RESPONSE status=${activityResponse.status} message=${activityResponse.message} count=${activityResponse.activities.size}")
-                    activityResponse.activities.forEach { activity ->
-                        AppLogger.log("ACTIVITY_ITEM keyu=${activity.actKeyu} code=${activity.actCode} lib=${activity.actLib}")
-                    }
-                    if (response.isSuccessful) {
-                        activity.handleLoadSuccess(activityResponse)
-                    } else {
-                        val errorMsg = response.errorBody()?.string() ?: activity.getString(R.string.activity_selection_error_unknown)
-                        activity.handleLoadFailure(errorMsg)
-                    }
-                } ?: run {
-                    val errorMsg = activity.getString(R.string.activity_selection_error_unknown)
-                    activity.handleLoadFailure(errorMsg)
+                    // Navigate to StockSearchActivity
+                    val intent = Intent(this, StockSearchActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
                 }
             }
 
-            override fun onFailure(call: Call<ActivityListResponse>, t: Throwable) {
-                // Check if activity is still alive before updating UI (CRITICAL FIX #2: Race condition check)
-                val activity = activityRef.get() ?: return
-                if (activity.isFinishing || activity.isDestroyed) return
-
-                activity.handleLoadFailure(t.message ?: activity.getString(R.string.activity_selection_error_network))
-            }
-        })
-    }
-
-    private fun handleLoadSuccess(response: ActivityListResponse) {
-        if (!isActivityAlive) return
-
-        runOnUiThread {
-            if (!isActivityAlive) return@runOnUiThread
-
-            setLoadingState(false)
-
-            // Check if activities list is empty
-            if (response.activities.isEmpty()) {
-                showError(getString(R.string.activity_selection_error_empty))
-                AppLogger.log(
-                    "[${getCurrentTimestamp()}] ACTIVITY_LOAD_FAILED " +
-                        "error=no_activities_returned"
-                )
-                return@runOnUiThread
-            }
-
-            // Store activities list
-            activities = response.activities
-
-            // Populate spinner with activities
-            populateSpinner(activities)
-
-            // Log successful load
-            AppLogger.log(
-                "[${getCurrentTimestamp()}] ACTIVITY_LOAD_SUCCESS " +
-                    "activities_count=${activities.size}"
-            )
-
-            // Clear status message on success
             binding.statusMessageTextView.text = ""
         }
     }
 
-    private fun handleLoadFailure(errorMsg: String) {
-        if (!isActivityAlive) return
-
-        runOnUiThread {
-            if (!isActivityAlive) return@runOnUiThread
-
-            setLoadingState(false)
-
-            val displayError = when {
-                errorMsg.contains("network", ignoreCase = true) ->
-                    getString(R.string.activity_selection_error_network)
-                else -> errorMsg.take(100) // Truncate long error messages
-            }
-
-            showError(displayError)
-
-            // Log failed load
-            AppLogger.log(
-                "[${getCurrentTimestamp()}] ACTIVITY_LOAD_FAILED " +
-                    "error=${errorMsg.take(50)}"
-            )
-        }
-    }
-
-    private fun populateSpinner(activityList: List<ActivityItem>) {
-        // Guard clause: Check if activities list is empty (IMPORTANT FIX #2)
-        if (activityList.isEmpty()) {
-            showError(getString(R.string.activity_selection_error_empty))
-            return
-        }
-
-        // Create formatted display list: "ACT_CODE - ACT_LIB"
-        val displayList = activityList.map { "${it.actCode} - ${it.actLib}" }
-
-        // Create adapter
-        val adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_item,
-            displayList
-        )
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        // Set adapter to spinner
-        binding.activitySpinner.adapter = adapter
-
-        // Set first item as selected by default
-        binding.activitySpinner.setSelection(0)
-    }
-
-    private fun performActivitySelection() {
-        // Get selected position
-        val selectedPosition = binding.activitySpinner.selectedItemPosition
-
-        // Validate selection
-        if (selectedPosition < 0 || selectedPosition >= activities.size) {
-            showError(getString(R.string.activity_selection_error_select))
-            return
-        }
-
-        // Get selected activity
-        val selectedActivity = activities[selectedPosition]
-
-        // Save activity
-        ActivityManager.saveActivity(
-            this,
-            selectedActivity.actKeyu,
-            selectedActivity.actCode,
-            selectedActivity.actLib
-        )
-
-        // Log activity selection
-        AppLogger.log(
-            "[${getCurrentTimestamp()}] ACTIVITY_SELECTED " +
-                "act_code=${selectedActivity.actCode} act_keyu=${selectedActivity.actKeyu}"
-        )
-
-        // Launch MainActivity and finish
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
-    }
 
     private fun exitActivity() {
         finish()
-    }
-
-    private fun showError(message: String) {
-        binding.statusMessageTextView.text = message
-        binding.statusMessageTextView.setTextColor(getColor(R.color.error_red))
-    }
-
-    private fun setLoadingState(isLoading: Boolean) {
-        binding.confirmButton.isEnabled = !isLoading
-        binding.cancelButton.isEnabled = !isLoading
-        binding.activitySpinner.isEnabled = !isLoading
-        binding.loadingProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
-    private fun getCurrentTimestamp(): String {
-        return dateFormat.format(Date())
     }
 }
