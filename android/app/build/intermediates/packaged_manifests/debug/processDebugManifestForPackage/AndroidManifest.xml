@@ -40,6 +40,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.example.stockapp.PreLoginSettingsActivity"
+            android:label="API Configuration"
+            android:parentActivityName="com.example.stockapp.LoginActivity" />
+        <activity
             android:name="com.example.stockapp.ActivitySelectionActivity"
             android:exported="true" />
         <activity

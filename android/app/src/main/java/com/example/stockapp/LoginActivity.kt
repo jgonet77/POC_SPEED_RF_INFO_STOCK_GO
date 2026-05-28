@@ -42,6 +42,14 @@ class LoginActivity : AppCompatActivity() {
         // Setup button listeners
         binding.loginButton.setOnClickListener { performLogin() }
         binding.cancelButton.setOnClickListener { exitApp() }
+
+        // Settings button (accessible without login)
+        val settingsButton = findViewById<android.widget.Button>(R.id.settingsIconButton)
+        settingsButton.setOnClickListener {
+            val intent = Intent(this, PreLoginSettingsActivity::class.java)
+            startActivity(intent)
+            AppLogger.log("LoginActivity: Opened PreLoginSettingsActivity")
+        }
     }
 
     override fun onDestroy() {

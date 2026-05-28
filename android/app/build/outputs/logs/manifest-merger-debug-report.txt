@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:2:1-48:12
-INJECTED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:2:1-48:12
-INJECTED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:2:1-48:12
-INJECTED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:2:1-48:12
+ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:2:1-53:12
+INJECTED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:2:1-53:12
+INJECTED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:2:1-53:12
+INJECTED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:2:1-53:12
 MERGED from [androidx.databinding:viewbinding:8.3.0] C:\Users\jerome.gouez\.gradle\caches\8.11.1\transforms\9ad5e2bd7e52a20b02e12d6def53062a\transformed\jetified-viewbinding-8.3.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\jerome.gouez\.gradle\caches\8.11.1\transforms\92e43c936db4b521c80de03ba503b5ea\transformed\constraintlayout-2.1.4\AndroidManifest.xml:2:1-11:12
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\jerome.gouez\.gradle\caches\8.11.1\transforms\a38d771d1b7cbb89cbc9de38e03a2de6\transformed\jetified-appcompat-resources-1.6.1\AndroidManifest.xml:17:1-22:12
@@ -63,8 +63,8 @@ ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManif
 	android:name
 		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:10:22-77
 application
-ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:12:5-47:19
-INJECTED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:12:5-47:19
+ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:12:5-52:19
+INJECTED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:12:5-52:19
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\jerome.gouez\.gradle\caches\8.11.1\transforms\92e43c936db4b521c80de03ba503b5ea\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\jerome.gouez\.gradle\caches\8.11.1\transforms\92e43c936db4b521c80de03ba503b5ea\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
 MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\jerome.gouez\.gradle\caches\8.11.1\transforms\456c78b0f9bc4f5575d0addc01c613ac\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:23:5-33:19
@@ -107,36 +107,44 @@ category#android.intent.category.LAUNCHER
 ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:23:17-77
 	android:name
 		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:23:27-74
+activity#com.example.stockapp.PreLoginSettingsActivity
+ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:27:9-30:59
+	android:parentActivityName
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:30:13-56
+	android:label
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:29:13-46
+	android:name
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:28:13-53
 activity#com.example.stockapp.ActivitySelectionActivity
-ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:27:9-29:39
+ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:32:9-34:39
 	android:exported
-		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:29:13-36
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:34:13-36
 	android:name
-		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:28:13-54
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:33:13-54
 activity#com.example.stockapp.MainActivity
-ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:31:9-33:39
+ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:36:9-38:39
 	android:exported
-		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:33:13-36
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:38:13-36
 	android:name
-		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:32:13-41
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:37:13-41
 activity#com.example.stockapp.SettingsActivity
-ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:35:9-37:39
+ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:40:9-42:39
 	android:exported
-		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:37:13-36
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:42:13-36
 	android:name
-		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:36:13-45
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:41:13-45
 activity#com.example.stockapp.LogsViewerActivity
-ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:39:9-41:40
+ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:44:9-46:40
 	android:exported
-		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:41:13-37
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:46:13-37
 	android:name
-		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:40:13-47
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:45:13-47
 activity#com.example.stockapp.StockSearchActivity
-ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:43:9-45:40
+ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:48:9-50:40
 	android:exported
-		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:45:13-37
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:50:13-37
 	android:name
-		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:44:13-48
+		ADDED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml:49:13-48
 uses-sdk
 INJECTED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\Projects\POC_SPEED_RF_INFO_STOCK\android\app\src\main\AndroidManifest.xml
