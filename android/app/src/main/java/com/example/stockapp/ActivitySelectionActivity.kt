@@ -96,7 +96,15 @@ class ActivitySelectionActivity : AppCompatActivity() {
             )
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.activitySpinner.adapter = adapter
-            binding.activitySpinner.setSelection(0)
+
+            // Pre-select BKS as default activity
+            val bksIndex = activities.indexOfFirst { it.actCode.equals("BKS", ignoreCase = true) }
+            if (bksIndex >= 0) {
+                binding.activitySpinner.setSelection(bksIndex)
+                AppLogger.log("ACTIVITY_DEFAULT BKS pre-selected at index=$bksIndex")
+            } else {
+                binding.activitySpinner.setSelection(0)
+            }
 
             binding.confirmButton.setOnClickListener {
                 val selectedIndex = binding.activitySpinner.selectedItemPosition
