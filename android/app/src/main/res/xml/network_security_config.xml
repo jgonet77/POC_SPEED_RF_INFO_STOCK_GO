@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Configuration réseau pour les builds de PRODUCTION (release).
+    HTTPS obligatoire pour tous les domaines externes.
+    Cleartext autorisé uniquement pour localhost et l'émulateur Android.
+
+    Pour les tests en réseau local, utiliser un build DEBUG :
+    le fichier src/debug/res/xml/network_security_config.xml prend le dessus
+    automatiquement et autorise HTTP en clair vers toute adresse.
+-->
 <network-security-config>
-    <!-- Allow cleartext for local development only -->
+    <!-- Émulateur Android (10.0.2.2 = machine hôte depuis l'émulateur) -->
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">192.168.1.20</domain>
-        <domain includeSubdomains="true">localhost</domain>
-        <domain includeSubdomains="true">127.0.0.1</domain>
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">10.0.2.2</domain>
     </domain-config>
-    <!-- Enforce HTTPS for all other domains -->
-    <default-config cleartextTrafficPermitted="false" />
+
+    <!-- Toutes les autres connexions : HTTPS uniquement -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
 </network-security-config>

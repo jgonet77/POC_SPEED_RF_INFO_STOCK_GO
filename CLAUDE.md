@@ -1,172 +1,209 @@
-# CLAUDE.md - POC Stock Mobile (Android + API Python)
+# CLAUDE.md - POC Stock Mobile (Android + API Go)
 
-## 🎯 Vision du projet
+## Vision du projet
 
-POC d'application mobile Android pour permettre aux préparateurs/caristes de consulter le stock de l'entrepôt en temps réel via une API REST Python, connectée au WMS SPEED (SQL Server).
+POC d'application mobile Android pour permettre aux préparateurs/caristes de consulter le stock de l'entrepôt en temps réel via une API REST Go, connectée au WMS SPEED (SQL Server).
 
-**Objectif:** Valider la faisabilité technique (connexion mobile ↔ BD, authentification, performance, scan code-barres).
+**Objectif :** Valider la faisabilité technique (connexion mobile ↔ BD, authentification, performance, scan code-barres).
 
----
-
-## 📋 Stack technique
-
-- **Frontend:** Android natif (Kotlin)
-- **Backend:** Python (FastAPI) - Architecture en couches (API → Service → Repository)
-- **Base de données:** Microsoft SQL Server (WMS SPEED)
-- **Infrastructure:** Local (accessible depuis le réseau local du téléphone)
+**État actuel :** Migration du backend Python (FastAPI) vers Go (Fiber) en cours. Le backend Python est conservé dans `backend/` comme référence uniquement — ne pas modifier.
 
 ---
 
-## 🏗️ Architecture (Approche 2 - Layered)
+## Stack technique
+
+- **Frontend :** Android natif (Kotlin)
+- **Backend :** Go 1.22 (Fiber v2) — module `stock-api`
+- **Base de données :** Microsoft SQL Server (WMS SPEED)
+- **Driver SQL :** `github.com/microsoft/go-mssqldb` (pur Go, sans ODBC)
+- **Auth :** JWT HS256 via `github.com/golang-jwt/jwt/v5`
+- **Infrastructure :** Local (accessible depuis le réseau local du téléphone)
+
+---
+
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────┐
 │         ANDROID KOTLIN APP                  │
-│  (UI: Accueil, Recherche, Détails stock)   │
+│  (UI: Login, Activités, Recherche stock)    │
 └─────────────┬───────────────────────────────┘
-              │ HTTP/REST (Retrofit)
+              │ HTTP/REST (Retrofit + Bearer token)
               ↓
 ┌─────────────────────────────────────────────┐
-│      PYTHON FASTAPI SERVER (Couches)        │
+│      GO FIBER SERVER (Couches)              │
 ├─────────────────────────────────────────────┤
-│  API Layer (Routes/Controllers)             │
+│  Routes (handlers Fiber)                    │
 ├─────────────────────────────────────────────┤
-│  Service Layer (Logique métier)             │
+│  Services (logique métier)                  │
 ├─────────────────────────────────────────────┤
-│  Repository Layer (Accès données)           │
+│  Repositories (accès données)               │
 └─────────────┬───────────────────────────────┘
-              │ pyodbc (SQL Server Driver)
+              │ go-mssqldb (sqlserver:// DSN)
               ↓
 ┌─────────────────────────────────────────────┐
 │      MICROSOFT SQL SERVER                   │
-│      WMS SPEED (Tables stock)               │
+│      WMS SPEED                              │
+│  USW_DAT · ACT_PAR · STK_DAT               │
 └─────────────────────────────────────────────┘
 ```
 
 ---
 
-## 📁 Structure du projet
+## Structure du projet
 
 ```
-POC_SPEED_RF_INFO_STOCK/
-├── docs/
-│   ├── FONCTIONNEL.md         # Specs fonctionnelles (simple)
-│   ├── TECHNIQUE.md            # Specs techniques (architecture)
-│   └── superpowers/specs/      # Design docs signés
-├── backend/
-│   ├── main.py                 # Point d'entrée FastAPI
-│   ├── config.py               # Configuration (DB, env)
-│   ├── models/                 # Pydantic models (request/response)
-│   ├── routes/                 # API endpoints
-│   ├── services/               # Logique métier
-│   ├── repositories/           # Accès données
-│   ├── schemas/                # Structures de données
-│   └── requirements.txt         # Dépendances Python
-├── android/
-│   ├── app/src/main/
-│   │   ├── AndroidManifest.xml
-│   │   ├── java/com/example/stockapp/
-│   │   │   ├── MainActivity.kt
-│   │   │   ├── models/         # Data classes
-│   │   │   ├── api/            # Retrofit services
-│   │   │   ├── ui/             # Activities et composants
-│   │   │   ├── viewmodels/     # ViewModels
-│   │   │   └── repositories/   # Data repositories
-│   │   └── res/                # Resources (layout, string, etc.)
-│   └── build.gradle
-└── CLAUDE.md                    # Ce fichier
+POC_SPEED_RF_INFO_STOCK_GO/
+├── backend/                    # Référence Python (FastAPI) — NE PAS MODIFIER
+│   ├── main.py / config.py
+│   ├── models/ routes/ services/ repositories/ middleware/
+│   ├── tests/
+│   ├── .env                    # Config locale réelle
+│   └── requirements.txt
+├── backend-go/                 # Backend Go — source active
+│   ├── go.mod / go.sum
+│   ├── main.go                 # Point d'entrée Fiber
+│   ├── config/config.go        # Settings + DSN()
+│   ├── db/db.go                # Pool *sql.DB
+│   ├── middleware/auth.go      # RequireAuth() fiber.Handler
+│   ├── models/                 # Structs request/response (json tags snake_case)
+│   │   ├── auth.go · stock.go · activity.go · health.go
+│   ├── repositories/           # Accès SQL Server (paramétré @p1/@p2)
+│   │   ├── auth_repository.go · stock_repository.go
+│   │   ├── activity_repository.go · health_repository.go
+│   ├── services/               # Logique métier + token store
+│   │   ├── token_store.go · health_service.go · stock_service.go
+│   ├── routes/                 # Handlers Fiber par domaine
+│   │   ├── auth.go · stock.go · activity.go · health.go · helpers.go
+│   └── logs/                   # Logs auth (auth.log)
+├── android/                    # App Android Kotlin (MVVM)
+│   └── app/src/main/java/com/example/stockapp/
+│       ├── api/ models/ repositories/ viewmodels/
+│       └── (LoginActivity, StockSearchActivity, ActivitySelectionActivity…)
+├── docs/                       # Specs fonctionnelles et techniques (HTML)
+├── MIGRATION.md                # Documentation exhaustive du backend Python
+│                               # (endpoints, tables SQL, env vars, logique)
+└── CLAUDE.md                   # Ce fichier
 ```
 
 ---
 
-## ✨ Conventions de code
+## Conventions de code
 
-Voir le CLAUDE.md global. Adaptations spécifiques:
+### Backend (Go)
 
-### Backend (Python)
-
-- **Repository Pattern** : Abstraction de l'accès données
-- **Service Layer** : Logique métier indépendante de la persistance
-- **Validation** : Pydantic models pour validation des requêtes
-- **Nommage** : `snake_case` pour fonctions/variables Python
-- **Erreurs** : Exceptions custom par domaine (AuthError, StockError, etc.)
+- **Nommage :** `PascalCase` pour types/fonctions exportées, `camelCase` pour non-exportés
+- **Erreurs :** retournées explicitement `(value, error)` — pas de panic sauf au démarrage
+- **SQL :** toujours paramétré avec `@p1, @p2, …` (syntaxe go-mssqldb) — jamais de `fmt.Sprintf` dans les requêtes
+- **Injection :** `*sql.DB` injecté par constructeur `New*(db)` — jamais accédé globalement dans les repositories
+- **Concurrence :** `services.Store` (TokenStore) utilise `sync.RWMutex` — tous les handlers Fiber sont concurrents
+- **JSON :** tags snake_case obligatoires, `omitempty` sur les champs optionnels des réponses
+- **Enveloppe d'erreur HTTP :** toujours `{"status":"error","message":"...","detail":"..."}`
 
 ### Frontend (Android/Kotlin)
 
-- **MVVM Pattern** : ViewModel + Repository
-- **Retrofit** : HTTP client typé
-- **LiveData** : Observable pour UI updates
-- **Nommage** : `PascalCase` pour classes, `camelCase` pour propriétés
-- **Coroutines** : Async/await pour requêtes réseau
+- **Pattern :** MVVM (ViewModel + Repository)
+- **Réseau :** Retrofit avec `AuthInterceptor` (injection Bearer token, gestion 401)
+- **UI updates :** LiveData + Coroutines
+- **Nommage :** `PascalCase` classes, `camelCase` propriétés
 
 ---
 
-## 🔐 Authentification
+## Authentification
 
-1. Utilisateur saisit login/password sur l'écran de connexion
-2. API valide contre la table `Utilisateurs` du SQL Server
-3. API retourne un token simple (session ID) OU une liste d'activités associées
-4. App stocke localement (SharedPreferences) pour les futures requêtes
-5. Chaque requête inclut le token en header
+1. L'utilisateur saisit login/password sur l'écran de connexion
+2. `POST /api/login` — valide contre la table `USW_DAT` (colonnes `USW_LOGN`, `USW_PASS`)
+3. Le mot de passe peut être envoyé en clair, MD5 ou SHA256 (`hash_method`)
+4. L'API retourne un JWT HS256 valable 24 h
+5. L'app stocke le token dans SharedPreferences
+6. Chaque requête protégée inclut `Authorization: Bearer <token>`
+7. Le token est aussi vérifié dans le store mémoire `services.Store` (révocation)
 
-**Données requises** (à préciser avec la doc des tables) :
-- Table: `Utilisateurs` (login, password, id_utilisateur)
-- Table: `Activites_Utilisateur` (lien utilisateur ↔ activités)
-
----
-
-## 📊 Flux fonctionnel principal
-
-1. **Login** : Authentification utilisateur + sélection d'activité
-2. **Accueil** : Liste des options (Rechercher, Historique, Paramètres)
-3. **Recherche** :
-   - Saisie SKU OU Scan code-barres
-   - Requête `/api/stock/search?sku=...`
-   - Affichage des résultats
-4. **Détails** :
-   - Click sur un résultat
-   - Requête `/api/stock/{sku}/details`
-   - Affichage : Quantité + Localisation + Infos additionnelles (lot, date exp, état)
+**Tables SQL :**
+- `USW_DAT` — utilisateurs (`USW_LOGN`, `USW_PASS`)
+- `ACT_PAR` — activités (`ACT_KEYU`, `ACT_CODE`, `ACT_LIB`, `ACT_ACTF`)
+- `STK_DAT` — stock (`ACT_CODE`, `ART_CODE`, `STK_LIEU`, `STK_NOSU`, `QUA_CODE`, `STK_QTE`)
 
 ---
 
-## 🧪 Testing
+## Endpoints REST
 
-- **Backend** : Tests unitaires (services), tests intégration (repositories)
-- **Frontend** : Tests unitaires (ViewModels), tests UI (Espresso)
-- **E2E** : Scénario complet login → recherche → détails
+| Méthode | Route | Auth | Description |
+|---------|-------|------|-------------|
+| GET | `/` | — | Liveness check |
+| GET | `/api/health/api` | — | Santé de l'API |
+| GET | `/api/health/database` | — | Test connexion SQL Server |
+| POST | `/api/login` | — | Authentification → JWT |
+| GET | `/api/activities` | JWT | Liste des activités actives |
+| POST | `/api/stock/search` | JWT | Recherche stock (art_code / stk_lieu / stk_nosu) |
+| GET | `/api/stock/details/:sku` | JWT | Détail stock (non implémenté) |
 
-Pas de TDD strict pour le POC, mais coverage ≥ 80% attendue pour le code critique.
-
----
-
-## 🚀 Déploiement POC
-
-**Phase 1 (Validation technique):**
-- API: Tourne sur localhost:8000 (accessible via USB ou WiFi local)
-- App: Testée sur appareil physique connecté au même réseau
-- BD: SQL Server accessible depuis la machine de dev
-
-**Phase 2 (si POC réussit):**
-- API: Hosting Azure/AWS
-- App: Google Play Store
-- BD: Configuration production WMS SPEED
+Voir `MIGRATION.md` pour la description complète de chaque endpoint (corps, réponses, logique).
 
 ---
 
-## 📞 Points de contact
+## Variables d'environnement
 
-- **WMS SPEED DB** : [À fournir : host, port, authentification, tables]
-- **Utilisateurs cibles** : Préparateurs/caristes
-- **Modèle recommandé** : Sonnet 4.6 pour specs, Opus 4.7 pour dev
+| Variable | Obligatoire | Défaut |
+|---|---|---|
+| `SQL_SERVER_PASSWORD` | **OUI** | — |
+| `SQL_SERVER_HOST` | non | `localhost` |
+| `SQL_SERVER_PORT` | non | `1433` |
+| `SQL_SERVER_DB` | non | `WMS_SPEED` |
+| `SQL_SERVER_USER` | non | `sa` |
+| `API_HOST` | non | `0.0.0.0` |
+| `API_PORT` | non | `8000` |
+| `SECRET_KEY` | non | `dev-secret-key-change-in-prod` |
+| `CORS_ORIGINS` | non | `http://localhost:3000,http://10.0.2.2:3000` |
+| `LOG_PATH` | non | `logs/auth.log` |
+
+Le fichier `.env` de référence est dans `backend/.env`.
 
 ---
 
-## ✅ Checklist de démarrage
+## Tests
 
-- [ ] CLAUDE.md du projet validé ✓
-- [ ] Documentation fonctionnelle révisée
-- [ ] Documentation technique révisée
-- [ ] Accès à la doc des tables SQL Server (Utilisateurs, Stock, Emplacements, etc.)
-- [ ] Environnement de dev setup (Python 3.10+, Android Studio, Git)
-- [ ] Première itération de l'API (Login + Search endpoint)
+- **Backend Go :** tests unitaires (services), tests intégration (repositories avec vraie BD)
+- **Frontend Android :** tests unitaires (ViewModels), tests UI (Espresso)
+- Coverage cible : ≥ 80% sur le code critique
+
+---
+
+## Déploiement
+
+**Développement :**
+```bash
+cd backend-go
+go mod tidy
+go run .            # écoute sur 0.0.0.0:8000
+```
+
+**Build production :**
+```bash
+cd backend-go
+go build -o stock-api .
+./stock-api
+```
+
+L'API est accessible depuis le téléphone via WiFi local sur le port configuré.
+
+---
+
+## Points de contact
+
+- **WMS SPEED DB :** `LAPVMI116\SQL2019` — base `POC_V8SpeedDeveloppement`
+- **Utilisateurs cibles :** Préparateurs/caristes
+- **Modèles recommandés :** Sonnet 4.6 pour specs/docs, Opus 4.8 pour dev et migration
+
+---
+
+## Checklist démarrage
+
+- [x] Backend Python documenté dans `MIGRATION.md`
+- [x] Backend Go généré dans `backend-go/` (20 fichiers)
+- [ ] `go mod tidy` + `go build ./...` (nécessite Go 1.22+)
+- [ ] Test de connexion SQL Server (`GET /api/health/database`)
+- [ ] Test login (`POST /api/login`)
+- [ ] Test recherche stock (`POST /api/stock/search`)
+- [ ] Implémenter `GET /api/stock/details/:sku`
+- [ ] Tests unitaires Go (services + repositories)

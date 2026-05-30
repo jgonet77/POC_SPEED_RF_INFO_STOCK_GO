@@ -1,0 +1,12 @@
+# Binaire compilé
+stock-api.exe
+stock-api
+
+# Configuration locale (contient mots de passe)
+.env
+
+# Logs runtime
+logs/*.log
+
+# Artefacts Go
+*.test

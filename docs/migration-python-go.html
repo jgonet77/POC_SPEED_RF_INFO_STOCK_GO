@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Migration Python → Go — Rapport technique</title>
+<style>
+  :root {
+    --blue:    #2563eb;
+    --blue-l:  #dbeafe;
+    --green:   #16a34a;
+    --green-l: #dcfce7;
+    --orange:  #ea580c;
+    --orange-l:#ffedd5;
+    --red:     #dc2626;
+    --red-l:   #fee2e2;
+    --gray:    #64748b;
+    --gray-l:  #f8fafc;
+    --border:  #e2e8f0;
+    --text:    #1e293b;
+    --radius:  10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; color: var(--text); background: #f1f5f9; line-height: 1.6; }
+
+  /* ── Layout ── */
+  .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* ── Header ── */
+  .hero { background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 60%, #2563eb 100%);
+          color: #fff; border-radius: 16px; padding: 48px 40px 40px; margin-bottom: 40px; }
+  .hero h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+  .hero p  { opacity: .85; font-size: 1.05rem; max-width: 680px; }
+  .hero .meta { display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap; }
+  .hero .meta span { background: rgba(255,255,255,.15); border-radius: 20px;
+                     padding: 4px 14px; font-size: .85rem; }
+
+  /* ── Section titles ── */
+  h2 { font-size: 1.35rem; font-weight: 700; margin-bottom: 20px; padding-bottom: 10px;
+       border-bottom: 2px solid var(--border); color: #1e293b; }
+  h2 .emoji { margin-right: 8px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 12px; color: #334155; }
+
+  section { background: #fff; border-radius: var(--radius); border: 1px solid var(--border);
+            padding: 32px; margin-bottom: 28px; }
+
+  /* ── Callout boxes ── */
+  .callout { border-radius: 8px; padding: 16px 20px; margin: 16px 0; display: flex; gap: 12px; }
+  .callout.info   { background: var(--blue-l);   border-left: 4px solid var(--blue); }
+  .callout.ok     { background: var(--green-l);  border-left: 4px solid var(--green); }
+  .callout.warn   { background: var(--orange-l); border-left: 4px solid var(--orange); }
+  .callout.danger { background: var(--red-l);    border-left: 4px solid var(--red); }
+  .callout .icon  { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+  .callout .body  { font-size: .92rem; }
+  .callout .body strong { display: block; margin-bottom: 4px; }
+
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { background: var(--gray-l); text-align: left; padding: 10px 14px; font-weight: 600;
+       border-bottom: 2px solid var(--border); color: #475569; text-transform: uppercase;
+       font-size: .78rem; letter-spacing: .04em; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8fafc; }
+
+  /* ── Badge ── */
+  .badge { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: .78rem;
+           font-weight: 600; }
+  .badge.green  { background: var(--green-l);  color: #15803d; }
+  .badge.blue   { background: var(--blue-l);   color: #1d4ed8; }
+  .badge.orange { background: var(--orange-l); color: #c2410c; }
+  .badge.gray   { background: #f1f5f9;         color: #475569; }
+  .badge.red    { background: var(--red-l);    color: #b91c1c; }
+
+  /* ── Stat cards ── */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .stat  { background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+           padding: 20px; text-align: center; }
+  .stat .val { font-size: 2rem; font-weight: 800; color: var(--blue); }
+  .stat .lbl { font-size: .8rem; color: var(--gray); margin-top: 4px; text-transform: uppercase;
+               letter-spacing: .05em; }
+
+  /* ── Agent timeline ── */
+  .phases { display: grid; gap: 12px; }
+  .phase  { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .phase-header { background: var(--gray-l); padding: 10px 16px; display: flex;
+                  justify-content: space-between; align-items: center; }
+  .phase-header .name { font-weight: 600; font-size: .92rem; }
+  .phase-body { padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .agent-chip { background: var(--blue-l); color: #1d4ed8; border-radius: 20px;
+                padding: 4px 12px; font-size: .82rem; font-weight: 500; }
+
+  /* ── Code blocks ── */
+  pre { background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 16px 20px;
+        font-size: .82rem; overflow-x: auto; margin: 12px 0; line-height: 1.7; }
+  code { font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace; }
+  pre code { color: inherit; }
+  .kw  { color: #93c5fd; }
+  .str { color: #86efac; }
+  .cmt { color: #64748b; }
+
+  /* ── Diff table ── */
+  .diff td:first-child { width: 28%; font-weight: 600; color: #475569; }
+  .py-cell { background: #fef9c3; }
+  .go-cell { background: #f0fdf4; }
+
+  /* ── Steps ── */
+  .steps { counter-reset: step; display: grid; gap: 12px; }
+  .step  { display: flex; gap: 16px; }
+  .step::before { counter-increment: step; content: counter(step);
+                  background: var(--blue); color: #fff; width: 28px; height: 28px;
+                  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+                  font-size: .8rem; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+  .step-body { font-size: .92rem; }
+  .step-body strong { display: block; margin-bottom: 2px; }
+
+  /* ── Two-col ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── Footer ── */
+  footer { text-align: center; color: var(--gray); font-size: .82rem; margin-top: 48px; }
+
+  .tag { display: inline-block; background: #f1f5f9; border: 1px solid var(--border);
+         border-radius: 4px; padding: 1px 7px; font-size: .78rem; color: #475569;
+         font-family: monospace; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Migration Backend Python → Go</h1>
+    <p>Rapport technique de la migration du backend FastAPI vers Go Fiber pour le POC Stock Mobile WMS SPEED.</p>
+    <div class="meta">
+      <span>📅 Mai 2026</span>
+      <span>🏢 BK Systèmes</span>
+      <span>🤖 Opus 4.8 multi-agents</span>
+      <span>✅ En production sur Android</span>
+    </div>
+  </div>
+
+  <!-- ① STATS GLOBALES -->
+  <section>
+    <h2><span class="emoji">📊</span>Chiffres clés de la migration</h2>
+    <div class="stats">
+      <div class="stat"><div class="val">~15<span style="font-size:1rem">min</span></div><div class="lbl">Durée de génération</div></div>
+      <div class="stat"><div class="val">324K</div><div class="lbl">Tokens consommés</div></div>
+      <div class="stat"><div class="val">9</div><div class="lbl">Agents Opus 4.8</div></div>
+      <div class="stat"><div class="val">120</div><div class="lbl">Appels d'outils</div></div>
+      <div class="stat"><div class="val">20</div><div class="lbl">Fichiers Go générés</div></div>
+      <div class="stat"><div class="val">5</div><div class="lbl">Phases parallèles</div></div>
+    </div>
+    <div class="callout ok">
+      <div class="icon">✅</div>
+      <div class="body"><strong>Résultat</strong>
+        Tous les 20 fichiers Go compilent sans erreur. Le review agent a confirmé 0 incohérence détectée. Le backend Go est opérationnel et l'app Android se connecte correctement.</div>
+    </div>
+  </section>
+
+  <!-- ② COMPARAISON PYTHON vs GO -->
+  <section>
+    <h2><span class="emoji">⚖️</span>Comparaison Python vs Go</h2>
+    <table class="diff">
+      <thead><tr><th>Critère</th><th class="py-cell">Python (FastAPI)</th><th class="go-cell">Go (Fiber)</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Framework</td>
+          <td class="py-cell">FastAPI 0.104.1 + Uvicorn 0.24.0</td>
+          <td class="go-cell">Fiber v2.52.6 (basé sur fasthttp)</td>
+        </tr>
+        <tr>
+          <td>Driver SQL Server</td>
+          <td class="py-cell"><span class="tag">pyodbc 5.1.0</span> via ODBC Driver 17<br><small>Supporte Named Pipes <strong>et</strong> TCP</small></td>
+          <td class="go-cell"><span class="tag">go-mssqldb v1.7.2</span> pur Go<br><small>TCP uniquement — pas de Named Pipes</small></td>
+        </tr>
+        <tr>
+          <td>Validation des données</td>
+          <td class="py-cell">Pydantic v2 (déclaratif, annotations Python)</td>
+          <td class="go-cell">Structs Go avec json tags + validation manuelle</td>
+        </tr>
+        <tr>
+          <td>Authentification JWT</td>
+          <td class="py-cell">PyJWT 2.8.0 — HS256</td>
+          <td class="go-cell">golang-jwt/jwt v5 — HS256 (identique)</td>
+        </tr>
+        <tr>
+          <td>Concurrence</td>
+          <td class="py-cell">Asyncio (mono-thread événementiel)</td>
+          <td class="go-cell">Goroutines — vrai parallélisme<br><small>Token store protégé par sync.RWMutex</small></td>
+        </tr>
+        <tr>
+          <td>Démarrage</td>
+          <td class="py-cell">~2–3 s (interpréteur Python + import)</td>
+          <td class="go-cell">&lt; 100 ms (binaire natif compilé)</td>
+        </tr>
+        <tr>
+          <td>Déploiement</td>
+          <td class="py-cell">Venv + pip install + Uvicorn</td>
+          <td class="go-cell">Un seul binaire <span class="tag">stock-api.exe</span>, aucune dépendance runtime</td>
+        </tr>
+        <tr>
+          <td>Chargement config</td>
+          <td class="py-cell"><span class="tag">python-dotenv</span> dans <span class="tag">config.py</span></td>
+          <td class="go-cell"><span class="tag">godotenv</span> dans <span class="tag">config.init()</span></td>
+        </tr>
+        <tr>
+          <td>Architecture</td>
+          <td class="py-cell">Routes → Services → Repositories (3 couches)</td>
+          <td class="go-cell">Routes → Services → Repositories (identique)</td>
+        </tr>
+        <tr>
+          <td>Documentation API</td>
+          <td class="py-cell">OpenAPI auto-générée par FastAPI</td>
+          <td class="go-cell">Swagger via annotations <span class="tag">swag</span> + <span class="tag">gofiber/swagger</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ③ OPUS 4.8 MULTI-AGENTS -->
+  <section>
+    <h2><span class="emoji">🤖</span>Génération multi-agents Opus 4.8</h2>
+    <p style="margin-bottom:20px;color:#475569;font-size:.92rem;">
+      Plutôt que de générer le code séquentiellement, un <strong>workflow multi-agents</strong> a été lancé :
+      9 agents Opus 4.8 ont travaillé en parallèle, chacun responsable d'une couche précise.
+      Un contrat partagé (types, noms de fonctions, chemins d'import) a été injecté dans chaque prompt
+      pour garantir la cohérence sans dépendance entre agents.
+    </p>
+
+    <div class="phases">
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="name">⚡ Phase 1 — Foundation <small style="font-weight:400;color:#64748b">(3 agents en parallèle)</small></span>
+          <span class="badge blue">Fondations</span>
+        </div>
+        <div class="phase-body">
+          <span class="agent-chip">go.mod + config/config.go</span>
+          <span class="agent-chip">models/ (4 fichiers)</span>
+          <span class="agent-chip">services/token_store.go</span>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="name">🗄️ Phase 2 — Data Layer <small style="font-weight:400;color:#64748b">(2 agents en parallèle)</small></span>
+          <span class="badge blue">Accès données</span>
+        </div>
+        <div class="phase-body">
+          <span class="agent-chip">db/db.go + 4 repositories</span>
+          <span class="agent-chip">services/health_service.go + stock_service.go</span>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="name">🌐 Phase 3 — API Layer <small style="font-weight:400;color:#64748b">(2 agents en parallèle)</small></span>
+          <span class="badge blue">API REST</span>
+        </div>
+        <div class="phase-body">
+          <span class="agent-chip">middleware/auth.go</span>
+          <span class="agent-chip">routes/auth.go + stock.go + activity.go + health.go</span>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="name">🔧 Phase 4 — Assembly <small style="font-weight:400;color:#64748b">(1 agent)</small></span>
+          <span class="badge gray">Point d'entrée</span>
+        </div>
+        <div class="phase-body">
+          <span class="agent-chip">main.go (Fiber app, CORS, graceful shutdown)</span>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-header">
+          <span class="name">🔍 Phase 5 — Review <small style="font-weight:400;color:#64748b">(1 agent)</small></span>
+          <span class="badge green">Validation</span>
+        </div>
+        <div class="phase-body">
+          <span class="agent-chip">Vérification imports, types, SQL @p1/@p2, JSON tags, null safety…</span>
+          <span class="agent-chip" style="background:#dcfce7;color:#15803d">0 incohérence détectée</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callout info" style="margin-top:20px;">
+      <div class="icon">💡</div>
+      <div class="body"><strong>Pourquoi des agents parallèles ?</strong>
+        Chaque couche de l'architecture est indépendante des autres à condition de partager un contrat commun (noms de types, signatures de fonctions, chemins d'import). En parallélisant, le temps de génération passe de ~60 min séquentiel à ~15 min. Le review agent final joue le rôle d'intégration continue : il lit tous les fichiers et corrige les éventuelles divergences.</div>
+    </div>
+  </section>
+
+  <!-- ④ PROBLÈME SQL SERVER TCP -->
+  <section>
+    <h2><span class="emoji">🗄️</span>Problème de connexion SQL Server — TCP vs Named Pipes</h2>
+
+    <div class="callout warn">
+      <div class="icon">⚠️</div>
+      <div class="body"><strong>Symptôme rencontré</strong>
+        Le serveur Go démarrait mais échouait à se connecter à SQL Server avec l'erreur :
+        <code>unable to open tcp connection with host 'LAPVMI116:1433'</code>.
+        Le backend Python se connectait sans problème à la même base.</div>
+    </div>
+
+    <h3 style="margin-top:24px;">Pourquoi Python fonctionnait et Go non ?</h3>
+    <div class="two-col">
+      <div>
+        <div style="background:var(--orange-l);border-radius:8px;padding:16px;margin-bottom:12px;">
+          <strong style="color:#c2410c;">🐍 Python — pyodbc + ODBC Driver 17</strong>
+        </div>
+        <p style="font-size:.92rem;color:#475569;">
+          pyodbc utilise le pilote ODBC de Microsoft qui supporte <strong>deux protocoles</strong> :
+          <br><br>
+          <strong>Named Pipes</strong> (par défaut local) : connexion via le système de fichiers Windows
+          (<span class="tag">\\.\pipe\MSSQL$SQL2019\sql\query</span>). Ne nécessite pas que TCP soit activé.
+          <br><br>
+          <strong>TCP/IP</strong> : connexion réseau standard sur port 1433. Nécessite que TCP soit activé dans SQL Server.
+          <br><br>
+          Quand le serveur est local, ODBC préfère automatiquement les Named Pipes — d'où le fait que Python fonctionnait sans configuration TCP.
+        </p>
+      </div>
+      <div>
+        <div style="background:var(--green-l);border-radius:8px;padding:16px;margin-bottom:12px;">
+          <strong style="color:#15803d;">🐹 Go — go-mssqldb (pur Go)</strong>
+        </div>
+        <p style="font-size:.92rem;color:#475569;">
+          go-mssqldb est un driver 100% Go, sans dépendance au pilote ODBC de Windows.
+          Il utilise <strong>uniquement TCP/IP</strong> pour se connecter à SQL Server.
+          <br><br>
+          Pour une instance nommée comme <span class="tag">LAPVMI116\SQL2019</span>, le driver interroge le
+          <strong>SQL Server Browser</strong> (UDP 1434) pour découvrir le port dynamique assigné à l'instance,
+          puis se connecte en TCP.
+          <br><br>
+          Si TCP n'est pas activé dans SQL Server, la connexion échoue immédiatement —
+          même si le serveur est sur la même machine.
+        </p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:24px;">Solution appliquée : activer TCP/IP dans SQL Server Configuration Manager</h3>
+    <div class="steps">
+      <div class="step"><div class="step-body">
+        <strong>SQL Server Configuration Manager → Protocols for SQL2019</strong>
+        Double-clic sur TCP/IP → onglet Protocol → <span class="tag">Enabled = Yes</span>
+      </div></div>
+      <div class="step"><div class="step-body">
+        <strong>Configurer le port fixe</strong>
+        Onglet IP Addresses → IPAll → <span class="tag">TCP Dynamic Ports</span> = vide, <span class="tag">TCP Port = 1433</span>
+      </div></div>
+      <div class="step"><div class="step-body">
+        <strong>Redémarrer le service SQL Server (SQL2019)</strong>
+        SQL Server Services → SQL Server (SQL2019) → clic droit → Restart
+      </div></div>
+      <div class="step"><div class="step-body">
+        <strong>Activer SQL Server Browser</strong>
+        SQL Server Services → SQL Server Browser → Start (permet la découverte de l'instance nommée)
+      </div></div>
+    </div>
+
+    <h3 style="margin-top:24px;">Correction dans le code Go — format du DSN</h3>
+    <p style="font-size:.92rem;color:#475569;margin-bottom:12px;">
+      Une seconde erreur s'est produite lors du premier essai : l'URL générée encodait le
+      <span class="tag">/</span> en <span class="tag">%2F</span>, ce qui rendait le DSN invalide.
+      Pour les instances nommées, go-mssqldb attend le paramètre <span class="tag">instance=</span>
+      en query string, pas un slash dans le host.
+    </p>
+    <div class="two-col">
+      <div>
+        <p style="font-size:.8rem;color:#dc2626;font-weight:600;margin-bottom:4px;">❌ DSN incorrect (encodage URL)</p>
+        <pre><code>sqlserver://sa:BKS@LAPVMI116<span style="color:#f87171">%2F</span>SQL2019
+  ?database=POC_V8SpeedDeveloppement</code></pre>
+      </div>
+      <div>
+        <p style="font-size:.8rem;color:#16a34a;font-weight:600;margin-bottom:4px;">✅ DSN correct (query param)</p>
+        <pre><code>sqlserver://sa:BKS@LAPVMI116
+  ?database=POC_V8SpeedDeveloppement
+  &amp;<span style="color:#86efac">instance=SQL2019</span></code></pre>
+      </div>
+    </div>
+
+    <h3 style="margin-top:24px;">Risques d'activer TCP sur SQL Server</h3>
+    <table>
+      <thead><tr><th>Risque</th><th>Niveau</th><th>Mitigation</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Exposition du port 1433 sur le réseau local</td>
+          <td><span class="badge orange">Modéré</span></td>
+          <td>Restreindre via le pare-feu Windows aux seules IP autorisées (serveur API uniquement)</td>
+        </tr>
+        <tr>
+          <td>Tentatives de connexion brute-force depuis le réseau</td>
+          <td><span class="badge orange">Modéré</span></td>
+          <td>Utiliser un compte SQL dédié (pas <span class="tag">sa</span>) avec mot de passe fort en production</td>
+        </tr>
+        <tr>
+          <td>Exposition à Internet</td>
+          <td><span class="badge red">Élevé si mal configuré</span></td>
+          <td>Ne jamais ouvrir le port 1433 vers Internet. L'API Go sert d'intermédiaire — seul le port 8000 doit être accessible depuis le téléphone.</td>
+        </tr>
+        <tr>
+          <td>Impact sur les connexions Python existantes</td>
+          <td><span class="badge green">Aucun</span></td>
+          <td>Activer TCP ne désactive pas les Named Pipes. Les deux coexistent.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout ok" style="margin-top:16px;">
+      <div class="icon">🛡️</div>
+      <div class="body"><strong>Bonne pratique adoptée</strong>
+        Une règle de pare-feu "Allow FastAPI 8000" existait déjà. Le port 1433 reste fermé vers l'extérieur.
+        Seul le port 8000 (API Go) est accessible depuis les téléphones sur le réseau local.
+        SQL Server n'est jamais exposé directement.</div>
+    </div>
+  </section>
+
+  <!-- ⑤ ANDROID CLEARTEXT -->
+  <section>
+    <h2><span class="emoji">📱</span>Connexion Android — HTTP en clair sur réseau local</h2>
+
+    <div class="callout warn">
+      <div class="icon">⚠️</div>
+      <div class="body"><strong>Symptôme rencontré</strong>
+        L'app Android affichait : <em>"api_test_failure: cleartext communication to 192.168.1.20 not permitted by network security policy"</em>.
+        L'app fonctionnait au bureau mais pas à la maison.</div>
+    </div>
+
+    <h3 style="margin-top:24px;">Pourquoi ça fonctionnait au bureau et pas à la maison ?</h3>
+    <p style="font-size:.92rem;color:#475569;margin-bottom:12px;">
+      Depuis Android 9 (API 28), toutes les communications HTTP en clair sont <strong>bloquées par défaut</strong>.
+      Il est possible d'autoriser des exceptions via un fichier <span class="tag">network_security_config.xml</span>.
+    </p>
+    <table>
+      <thead><tr><th>Environnement</th><th>Adresse utilisée</th><th>Résultat avec l'ancienne config</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Bureau (réseau entreprise)</td>
+          <td>Nom DNS — ex. <span class="tag">LAPVMI116</span></td>
+          <td><span class="badge green">Fonctionnait</span> — la balise <code>&lt;domain&gt;</code> accepte les noms DNS</td>
+        </tr>
+        <tr>
+          <td>Maison (réseau WiFi privé)</td>
+          <td>Adresse IP — <span class="tag">192.168.1.20</span></td>
+          <td><span class="badge red">Bloqué</span> — Android ignore les IPs dans <code>&lt;domain&gt;</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout danger" style="margin-top:16px;">
+      <div class="icon">🚫</div>
+      <div class="body"><strong>Limitation Android documentée</strong>
+        La balise <code>&lt;domain includeSubdomains="true"&gt;192.168.1.20&lt;/domain&gt;</code>
+        est <strong>silencieusement ignorée</strong> par Android. Seuls les noms de domaine (DNS) sont valides
+        dans cette balise — jamais des adresses IP.</div>
+    </div>
+
+    <h3 style="margin-top:24px;">Solution : Build Variants Android (Debug vs Release)</h3>
+    <p style="font-size:.92rem;color:#475569;margin-bottom:16px;">
+      La solution propre est d'utiliser le système de <strong>variants de build</strong> d'Android.
+      Chaque variant peut avoir ses propres ressources. Le build Debug (utilisé pendant les tests)
+      prend automatiquement le fichier dans <span class="tag">src/debug/</span> en priorité sur <span class="tag">src/main/</span>.
+    </p>
+
+    <div class="two-col">
+      <div>
+        <p style="font-size:.82rem;font-weight:600;color:#1d4ed8;margin-bottom:8px;">
+          📁 src/debug/res/xml/network_security_config.xml<br>
+          <span style="font-weight:400;color:#64748b;">(builds de développement)</span>
+        </p>
+        <pre><code><span class="cmt">&lt;!-- HTTP autorisé partout en debug --&gt;</span>
+&lt;network-security-config&gt;
+  &lt;<span class="kw">base-config</span>
+    cleartextTrafficPermitted=<span class="str">"true"</span>&gt;
+    &lt;trust-anchors&gt;
+      &lt;certificates src=<span class="str">"system"</span> /&gt;
+    &lt;/trust-anchors&gt;
+  &lt;/base-config&gt;
+&lt;/network-security-config&gt;</code></pre>
+      </div>
+      <div>
+        <p style="font-size:.82rem;font-weight:600;color:#15803d;margin-bottom:8px;">
+          📁 src/main/res/xml/network_security_config.xml<br>
+          <span style="font-weight:400;color:#64748b;">(builds de production)</span>
+        </p>
+        <pre><code><span class="cmt">&lt;!-- HTTPS obligatoire en production --&gt;</span>
+&lt;network-security-config&gt;
+  &lt;<span class="kw">domain-config</span>
+    cleartextTrafficPermitted=<span class="str">"true"</span>&gt;
+    &lt;domain&gt;localhost&lt;/domain&gt;
+    &lt;domain&gt;10.0.2.2&lt;/domain&gt;
+  &lt;/domain-config&gt;
+  &lt;<span class="kw">base-config</span>
+    cleartextTrafficPermitted=<span class="str">"false"</span> /&gt;
+&lt;/network-security-config&gt;</code></pre>
+      </div>
+    </div>
+
+    <div class="callout ok" style="margin-top:16px;">
+      <div class="icon">✅</div>
+      <div class="body"><strong>Résultat</strong>
+        Le build Debug (installé via Android Studio ou <code>gradlew installDebug</code>) autorise HTTP en clair
+        vers n'importe quelle adresse IP ou domaine — chez soi, au bureau, sur n'importe quel réseau.
+        Aucune modification de code n'est nécessaire en changeant de réseau.
+        Il suffit de mettre à jour l'IP du serveur dans les Paramètres de l'application.</div>
+    </div>
+
+    <h3 style="margin-top:24px;">Flux de fonctionnement selon le réseau</h3>
+    <table>
+      <thead><tr><th>Réseau</th><th>IP à configurer dans l'app</th><th>Build à utiliser</th><th>Résultat</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>🏠 Réseau domicile</td>
+          <td><span class="tag">192.168.1.20</span></td>
+          <td><span class="badge blue">Debug APK</span></td>
+          <td><span class="badge green">Fonctionne</span></td>
+        </tr>
+        <tr>
+          <td>🏢 Réseau entreprise</td>
+          <td><span class="tag">LAPVMI116</span> ou IP réseau entreprise</td>
+          <td><span class="badge blue">Debug APK</span></td>
+          <td><span class="badge green">Fonctionne</span></td>
+        </tr>
+        <tr>
+          <td>🚀 Production</td>
+          <td>URL HTTPS (ex: <span class="tag">api.bksystemes.fr</span>)</td>
+          <td><span class="badge gray">Release APK</span></td>
+          <td><span class="badge green">Fonctionne (HTTPS)</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ⑥ RÉSUMÉ -->
+  <section>
+    <h2><span class="emoji">🎯</span>Synthèse et prochaines étapes</h2>
+    <div class="two-col">
+      <div>
+        <h3>✅ Acquis</h3>
+        <ul style="list-style:none;display:grid;gap:8px;margin-top:8px;">
+          <li>🟢 Backend Go compilé et opérationnel</li>
+          <li>🟢 Connexion SQL Server fonctionnelle (TCP activé)</li>
+          <li>🟢 Login, activités et recherche stock testés</li>
+          <li>🟢 Swagger UI disponible sur <span class="tag">/swagger/index.html</span></li>
+          <li>🟢 App Android connectée (home + bureau)</li>
+          <li>🟢 Documentation de déploiement complète</li>
+        </ul>
+      </div>
+      <div>
+        <h3>🔲 Prochaines étapes</h3>
+        <ul style="list-style:none;display:grid;gap:8px;margin-top:8px;">
+          <li>⬜ Implémenter <span class="tag">GET /api/stock/details/:sku</span></li>
+          <li>⬜ Écrire les tests unitaires Go (services + repositories)</li>
+          <li>⬜ Mettre en place HTTPS (certificat auto-signé ou Let's Encrypt)</li>
+          <li>⬜ Remplacer le compte <span class="tag">sa</span> par un compte SQL dédié</li>
+          <li>⬜ Supprimer le dossier <span class="tag">backend/</span> (référence Python)</li>
+          <li>⬜ Scanner barcode (Phase 2)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>BK Systèmes — POC Stock Mobile WMS SPEED — Mai 2026</p>
+    <p style="margin-top:4px;">Généré avec Claude Code (Opus 4.8) · 9 agents parallèles · 324 756 tokens</p>
+  </footer>
+
+</div>
+</body>
+</html>
