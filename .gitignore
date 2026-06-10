@@ -1,1 +1,18 @@
-android/.java/
+# Application mobile externalisée dans un dépôt dédié
+android/
+
+# Configuration locale (contient des secrets — ne jamais committer)
+.env
+**/.env
+
+# Logs runtime
+logs/*.log
+**/logs/*.log
+
+# Binaires compilés
+stock-api.exe
+stock-api
+*.exe
+
+# Artefacts Go
+*.test
