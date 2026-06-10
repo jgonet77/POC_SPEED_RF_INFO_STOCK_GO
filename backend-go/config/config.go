@@ -21,6 +21,9 @@ type Settings struct {
 	SQLServerDB       string
 	SQLServerUser     string
 	SQLServerPassword string
+	// SQLAuthType selects the authentication mode: "windows" for integrated
+	// (trusted) authentication, anything else for SQL Server login.
+	SQLAuthType string
 
 	// API server.
 	APIHost   string
@@ -49,8 +52,12 @@ func init() {
 // load reads environment variables and applies sensible defaults. The SQL
 // Server password is mandatory: an empty value panics to fail fast at startup.
 func load() *Settings {
+	authType := strings.ToLower(getEnv("SQL_AUTH_TYPE", "sql"))
+
+	// Password is mandatory only for SQL login; Windows integrated auth uses
+	// the current Windows identity and needs no password.
 	password := os.Getenv("SQL_SERVER_PASSWORD")
-	if password == "" {
+	if authType != "windows" && password == "" {
 		panic("config: SQL_SERVER_PASSWORD is required but not set")
 	}
 
@@ -60,6 +67,7 @@ func load() *Settings {
 		SQLServerDB:       getEnv("SQL_SERVER_DB", "WMS_SPEED"),
 		SQLServerUser:     getEnv("SQL_SERVER_USER", "sa"),
 		SQLServerPassword: password,
+		SQLAuthType:       authType,
 
 		APIHost:   getEnv("API_HOST", "0.0.0.0"),
 		APIPort:   getEnvInt("API_PORT", 8000),
@@ -94,9 +102,14 @@ func (s *Settings) DSN() string {
 
 	u := &url.URL{
 		Scheme:   "sqlserver",
-		User:     url.UserPassword(s.SQLServerUser, s.SQLServerPassword),
 		Host:     host,
 		RawQuery: query.Encode(),
+	}
+	// SQL login carries credentials in the URL userinfo. Windows integrated
+	// auth omits userinfo entirely: go-mssqldb then uses the current Windows
+	// identity (trusted connection) when no user id is supplied.
+	if s.SQLAuthType != "windows" {
+		u.User = url.UserPassword(s.SQLServerUser, s.SQLServerPassword)
 	}
 	return u.String()
 }
